@@ -53,7 +53,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 // Load the configuration
 $config = require __DIR__ . '/config.php';
 
-$app = app($config);
+$app = PHPQuick($config);
 
 $app->get('/', 'HomeController@index');
 
