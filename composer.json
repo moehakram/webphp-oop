@@ -1,0 +1,14 @@
+{
+    "require": {
+        "firebase/php-jwt": "^6.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app",
+            "MA\\PHPQUICK\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    }
+}

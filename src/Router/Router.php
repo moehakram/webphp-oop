@@ -1,0 +1,49 @@
+<?php
+
+namespace MA\PHPQUICK\Router;
+use MA\PHPQUICK\Http\Request;
+use MA\PHPQUICK\Router\Route;
+
+class Router
+{
+    private array $routes = [];
+    private Request $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
+    public function get(string $path, $callback, ...$middlewares): void
+    {
+        $this->register('GET', $path, $callback, $middlewares);
+    }
+
+    public function post(string $path, $callback, ...$middlewares): void
+    {
+        $this->register('POST', $path, $callback, $middlewares);
+    }
+
+    public function register(string $method, string $path, $callback, array $middlewares): void
+    {
+        $this->routes[$method][] = [
+            'path' => $path,
+            'callback' => $callback,
+            'middlewares' => $middlewares
+        ];
+    }
+
+    public function dispatch(string $method, string $path): ?Route
+    {
+        foreach ($this->routes[$method] ?? [] as $route) {
+            $pattern = '#^' . $route['path'] . '$#';
+            if (preg_match($pattern, $path, $variabels)) {
+                array_shift($variabels);
+                $variabels[] = $this->request;
+                return new Route($route['callback'], $route['middlewares'], $variabels);
+            }
+        }
+        return null;
+    }
+
+}

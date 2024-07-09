@@ -1,0 +1,6 @@
+/app
+/config
+/vendor
+/composer.lock
+/database.sql
+/migration.php
