@@ -13,7 +13,6 @@ class Application
     public static Application $app;
     public Router $router;
     public array $config;
-    public ?User $user = null;
 
     public Response $response;
     public Request $request;

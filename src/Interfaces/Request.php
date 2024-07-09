@@ -2,8 +2,6 @@
 
 namespace MA\PHPQUICK\Interfaces;
 
-use App\Domain\User;
-
 interface Request
 {
     public function get(string $key = '');
@@ -32,7 +30,7 @@ interface Request
 
     public function getQueryString(): string;
 
-    public function user(): ?User;
+    public function user(): ?UserAuth;
 
-    public function login(?User $user);
+    public function login(?UserAuth $user);
 }

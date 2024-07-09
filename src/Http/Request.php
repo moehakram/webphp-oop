@@ -3,8 +3,7 @@
 namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Interfaces\Request as InterfacesRequest;
-use App\Domain\User;
-use MA\PHPQUICK\Application;
+use MA\PHPQUICK\Interfaces\UserAuth;
 
 class Request implements InterfacesRequest
 {
@@ -13,6 +12,7 @@ class Request implements InterfacesRequest
     private array $cookies;
     private array $files;
     private array $server;
+    public ?UserAuth $user = null;
 
     public function __construct()
     {
@@ -118,12 +118,12 @@ class Request implements InterfacesRequest
         return isset($array[$key]) ? $this->clean($array[$key]) : $default;
     }
 
-    public function user(): ?User
+    public function user(): ?UserAuth
     {
-        return Application::$app->user;
+        return $this->user;
     }
 
-    public function login(?User $user){
-        Application::$app->user = $user;
+    public function login(?UserAuth $user){
+        $this->user = $user;
     }
 }
