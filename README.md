@@ -1,9 +1,7 @@
-Here is the improved and translated version of your markdown file:
-
-```markdown
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [About The Project](#about-the-project)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
@@ -143,4 +141,3 @@ $app->get('/dashboard', 'DashboardController@index', AuthMiddleware::class);
 - **Array:** `[ControllerClass::class, 'methodName']`
 - **String:** `'Controller@method'`
 - **Callable:** `function(Request $req) { ... }` or `fn(Request $req) => ...`
-```
