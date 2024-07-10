@@ -61,7 +61,7 @@ class SessionService
         $this->session->set('name', $user->name);
         $this->session->set('role', $user->role);
         $this->session->set('exp', time() + self::EXPIRY);
-        $this->session->save();
+        $this->session->push();
     }
 
     private function isSessionExpired(?int $exp): bool

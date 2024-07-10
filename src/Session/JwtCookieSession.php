@@ -52,7 +52,7 @@ class JwtCookieSession
     {
         if (isset($this->data[$key])) {
             unset($this->data[$key]);
-            $this->save();
+            $this->push();
         }
     }
 
@@ -62,7 +62,7 @@ class JwtCookieSession
         setcookie($this->cookie_name, '', 1, '/');
     }
 
-    public function save(): void
+    public function push(): void
     {
         $token = $this->generateToken();
         setcookie(
