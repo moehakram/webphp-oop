@@ -9,8 +9,8 @@
   - [Entry Point (`index.php`)](#entry-point-indexphp)
   - [Routing Patterns](#routing-patterns)
   - [Callback Formats](#callback-formats)
+    - [Summary](#summary)
   - [Implementing Middleware](#implementing-middleware)
-  - [Summary](#summary)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -115,6 +115,12 @@ Various callback formats are accepted:
     
     $app->get('/arrow-function', fn() => "Hello World");
     ```
+#### Summary
+
+- **Array:** `[ControllerClass::class, 'methodName']`
+- **String:** `'Controller@method'`
+- **Callable:** `function(Request $req) { ... }` or `fn(Request $req) => ...`
+
 ### Implementing Middleware
 You can add middleware to your routes by passing them as additional parameters to the get method.
 
@@ -135,9 +141,3 @@ class AuthMiddleware implements Middleware {
 $app->get('/dashboard', 'DashboardController@index', AuthMiddleware::class);
 
 ```
-
-### Summary
-
-- **Array:** `[ControllerClass::class, 'methodName']`
-- **String:** `'Controller@method'`
-- **Callable:** `function(Request $req) { ... }` or `fn(Request $req) => ...`
