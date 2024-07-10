@@ -10,9 +10,13 @@ class AuthMiddleware implements Middleware{
 
     use ServiceTrait;
 
-    public function execute(Request $request, callable $next)
+    public function __construct()
     {
         $this->authService();
+    }
+
+    public function execute(Request $request, callable $next)
+    {
         $request->login($this->sessionService->current());
         return $next($request);
     }
