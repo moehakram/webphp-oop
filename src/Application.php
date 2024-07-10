@@ -1,7 +1,6 @@
 <?php
 namespace MA\PHPQUICK;
 
-use App\Domain\User;
 use MA\PHPQUICK\Http\Request;
 use MA\PHPQUICK\Router\Route;
 use MA\PHPQUICK\Http\Response;
@@ -11,9 +10,8 @@ use MA\PHPQUICK\Router\Runner;
 class Application
 {
     public static Application $app;
-    public Router $router;
     public array $config;
-
+    public Router $router;
     public Response $response;
     public Request $request;
 
@@ -21,8 +19,9 @@ class Application
     {
         self::$app = $this;
         $this->config = $config;
-        $this->request = new Request;
-        $this->response = new Response;
+        $session = new Session();
+        $this->request = new Request($session);
+        $this->response = new Response($session);
         $this->router = new Router($this->request);
     }
 

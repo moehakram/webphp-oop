@@ -4,6 +4,7 @@ namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Interfaces\Request as InterfacesRequest;
 use MA\PHPQUICK\Interfaces\UserAuth;
+use MA\PHPQUICK\Session;
 
 class Request implements InterfacesRequest
 {
@@ -12,15 +13,17 @@ class Request implements InterfacesRequest
     private array $cookies;
     private array $files;
     private array $server;
-    public ?UserAuth $user = null;
+    private Session $session;
+    private ?UserAuth $user = null;
 
-    public function __construct()
+    public function __construct(Session $session)
     {
         $this->request = $_POST;
         $this->query = $_GET;
         $this->cookies = $_COOKIE;
         $this->files = $_FILES;
         $this->server = $_SERVER;
+        $this->session = $session;
     }
 
     public function get(string $key = '')
@@ -125,5 +128,9 @@ class Request implements InterfacesRequest
 
     public function login(?UserAuth $user){
         $this->user = $user;
+    }
+
+    public function session(): Session{
+        return $this->session;
     }
 }

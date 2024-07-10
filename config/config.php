@@ -16,11 +16,5 @@ return [
         'name' => 'php_mvc',
         'username' => 'root',
         'password' => ''
-    ],
-
-    'session' => [
-        'name' => 'PHP-MVC',
-        'key' => "kRd9SO75b0MffA6ThNjW0lYfZpUJzwbiwN9moDf0wQvyLWmBdrnYbCZ4IekHQVNenFD8gt4sKreL7Z",
-        'exp' => time() + (60 * 60 * 3) // 3 JAM
     ]
 ];

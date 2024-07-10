@@ -3,93 +3,87 @@
 namespace  App\Service;
 
 use App\Domain\{Session, User};
+use App\Helper\Session as HelperSession;
 use App\Repository\SessionRepository;
-use App\Helper\TokenHandler;
 
 class SessionService
 {
     private SessionRepository $sessionRepository;
+    protected HelperSession $session;
 
     public function __construct(SessionRepository $sessionRepository)
     {
         $this->sessionRepository = $sessionRepository;
+        $this->session = new HelperSession();
     }
 
     public function create(User $user): Session
     {
         $session = new Session();
-        $session->id = strRandom(10);
+        $session->id = strRandom(11);
         $session->userId = $user->id;
         
         $this->sessionRepository->save($session);
-        $this->setSessionCookie($user, $session->id);
+        $this->setSession($user, $session->id);
 
         return $session;
     }
 
+    private function setSession(User $user, string $sessionId): void
+    {
+        $this->session->set('id', $sessionId);
+        $this->session->set('name', $user->name);
+        $this->session->set('role', $user->role);
+        $this->session->set('exp', time()+ HelperSession::EXPIRY);
+        $this->session->save();
+    }
+
     public function destroy()
     {
-        $session = $this->getSessionPayload();
-        if($session){
-            $this->sessionRepository->deleteById($session->id);
+        if($id = $this->session->get('id')){
+            $this->sessionRepository->deleteById($id);
             // $this->sessionRepository->deleteAll();
-            $this->clearSessionCookie();
+            $this->session->clear();
         }
     }
 
     public function current(): ?User
     {
-        $payload = $this->getSessionPayload();
+        $exp = $this->session->get('exp');
 
-        if ($this->isSessionExpired($payload)) {
+        if ($this->isSessionExpired($exp)) {
             return null;
-        }
+        };
 
-        $session = $this->sessionRepository->findById($payload->id);
+        if(!$id = $this->verifySessionInDB()){
+            return null;
+        };
+        
+        $user = new User();
+        $user->id = $id;
+        $user->name = $this->session->get('name');
+        $user->role = $this->session->get('role');
+
+        return $user;
+    }
+
+    private function isSessionExpired($exp): bool
+    {
+        return $exp === null || $exp < time();
+    }
+
+    public function verifySessionInDB(){
+        if(!$this->session->get('id')){
+            return null;
+        };
+
+        $session = $this->sessionRepository->findById($this->session->get('id'));
 
         if ($session === null) {
             $this->destroy();
             return null;
         }
 
-        $user = new User();
-        $user->id = $session->userId;
-        $user->name = $payload->name;
-        $user->role = $payload->role;
-
-        return $user;
+        return $session->userId;
     }
-
-    private function isSessionExpired($payload): bool
-    {
-        return $payload === null || $payload->exp < time();
-    }
-
-    private function getSessionPayload() : ?\stdClass
-    {
-        $JWT = request()->cookie(config('session.name')) ?? '';
-        if (empty($JWT)) return null;
-        return TokenHandler::verifyToken($JWT, config('session.key'));
-    }
-
-    private function setSessionCookie(User $user, string $sessionId): void
-    {
-        $expires = config('session.exp');
-
-        $payload = [
-            'id' => $sessionId,
-            'name' => $user->name,
-            'role' => $user->role,
-            'exp' => $expires
-        ];
-
-        $value = TokenHandler::generateToken($payload, config('session.key'));
-        setcookie(config('session.name'), $value, $expires, "/", "", false, true);
-    }
-
-    private function clearSessionCookie(): void
-    {
-        setcookie(config('session.name'), '', 1, "/");
-    }
-
 }

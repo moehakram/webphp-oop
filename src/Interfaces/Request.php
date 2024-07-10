@@ -2,6 +2,8 @@
 
 namespace MA\PHPQUICK\Interfaces;
 
+use MA\PHPQUICK\Session;
+
 interface Request
 {
     public function get(string $key = '');
@@ -33,4 +35,6 @@ interface Request
     public function user(): ?UserAuth;
 
     public function login(?UserAuth $user);
+
+    public function session(): Session;
 }

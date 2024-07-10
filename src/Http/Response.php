@@ -6,12 +6,14 @@ use MA\PHPQUICK\Exception\ForbiddenException;
 use MA\PHPQUICK\Exception\NotFoundException;
 use MA\PHPQUICK\Interfaces\Response as InterfacesResponse;
 use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\Session;
 
 class Response implements InterfacesResponse
 {
     private array $headers = [];
     private $content = '';
     private int $statusCode = 200;
+    protected Session $session;
 
     public const STATUS_TEXTS = [
         // INFORMATIONAL CODES
@@ -77,6 +79,11 @@ class Response implements InterfacesResponse
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
     ];
+
+    public function __construct(Session $session)
+    {
+        $this->session = $session;
+    }
 
     public function getStatusText(): string
     {
