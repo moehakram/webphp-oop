@@ -6,8 +6,8 @@ use App\Middleware\{AuthMiddleware, CSRFMiddleware, GuestMiddleware, OnlyAdminMi
 
 $app->get('/', 'HomeController@index');
 
-$app->get("/user/register", [AuthController::class, 'showRegistration'], AuthMiddleware::class, GuestMiddleware::class);
-$app->post("/user/register", [AuthController::class, 'register'], AuthMiddleware::class, GuestMiddleware::class, CSRFMiddleware::class);
+$app->get("/user/register", [AuthController::class, 'showRegistration'], GuestMiddleware::class);
+$app->post("/user/register", [AuthController::class, 'register'], GuestMiddleware::class, CSRFMiddleware::class);
 $app->get("/user/login", [AuthController::class, 'showLogin'], GuestMiddleware::class);
 $app->post("/user/login", [AuthController::class, 'login'], GuestMiddleware::class, CSRFMiddleware::class);
 $app->get("/user/logout", [AuthController::class, 'logout'], AuthMiddleware::class);
