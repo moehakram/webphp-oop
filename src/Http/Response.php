@@ -184,14 +184,14 @@ class Response implements InterfacesResponse
 
     public function setNotFound($message = null)
     {
-        throw new NotFoundException(View::render('error/404', [
+        return throw new NotFoundException(View::render('error/404', [
             'message' => $message
         ]));
     }
     
     public function setForbidden()
     {
-        throw new ForbiddenException(View::render('error/403'));
+        return throw new ForbiddenException(View::render('error/403'));
     }
 
     public function setNoCache(): Response

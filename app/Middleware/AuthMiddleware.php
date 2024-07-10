@@ -17,7 +17,13 @@ class AuthMiddleware implements Middleware{
 
     public function execute(Request $request, callable $next)
     {
-        $request->login($this->sessionService->current());
+        $user = $this->sessionService->current();
+        if ($user == null) {
+            response()->redirect('/user/login');
+        }
+
+        $request->login($user);
+        
         return $next($request);
     }
 }
