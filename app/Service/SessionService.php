@@ -1,19 +1,20 @@
 <?php
 
-namespace  App\Service;
+namespace App\Service;
 
-use App\Domain\{Session, User};
+use App\Domain\Session;
+use App\Domain\User;
 use MA\PHPQUICK\Session\JwtCookieSession;
 use App\Repository\SessionRepository;
 
 class SessionService
 {
-    protected const COOKIE_NAME = 'PHPQuick-MVC'; // Ganti dengan secret yang kuat
-    protected const JWT_SECRET = 'kRd9SO75b0MffA6ThNjW0lYfZpUJzwbiwN9moDf0wQvyLWmBdrnYbCZ4IekHQVNenFD8gt4sKreL7Z'; // Ganti dengan secret yang kuat
-    protected const EXPIRY = 3600 * 1; // 1 jam
-   
+    protected const COOKIE_NAME = 'PHPQuick-MVC';
+    protected const JWT_SECRET = 'fe1ed383b50832081d04bef6067540e54c66066a83cc1cf994af07'; // Change to a strong secret
+    protected const EXPIRY = 3600 * 1; // 1 hour
+
     private SessionRepository $sessionRepository;
-    protected JwtCookieSession $session;
+    private JwtCookieSession $session;
 
     public function __construct(SessionRepository $sessionRepository)
     {
@@ -26,11 +27,32 @@ class SessionService
         $session = new Session();
         $session->id = strRandom(11);
         $session->userId = $user->id;
-        
+
         $this->sessionRepository->save($session);
         $this->setSession($user, $session->id);
 
         return $session;
+    }
+
+    public function destroy(): void
+    {
+        if ($id = $this->session->get('id')) {
+            $this->sessionRepository->deleteById($id);
+            $this->session->clear();
+        }
+    }
+
+    public function current(): ?User
+    {
+        if ($this->isSessionExpired($this->session->get('exp'))) {
+            return null;
+        }
+
+        if (!$userId = $this->verifySessionInDB()) {
+            return null;
+        }
+
+        return $this->createUserFromSession($userId);
     }
 
     private function setSession(User $user, string $sessionId): void
@@ -42,46 +64,20 @@ class SessionService
         $this->session->save();
     }
 
-    public function destroy()
-    {
-        if($id = $this->session->get('id')){
-            $this->sessionRepository->deleteById($id);
-            // $this->sessionRepository->deleteAll();
-            $this->session->clear();
-        }
-    }
-
-    public function current(): ?User
-    {
-        $exp = $this->session->get('exp');
-
-        if ($this->isSessionExpired($exp)) {
-            return null;
-        };
-
-        if(!$id = $this->verifySessionInDB()){
-            return null;
-        };
-        
-        $user = new User();
-        $user->id = $id;
-        $user->name = $this->session->get('name');
-        $user->role = $this->session->get('role');
-
-        return $user;
-    }
-
-    private function isSessionExpired($exp): bool
+    private function isSessionExpired(?int $exp): bool
     {
         return $exp === null || $exp < time();
     }
 
-    public function verifySessionInDB(){
-        if(!$this->session->get('id')){
-            return null;
-        };
+    private function verifySessionInDB(): ?string
+    {
+        $sessionId = $this->session->get('id');
 
-        $session = $this->sessionRepository->findById($this->session->get('id'));
+        if (!$sessionId) {
+            return null;
+        }
+
+        $session = $this->sessionRepository->findById($sessionId);
 
         if ($session === null) {
             $this->destroy();
@@ -89,5 +85,15 @@ class SessionService
         }
 
         return $session->userId;
+    }
+
+    private function createUserFromSession(string $userId): User
+    {
+        $user = new User();
+        $user->id = $userId;
+        $user->name = $this->session->get('name');
+        $user->role = $this->session->get('role');
+
+        return $user;
     }
 }
