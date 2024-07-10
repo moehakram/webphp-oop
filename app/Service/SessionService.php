@@ -10,7 +10,7 @@ use App\Repository\SessionRepository;
 class SessionService
 {
     protected const COOKIE_NAME = 'PHPQuick-MVC';
-    protected const JWT_SECRET = 'fe1ed383b50832081d04bef6067540e54c66066a83cc1cf994af07'; // Change to a strong secret
+    protected const JWT_SECRET = 'fe1ed383b50832081d04bef6067540e54c66066a83cc1cf994af07';
     protected const EXPIRY = 3600 * 1; // 1 hour
 
     private SessionRepository $sessionRepository;
