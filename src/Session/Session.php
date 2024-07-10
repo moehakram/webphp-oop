@@ -1,5 +1,5 @@
 <?php
-namespace MA\PHPQUICK;
+namespace MA\PHPQUICK\Session;
 
 class Session
 {

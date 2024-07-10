@@ -6,7 +6,7 @@ use MA\PHPQUICK\Exception\ForbiddenException;
 use MA\PHPQUICK\Exception\NotFoundException;
 use MA\PHPQUICK\Interfaces\Response as InterfacesResponse;
 use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Session;
+use MA\PHPQUICK\Session\Session;
 
 class Response implements InterfacesResponse
 {

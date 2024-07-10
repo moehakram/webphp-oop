@@ -6,6 +6,7 @@ use MA\PHPQUICK\Router\Route;
 use MA\PHPQUICK\Http\Response;
 use MA\PHPQUICK\Router\Router;
 use MA\PHPQUICK\Router\Runner;
+use MA\PHPQUICK\Session\Session;
 
 class Application
 {

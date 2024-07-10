@@ -3,18 +3,22 @@
 namespace  App\Service;
 
 use App\Domain\{Session, User};
-use App\Helper\Session as HelperSession;
+use MA\PHPQUICK\Session\JwtCookieSession;
 use App\Repository\SessionRepository;
 
 class SessionService
 {
+    protected const COOKIE_NAME = 'PHPQuick-MVC'; // Ganti dengan secret yang kuat
+    protected const JWT_SECRET = 'kRd9SO75b0MffA6ThNjW0lYfZpUJzwbiwN9moDf0wQvyLWmBdrnYbCZ4IekHQVNenFD8gt4sKreL7Z'; // Ganti dengan secret yang kuat
+    protected const EXPIRY = 3600 * 1; // 1 jam
+   
     private SessionRepository $sessionRepository;
-    protected HelperSession $session;
+    protected JwtCookieSession $session;
 
     public function __construct(SessionRepository $sessionRepository)
     {
         $this->sessionRepository = $sessionRepository;
-        $this->session = new HelperSession();
+        $this->session = new JwtCookieSession(self::COOKIE_NAME, self::JWT_SECRET, self::EXPIRY);
     }
 
     public function create(User $user): Session
@@ -34,7 +38,7 @@ class SessionService
         $this->session->set('id', $sessionId);
         $this->session->set('name', $user->name);
         $this->session->set('role', $user->role);
-        $this->session->set('exp', time()+ HelperSession::EXPIRY);
+        $this->session->set('exp', time() + self::EXPIRY);
         $this->session->save();
     }
 

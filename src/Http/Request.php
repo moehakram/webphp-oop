@@ -4,7 +4,7 @@ namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Interfaces\Request as InterfacesRequest;
 use MA\PHPQUICK\Interfaces\UserAuth;
-use MA\PHPQUICK\Session;
+use MA\PHPQUICK\Session\Session;
 
 class Request implements InterfacesRequest
 {

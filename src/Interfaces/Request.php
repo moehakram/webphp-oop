@@ -2,7 +2,7 @@
 
 namespace MA\PHPQUICK\Interfaces;
 
-use MA\PHPQUICK\Session;
+use MA\PHPQUICK\Session\Session;
 
 interface Request
 {
