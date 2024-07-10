@@ -8,8 +8,8 @@ class JwtCookieSession
     protected const ALGORITHM = 'HS256';
     protected string $cookie_name;
     protected string $jwt_secret;
-    protected array $data = [];
     protected int $expiry;
+    protected array $data = [];
 
     public function __construct(string $cookie_name, string $jwt_secret = 'your_jwt_secret_here', int $expiry = 3600)
     {

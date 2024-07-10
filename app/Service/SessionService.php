@@ -69,7 +69,7 @@ class SessionService
         return $exp === null || $exp < time();
     }
 
-    private function verifySessionInDB(): ?string
+    private function verifySessionInDB()
     {
         $sessionId = $this->session->get('id');
 
