@@ -48,7 +48,11 @@ class SessionService
             return null;
         }
 
-        if (!$userId = $this->verifySessionInDB()) {
+        if (!$sessionId = $this->session->get('id')) {
+            return null;
+        }
+
+        if (!$userId = $this->verifySessionInDB($sessionId)) {
             return null;
         }
 
@@ -69,14 +73,8 @@ class SessionService
         return $exp === null || $exp < time();
     }
 
-    private function verifySessionInDB()
+    private function verifySessionInDB($sessionId)
     {
-        $sessionId = $this->session->get('id');
-
-        if (!$sessionId) {
-            return null;
-        }
-
         $session = $this->sessionRepository->findById($sessionId);
 
         if ($session === null) {
