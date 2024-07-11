@@ -59,13 +59,13 @@ class JwtCookieSession
     public function clear(): void
     {
         $this->data = [];
-        setcookie($this->cookie_name, '', 1, '/');
+        response()->setCookie($this->cookie_name, '', 1, '/');
     }
 
     public function push(): void
     {
         $token = $this->generateToken();
-        setcookie(
+        response()->setCookie(
             $this->cookie_name,
             $token,
             time() + $this->expiry,

@@ -159,18 +159,7 @@ class Response implements InterfacesResponse
 
     public function setCookie(string $name, string $value, int $expire = 0, string $path = '/', string $domain = '', bool $secure = false, bool $httponly = false): Response
     {
-        $cookieString = sprintf(
-            '%s=%s; expires=%s; path=%s; domain=%s; secure=%s; httponly=%s',
-            $name,
-            urlencode($value),
-            ($expire > 0) ? gmdate('D, d M Y H:i:s T', $expire) : 0,
-            $path,
-            $domain,
-            $secure ? 'true' : 'false',
-            $httponly ? 'true' : 'false'
-        );
-
-        $this->setHeader("Set-Cookie: $cookieString");
+        setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
         return $this;
     }
 
@@ -184,14 +173,16 @@ class Response implements InterfacesResponse
 
     public function setNotFound($message = null)
     {
-        return throw new NotFoundException(View::render('error/404', [
+        $view = View::render('error/404', [
             'message' => $message
-        ]));
+        ]);
+        throw new NotFoundException($view);
     }
     
     public function setForbidden()
     {
-        return throw new ForbiddenException(View::render('error/403'));
+        $view = View::render('error/403');
+        throw new ForbiddenException($view);
     }
 
     public function setNoCache(): Response
