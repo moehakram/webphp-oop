@@ -50,7 +50,7 @@ class ProfileController extends Controller
         try {
             $user = $this->userService->updateProfile($req);
             $this->sessionService->create($user); //update cookie session setelah update profile
-            response()->redirect('/');
+            return response()->redirect('/');
         } catch (ValidationException $exception) {
             response()->setStatusCode(422);
             return $this->view('profile/profile', [
@@ -86,7 +86,7 @@ class ProfileController extends Controller
 
         try {
             $this->userService->updatePassword($req);
-            response()->redirect('/');
+            return response()->redirect('/');
         } catch (ValidationException $exception) {
             return $this->view('profile/password', [
                 "title" => "Update user password",

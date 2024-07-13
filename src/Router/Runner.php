@@ -40,9 +40,7 @@ class Runner
     private function createResponse($result){
         if (is_scalar($result)) {
             return response($result);
-        }elseif($result instanceof Response){
-            return $result;
-        }elseif($result instanceof JsonResponse){
+        }else{
             return $result;
         }
     }
