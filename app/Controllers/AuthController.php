@@ -38,9 +38,8 @@ class AuthController extends Controller
         try {
             $user = $this->userService->login($req);
             $this->sessionService->create($user);
-            response()->redirect('/');
+            return response()->redirect('/');
         } catch (ValidationException $exception) {
-
             return $this->view('auth/login', [
                 'title' => 'Login User',
                 'error' => $exception->getMessage()
@@ -88,6 +87,6 @@ class AuthController extends Controller
     public function logout() // Proses logout pengguna
     {
         $this->sessionService->destroy();
-        response()->redirect('/');
+        return response()->redirect('/');
     }
 }

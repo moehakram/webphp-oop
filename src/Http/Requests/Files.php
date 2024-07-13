@@ -1,6 +1,6 @@
 <?php
-
 namespace MA\PHPQUICK\Http\Requests;
+
 use MA\PHPQUICK\Collection;
 
 class Files extends Collection

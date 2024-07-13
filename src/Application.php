@@ -1,12 +1,13 @@
 <?php
 namespace MA\PHPQUICK;
 
-use MA\PHPQUICK\Http\Request;
+use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Router\Route;
-use MA\PHPQUICK\Http\Response;
+use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Router\Router;
 use MA\PHPQUICK\Router\Runner;
-use MA\PHPQUICK\Session\Session;
+use MA\PHPQUICK\Exception\HttpException;
 
 class Application
 {
@@ -20,40 +21,38 @@ class Application
     {
         self::$app = $this;
         $this->config = $config;
-        $session = new Session();
-        $this->request = new Request($session);
-        $this->response = new Response($session);
+        // $session = new Session();
+        $this->request = new Request();
+        $this->response = new Response();
         $this->router = new Router($this->request);
     }
 
     public function get(string $path, $callback, ...$middlewares): void
     {
-        $this->router->register('GET', $path, $callback, $middlewares);
+        $this->router->register(Request::GET, $path, $callback, $middlewares);
         
     }
 
     public function post(string $path, $callback, ...$middlewares): void
     {
-        $this->router->register('POST', $path, $callback, $middlewares);
+        $this->router->register(Request::POST, $path, $callback, $middlewares);
         
     }
 
     public function run()
     {
         try {
-            $route = $this->router->dispatch($this->getMethod(), $this->getPath());
+            $route = $this->router->dispatch($this->request->getMethod(), $this->getPath());
 
             if ($route === null) {
-                $this->response->setNotFound('Route Not Found');
+                $this->setNotFound('Route Not Found');
             }
 
             $runner = $this->createRunner($route);
 
-            return $runner->handle($this->request);
-        } catch (\Throwable $th) {
-            return $this->response->setContent($th->getMessage())->setStatusCode($th->getCode());
-        } finally{
-            $this->response->send();
+            return $runner->handle($this->request)->send();
+        } catch (\MA\PHPQUICK\Exception\HttpException $http) {
+            return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
         }
     }
 
@@ -66,10 +65,9 @@ class Application
     private function handleRouteCallback(Route $route)
     {
         if ($route->getController() === null) {
-            $content = call_user_func_array($route->getAction(), $route->getParameter());
-            $this->response->setContent($content);
+            return call_user_func_array($route->getAction(), $route->getParameter());
         } else {
-            $this->executeController($route->getController(), $route->getAction(), $route->getParameter());
+            return $this->executeController($route->getController(), $route->getAction(), $route->getParameter());
         }
     }
 
@@ -78,13 +76,12 @@ class Application
         if (class_exists($controller)) {
             $controllerInstance = new $controller();
             if (method_exists($controllerInstance, $method)) {
-                $content = call_user_func_array([$controllerInstance, $method], $parameter);
-                $this->response->setContent($content);
+                return call_user_func_array([$controllerInstance, $method], $parameter);
             } else {
-                $this->response->setNotFound(sprintf("Method %s not found in %s", $method, $controller));
+                $this->setNotFound(sprintf("Method %s not found in %s", $method, $controller));
             }
         } else {
-            $this->response->setNotFound(sprintf("Controller class %s not found", $controller));
+            $this->setNotFound(sprintf("Controller class %s not found", $controller));
         }
     }
 
@@ -98,9 +95,12 @@ class Application
         return $this->cleanPath($this->request->getPath());
     }
 
-    private function getMethod(): string
+    public function setNotFound($message = null)
     {
-        return strtoupper($this->request->getMethod());
+        $view = View::render('error/404', [
+            'message' => $message
+        ]);
+        throw new HttpException(404, $view);
     }
 
 }

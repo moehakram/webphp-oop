@@ -38,6 +38,7 @@ class SessionService
     {
         if ($id = $this->session->get('id')) {
             $this->sessionRepository->deleteById($id);
+            // $this->sessionRepository->deleteAll();
             $this->session->clear();
         }
     }

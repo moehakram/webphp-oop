@@ -2,7 +2,9 @@
 
 namespace MA\PHPQUICK\Router;
 
-use MA\PHPQUICK\Http\Request;
+use MA\PHPQUICK\Http\Requests\Request;
+use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Http\Responses\JsonResponse;
 use MA\PHPQUICK\Interfaces\Middleware as MiddlewareInterface;
 
 class Runner
@@ -35,11 +37,13 @@ class Runner
         return $this->createResponse($result);
     }
 
-    private function createResponse($content){
-        if (is_scalar($content)) {
-            return response()->setContent($content);
-        } else {
-            return response();
+    private function createResponse($result){
+        if (is_scalar($result)) {
+            return response($result);
+        }elseif($result instanceof Response){
+            return $result;
+        }elseif($result instanceof JsonResponse){
+            return $result;
         }
     }
 

@@ -3,8 +3,9 @@
 use MA\PHPQUICK\Config;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
+use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Http\Responses\Cookie;
 use MA\PHPQUICK\Interfaces\Request;
-use MA\PHPQUICK\Interfaces\Response;
 
 if(!function_exists('cetak')){
     function cetak($arr, $die = true)
@@ -24,7 +25,8 @@ if(!function_exists('response')){
     {
         $res = Application::$app->response;
         if($content !== ''){
-            $res->setContent($content)->setStatusCode($statusCode);
+            $res->setContent($content);
+            $res->setStatusCode($statusCode);
         }
         return $res;
     }
@@ -62,7 +64,8 @@ if(!function_exists('set_CSRF')){
     function set_CSRF(string $path): string
     {
         $token = strRandom(17);
-        response()->setCookie('csrf_token', $token, time() + 60 * 60 * 30, $path);
+        // response()->setCookie('csrf_token', $token, time() + 60 * 60 * 30, $path);
+        response()->getHeaders()->setCookie(new Cookie('csrf_token', $token, time()+3600));
         return $token;
     }
 }

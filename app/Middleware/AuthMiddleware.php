@@ -5,7 +5,6 @@ namespace App\Middleware;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Interfaces\Middleware;
 use App\Service\ServiceTrait;
-use MA\PHPQUICK\Exception\HttpException;
 
 class AuthMiddleware implements Middleware{
 
@@ -20,7 +19,7 @@ class AuthMiddleware implements Middleware{
     {
         $user = $this->sessionService->current();
         if ($user == null) {
-            response()->redirect('/user/login');
+            return response()->redirect('/user/login');
         }
 
         $request->login($user);

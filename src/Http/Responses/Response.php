@@ -1,19 +1,40 @@
 <?php
 namespace MA\PHPQUICK\Http\Responses;
 
-class Response
+use MA\PHPQUICK\Interfaces\Response as IResponse;
+
+class Response implements IResponse
 {
-    protected $content = '';
-    protected $headers = null;
-    protected $statusCode;
-    protected $statusText = 'OK';
-    protected $httpVersion = '1.1';
+    protected string $content = '';
+    protected ResponseHeaders $headers;
+    protected int $statusCode;
+    protected string $statusText = 'OK';
+    protected string $httpVersion = '1.1';
 
     public function __construct($content = '', int $statusCode = 200, array $headers = [])
     {
         $this->setContent($content);
         $this->headers = new ResponseHeaders($headers);
         $this->setStatusCode($statusCode);
+    }
+
+    public function setNoCache(): Response
+    {
+        $this->headers->add('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');
+        $this->headers->add('Pragma', 'no-cache');
+        $this->headers->add('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        return $this;
+    }
+
+    public function redirect(string $targetUrl): Response
+    {
+        if (empty($targetUrl)) {
+            throw new \InvalidArgumentException('Invalid URL provided for redirect.');
+        }
+
+        $this->setStatusCode(302);
+        $this->headers->set('Location', str_replace(['&amp;', '\n', '\r'], ['&', '', ''], $targetUrl));
+        return $this;
     }
 
     public function getContent() : string
@@ -36,55 +57,52 @@ class Response
         return $this->statusCode;
     }
 
-    public function send()
-    {
-        $this->sendHeaders();
-        $this->sendContent();
-        // flush();
-    }
-
-    public function sendContent()
+    public function send(): void
     {
         if (!headers_sent()) {
-            echo $this->content;
+            $this->sendHeaders();
         }
+        $this->sendContent();
+    }
+
+    protected function sendContent(): void
+    {
+        echo $this->content;
     }
 
     public function sendHeaders()
-    {
-        if (!headers_sent()) {
-            header(
-                sprintf(
-                    'HTTP/%s %s %s',
-                    $this->httpVersion,
-                    $this->statusCode,
-                    $this->statusText
-                ),
-                true,
-                $this->statusCode
-            );
+    { 
+        header(
+            sprintf(
+                'HTTP/%s %s %s',
+                $this->httpVersion,
+                $this->statusCode,
+                $this->statusText
+            ),
+            true,
+            $this->statusCode
+        );
 
-            foreach ($this->headers->getAll() as $name => $values) {
-                foreach ($values as $value) {
-                    header("$name:$value", false, $this->statusCode);
-                }
+        foreach ($this->headers->getAll() as $name => $values) {
+            foreach ($values as $value) {
+                header("$name:$value", false, $this->statusCode);
+            }
+        }
+
+        foreach ($this->headers->getCookies(true) as $cookie) {
+            $options = [
+                'expires' => $cookie->getExpiration(),
+                'path' => $cookie->getPath(),
+                'domain' => $cookie->getDomain(),
+                'secure' => $cookie->isSecure(),
+                'httponly' => $cookie->isHttpOnly(),
+            ];
+
+            if (!$sameSite = $cookie->getSameSite()) {
+                $options['samesite'] = $sameSite;
             }
 
-            foreach ($this->headers->getCookies(true) as $cookie) {
-                $options = [
-                    'expires' => $cookie->getExpiration(),
-                    'path' => $cookie->getPath(),
-                    'domain' => $cookie->getDomain(),
-                    'secure' => $cookie->isSecure(),
-                    'httponly' => $cookie->isHttpOnly(),
-                ];
-
-                if (!$sameSite = $cookie->getSameSite()) {
-                    $options['samesite'] = $sameSite;
-                }
-
-                setcookie($cookie->getName(), $cookie->getValue(), $options);
-            }
+            setcookie($cookie->getName(), $cookie->getValue(), $options);
         }
     }
 
@@ -92,7 +110,6 @@ class Response
     {
         $this->content = $content;
     }
-
 
     public function setExpiration(\DateTime $expiration)
     {

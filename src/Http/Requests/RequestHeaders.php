@@ -5,17 +5,12 @@ use MA\PHPQUICK\Http\Headers;
 
 class RequestHeaders extends Headers
 {
-    /** The client's host */
     const CLIENT_HOST = 'client-host';
-    /** The client's IP address */
     const CLIENT_IP = 'client-ip';
-    /** The client's port */
     const CLIENT_PORT = 'client-port';
-    /** The client's protocol */
     const CLIENT_PROTO = 'client-proto';
-    /** The forwarded headers */
     const FORWARDED = 'forwarded';
-    /** @var array The list of HTTP request headers that don't begin with "HTTP_" */
+    
     protected static $specialCaseHeaders = [
         'AUTH_TYPE' => true,
         'CONTENT_LENGTH' => true,
@@ -26,12 +21,8 @@ class RequestHeaders extends Headers
         'PHP_AUTH_USER' => true
     ];
 
-    /**
-     * @param array $values The mapping of header names to values
-     */
     public function __construct(array $values = [])
     {
-        // Only add "HTTP_" server values or special case values
         foreach ($values as $name => $value) {
             $name = strtoupper($name);
 
@@ -43,12 +34,6 @@ class RequestHeaders extends Headers
         parent::__construct();
     }
 
-    /**
-     * Removes the "http-" from the name
-     *
-     * @param string $name The name to normalize
-     * @return string The normalized name
-     */
     protected function normalizeName(string $name) : string
     {
         $name = parent::normalizeName($name);

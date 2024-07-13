@@ -5,52 +5,6 @@ use MA\PHPQUICK\Http\Headers;
 
 class ResponseHeaders extends Headers
 {
-    const CONTENT_TYPE_HTML = 'text/html';
-    const CONTENT_TYPE_JSON = 'application/json';
-    const CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream';
-    const CONTENT_TYPE_PDF = 'application/pdf';
-    const CONTENT_TYPE_TEXT = 'text/plain';
-    const HTTP_CONTINUE = 100;
-    const HTTP_SWITCHING_PROTOCOL = 101;
-    const HTTP_OK = 200;
-    const HTTP_CREATED = 201;
-    const HTTP_ACCEPTED = 202;
-    const HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
-    const HTTP_NO_CONTENT = 204;
-    const HTTP_RESET_CONTENT = 205;
-    const HTTP_PARTIAL_CONTENT = 206;
-    const HTTP_MULTIPLE_CHOICE = 300;
-    const HTTP_MOVED_PERMANENTLY = 301;
-    const HTTP_FOUND = 302;
-    const HTTP_SEE_OTHER = 303;
-    const HTTP_NOT_MODIFIED = 304;
-    const HTTP_USE_PROXY = 305;
-    const HTTP_TEMPORARY_REDIRECT = 307;
-    const HTTP_PERMANENT_REDIRECT = 308;
-    const HTTP_BAD_REQUEST = 400;
-    const HTTP_UNAUTHORIZED = 401;
-    const HTTP_PAYMENT_REQUIRED = 402;
-    const HTTP_FORBIDDEN = 403;
-    const HTTP_NOT_FOUND = 404;
-    const HTTP_METHOD_NOT_ALLOWED = 405;
-    const HTTP_NOT_ACCEPTABLE = 406;
-    const HTTP_PROXY_AUTHENTICATION_REQUIRED = 407;
-    const HTTP_REQUEST_TIMEOUT = 408;
-    const HTTP_CONFLICT = 409;
-    const HTTP_GONE = 410;
-    const HTTP_LENGTH_REQUIRED = 411;
-    const HTTP_PRECONDITION_FAILED = 412;
-    const HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
-    const HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
-    const HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
-    const HTTP_EXPECTATION_FAILED = 417;
-    const HTTP_INTERNAL_SERVER_ERROR = 500;
-    const HTTP_NOT_IMPLEMENTED = 501;
-    const HTTP_BAD_GATEWAY = 502;
-    const HTTP_SERVICE_UNAVAILABLE = 503;
-    const HTTP_GATEWAY_TIMEOUT = 504;
-    const HTTP_HTTP_VERSION_NOT_SUPPORTED = 505;
-
     const STATUS_TEXTS = [
         // INFORMATIONAL CODES
         100 => 'Continue',
@@ -115,6 +69,52 @@ class ResponseHeaders extends Headers
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
     ];
+    
+    const CONTENT_TYPE_HTML = 'text/html';
+    const CONTENT_TYPE_JSON = 'application/json';
+    const CONTENT_TYPE_OCTET_STREAM = 'application/octet-stream';
+    const CONTENT_TYPE_PDF = 'application/pdf';
+    const CONTENT_TYPE_TEXT = 'text/plain';
+    const HTTP_CONTINUE = 100;
+    const HTTP_SWITCHING_PROTOCOL = 101;
+    const HTTP_OK = 200;
+    const HTTP_CREATED = 201;
+    const HTTP_ACCEPTED = 202;
+    const HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
+    const HTTP_NO_CONTENT = 204;
+    const HTTP_RESET_CONTENT = 205;
+    const HTTP_PARTIAL_CONTENT = 206;
+    const HTTP_MULTIPLE_CHOICE = 300;
+    const HTTP_MOVED_PERMANENTLY = 301;
+    const HTTP_FOUND = 302;
+    const HTTP_SEE_OTHER = 303;
+    const HTTP_NOT_MODIFIED = 304;
+    const HTTP_USE_PROXY = 305;
+    const HTTP_TEMPORARY_REDIRECT = 307;
+    const HTTP_PERMANENT_REDIRECT = 308;
+    const HTTP_BAD_REQUEST = 400;
+    const HTTP_UNAUTHORIZED = 401;
+    const HTTP_PAYMENT_REQUIRED = 402;
+    const HTTP_FORBIDDEN = 403;
+    const HTTP_NOT_FOUND = 404;
+    const HTTP_METHOD_NOT_ALLOWED = 405;
+    const HTTP_NOT_ACCEPTABLE = 406;
+    const HTTP_PROXY_AUTHENTICATION_REQUIRED = 407;
+    const HTTP_REQUEST_TIMEOUT = 408;
+    const HTTP_CONFLICT = 409;
+    const HTTP_GONE = 410;
+    const HTTP_LENGTH_REQUIRED = 411;
+    const HTTP_PRECONDITION_FAILED = 412;
+    const HTTP_REQUEST_ENTITY_TOO_LARGE = 413;
+    const HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
+    const HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
+    const HTTP_EXPECTATION_FAILED = 417;
+    const HTTP_INTERNAL_SERVER_ERROR = 500;
+    const HTTP_NOT_IMPLEMENTED = 501;
+    const HTTP_BAD_GATEWAY = 502;
+    const HTTP_SERVICE_UNAVAILABLE = 503;
+    const HTTP_GATEWAY_TIMEOUT = 504;
+    const HTTP_HTTP_VERSION_NOT_SUPPORTED = 505;
 
     private $cookies = [];
 
@@ -128,14 +128,8 @@ class ResponseHeaders extends Headers
         parent::__construct();
     }
 
-    public function deleteCookie(
-        string $name,
-        string $path = '/',
-        string $domain = '',
-        bool $isSecure = false,
-        bool $isHttpOnly = true
-    ) {
-        $this->setCookie(new Cookie($name, '', 0, $path, $domain, $isSecure, $isHttpOnly));
+    public function deleteCookie(string $name, string $path = '/', string $domain = '', bool $isSecure = false, bool $isHttpOnly = true){
+        $this->setCookie(new Cookie($name, '', 1, $path, $domain, $isSecure, $isHttpOnly));
     }
 
     public function getCookies(bool $includeDeletedCookies = false) : array

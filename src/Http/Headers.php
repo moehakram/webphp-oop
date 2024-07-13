@@ -4,28 +4,10 @@ namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Collection;
 
-/**
- * Defines the list of headers
- */
 class Headers extends Collection
 {
-    /** @var array The list of HTTP request headers that don't begin with "HTTP_" */
-    protected static $specialCaseHeaders = [
-        'AUTH_TYPE' => true,
-        'CONTENT_LENGTH' => true,
-        'CONTENT_TYPE' => true,
-        'PHP_AUTH_DIGEST' => true,
-        'PHP_AUTH_PW' => true,
-        'PHP_AUTH_TYPE' => true,
-        'PHP_AUTH_USER' => true
-    ];
 
-    public function __construct()
-    {
-        parent::__construct([]);
-    }
-
-    public function add(string $name, $values, bool $shouldReplace = true)
+    public function add(string $name, $values, bool $shouldReplace = true) : void
     {
         $this->set($name, $values, $shouldReplace);
     }

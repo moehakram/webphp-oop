@@ -3,8 +3,7 @@ namespace MA\PHPQUICK\Http\Responses;
 
 class JsonResponse extends Response
 {
-
-    public function __construct($content = [], int $statusCode = ResponseHeaders::HTTP_OK, array $headers = [])
+    public function __construct($content = [], int $statusCode = 200, array $headers = [])
     {
         parent::__construct($content, $statusCode, $headers);
 

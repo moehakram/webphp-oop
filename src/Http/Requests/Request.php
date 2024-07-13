@@ -1,10 +1,13 @@
 <?php
-
 namespace MA\PHPQUICK\Http\Requests;
 
 use MA\PHPQUICK\Collection;
+use MA\PHPQUICK\Interfaces\Request as IRequest;
+use MA\PHPQUICK\Http\Requests\Files;
+use MA\PHPQUICK\Http\Requests\RequestHeaders;
+use MA\PHPQUICK\Interfaces\UserAuth;
 
-class Request
+class Request implements IRequest
 {
     // http method
     const GET = 'GET';
@@ -48,27 +51,10 @@ class Request
     private $rawBody = null;
     private $originalMethodCollection = null;
 
-    public function __construct(array $query, array $post, array $cookies, array $server, array $files, string $rawBody = null) {
-        $this->query = new Collection($query);
-        $this->post = new Collection($post);
-        $this->cookies = new Collection($cookies);
-        $this->server = new Collection($server);
-        $this->headers = new RequestHeaders($server);
-        $this->files = new Files($files);
-        $this->rawBody = $rawBody;
-        $this->setPath();
-        $this->setMethod();
-        $this->setClientIPAddresses();
-        $this->setUnsupportedMethodsCollections();
-    }
+    private ?UserAuth $user = null;
 
-    public static function createIntance(array $query = null, array $post = null, array $cookies = null, array $server = null, array $files = null, string $rawBody = null) : Request {
-        $query = $query ?? $_GET;
-        $post = $post ?? $_POST;
-        $cookies = $cookies ?? $_COOKIE;
-        $server = $server ?? $_SERVER;
-        $files = $files ?? $_FILES;
-
+    public function __construct() {
+        $server = $_SERVER;
         if (array_key_exists('HTTP_CONTENT_LENGTH', $server)) {
             $server['CONTENT_LENGTH'] = $server['HTTP_CONTENT_LENGTH'];
         }
@@ -77,7 +63,19 @@ class Request
             $server['CONTENT_TYPE'] = $server['HTTP_CONTENT_TYPE'];
         }
 
-        return new static($query, $post, $cookies, $server, $files, $rawBody);
+        $this->query = new Collection($_GET);
+        $this->post = new Collection($_POST);
+        $this->put = new Collection([]);
+        $this->patch = new Collection([]);
+        $this->delete = new Collection([]);
+        $this->cookies = new Collection($_COOKIE);
+        $this->server = new Collection($server);
+        $this->headers = new RequestHeaders($server);
+        $this->files = new Files($_FILES);
+        $this->setPath();
+        $this->setMethod();
+        $this->setClientIPAddresses();
+        $this->setUnsupportedMethodsCollections();
     }
 
     public static function setTrustedHeaderName(string $name, $value)
@@ -88,19 +86,6 @@ class Request
     public static function setTrustedProxies($trustedProxies)
     {
         self::$trustedProxies = (array)$trustedProxies;
-    }
-
-    public function __clone()
-    {
-        $this->query = clone $this->query;
-        $this->post = clone $this->post;
-        $this->put = clone $this->put;
-        $this->patch = clone $this->patch;
-        $this->delete = clone $this->delete;
-        $this->cookies = clone $this->cookies;
-        $this->server = clone $this->server;
-        $this->headers = clone $this->headers;
-        $this->files = clone $this->files;
     }
 
     public function getClientIPAddress() : string
@@ -116,6 +101,16 @@ class Request
     public function getFiles() : Files
     {
         return $this->files;
+    }
+
+    public function get(string $key, $default = null)
+    {
+        return $this->query->get($key, $default);
+    }
+
+    public function post(string $key, $default = null)
+    {
+        return $this->post->get($key, $default);
     }
 
     public function getQuery() : Collection
@@ -144,12 +139,6 @@ class Request
         return $this->patch;
     }
 
-    /**
-     * Gets the full URL for the current request
-     *
-     * @return string The full URL
-     * @link http://stackoverflow.com/questions/6768793/get-the-full-url-in-php#answer-8891890
-     */
     public function getFullUrl() : string
     {
         $isSecure = $this->isSecure();
@@ -474,5 +463,14 @@ class Request
                     break;
             }
         }
+    }
+
+    
+    public function login(?UserAuth $user){
+        $this->user = $user;
+    }
+
+    public function user(): ?UserAuth{
+        return $this->user;
     }
 }

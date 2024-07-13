@@ -3,14 +3,16 @@ namespace MA\PHPQUICK;
 
 class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 {
-    protected $items = [];
+    protected array $items = [];
 
     public function __construct(array $items = [])
     {
-        $this->items = $items;
+        foreach ($items as $key => $value) {
+            $this->add($key, $value);
+        }
     }
 
-    public function getAll()
+    public function getAll(): array
     {
         return $this->items;
     }
@@ -30,7 +32,7 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
         $this->items[$key] = $value;
     }
 
-    public function exchangeArray($array) : array
+    public function exchangeArray(array $array): array
     {
         $oldValues = $this->items;
         $this->items = $array;
@@ -40,9 +42,7 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function remove(string $key)
     {
-        if (isset($items[$key])) {
-            unset($this->items[$key]);
-        }
+        unset($this->items[$key]);
     }
 
     public function has(string $key): bool
@@ -67,12 +67,12 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function offsetExists($offset): bool
     {
-        return isset($this->items[$offset]);
+        return $this->has($offset);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->items[$offset] ?? null;
+        return $this->get($offset);
     }
 
     public function offsetSet($offset, $value): void
@@ -86,6 +86,21 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function offsetUnset($offset): void
     {
-        unset($this->items[$offset]);
+        $this->remove($offset);
     }
+
+    // protected function clean($data)
+    // {
+    //     if (is_array($data)) {
+    //         $cleanedArray = [];
+    //         array_walk($data, function (&$value, $key) use (&$cleanedArray) {
+    //             $cleanedKey = $this->clean($key);
+    //             $cleanedValue = $this->clean($value);
+    //             $cleanedArray[$cleanedKey] = $cleanedValue;
+    //         });
+    //         return $cleanedArray;
+    //     } else {
+    //         return htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
+    //     }
+    // }
 }
