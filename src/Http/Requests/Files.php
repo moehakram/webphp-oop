@@ -20,9 +20,4 @@ class Files extends Collection
     {
         return parent::get($name, $default);
     }
-
-    public function getAll() : array
-    {
-        return parent::getAll();
-    }
 }

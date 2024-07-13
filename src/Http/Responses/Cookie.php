@@ -1,8 +1,6 @@
 <?php
 namespace MA\PHPQUICK\Http\Responses;
 
-use DateTime;
-
 class Cookie
 {
     private $name = '';
@@ -81,7 +79,7 @@ class Cookie
 
     public function setExpiration($expiration)
     {
-        if ($expiration instanceof DateTime) {
+        if ($expiration instanceof \DateTime) {
             $expiration = (int)$expiration->format('U');
         }
 
