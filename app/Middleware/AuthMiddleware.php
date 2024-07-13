@@ -5,6 +5,7 @@ namespace App\Middleware;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Interfaces\Middleware;
 use App\Service\ServiceTrait;
+use MA\PHPQUICK\Exception\HttpException;
 
 class AuthMiddleware implements Middleware{
 

@@ -40,7 +40,15 @@ class Request implements InterfacesRequest
         return $this->clean($this->request);
     }
 
-    public function input(string $key = '')
+    public function query(){
+        return $this->query;
+    }
+
+    public function input(){
+        return $this->request;
+    }
+
+    public function getContent(string $key = '')
     {
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata, true);

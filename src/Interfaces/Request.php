@@ -10,7 +10,7 @@ interface Request
 
     public function post(string $key = '');
 
-    public function input(string $key = '');
+    public function getContent(string $key = '');
 
     public function getPath(): string;
 

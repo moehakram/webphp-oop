@@ -12,12 +12,16 @@ class Runner
 
     public function __construct(array $middlewares)
     {
-        array_map([$this, 'addMiddleware'], $middlewares);
+        array_walk($middlewares, [$this, 'addMiddleware']);
     }
 
     private function addMiddleware($middleware): void
     {
-        $this->middlewares[] = is_string($middleware) && class_exists($middleware) ? new $middleware : $middleware;
+        if(is_string($middleware) && class_exists($middleware)){
+            $middleware = new $middleware;
+        }
+
+        $this->middlewares[] = $middleware;
     }
 
     public function handle(Request $request)
@@ -28,9 +32,12 @@ class Runner
         }
 
         $result = $this->executeMiddleware($middleware, $request);
+        return $this->createResponse($result);
+    }
 
-        if (is_scalar($result)) {
-            return response()->setContent($result);
+    private function createResponse($content){
+        if (is_scalar($content)) {
+            return response()->setContent($content);
         } else {
             return response();
         }

@@ -1,5 +1,4 @@
 <?php
-
 namespace MA\PHPQUICK\Exception;
 
 class ValidationException extends \Exception
