@@ -62,6 +62,8 @@ class Request implements IRequest
         if (array_key_exists('HTTP_CONTENT_TYPE', $server)) {
             $server['CONTENT_TYPE'] = $server['HTTP_CONTENT_TYPE'];
         }
+        $this->server = new Collection($server);
+        $this->headers = new RequestHeaders($server);
 
         $this->query = new Collection($_GET);
         $this->post = new Collection($_POST);
@@ -69,8 +71,6 @@ class Request implements IRequest
         $this->patch = new Collection([]);
         $this->delete = new Collection([]);
         $this->cookies = new Collection($_COOKIE);
-        $this->server = new Collection($server);
-        $this->headers = new RequestHeaders($server);
         $this->files = new Files($_FILES);
         $this->setPath();
         $this->setMethod();

@@ -5,15 +5,13 @@ use MA\PHPQUICK\Exception\HttpException;
 
 class UploadedFile extends \SplFileInfo
 {
-
-    private $tmpFilename = '';
-    private $tmpSize = 0;
-    private $tmpMimeType = '';
+    private $tmpFilename;
+    private $tmpSize;
+    private $tmpMimeType;
     private $error = UPLOAD_ERR_OK;
 
     public function __construct(string $path, string $tmpFilename, int $tmpSize, string $tmpMimeType = '', int $error = UPLOAD_ERR_OK){
         parent::__construct($path);
-
         $this->tmpFilename = $tmpFilename;
         $this->tmpSize = $tmpSize;
         $this->tmpMimeType = $tmpMimeType;
