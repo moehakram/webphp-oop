@@ -118,13 +118,6 @@ class ResponseHeaders extends Headers
 
     private $cookies = [];
 
-    public function __construct(array $values = [])
-    {
-        foreach ($values as $name => $value) {
-            $this->set($name, $value);
-        }
-    }
-
     public function deleteCookie(string $name, string $path = '/', string $domain = '', bool $isSecure = false, bool $isHttpOnly = true){
         $this->setCookie(new Cookie($name, '', 1, $path, $domain, $isSecure, $isHttpOnly));
     }
@@ -136,7 +129,7 @@ class ResponseHeaders extends Headers
         foreach ($this->cookies as $domain => $cookiesByDomain) {
             foreach ($cookiesByDomain as $path => $cookiesByPath) {
                 foreach ($cookiesByPath as $name => $cookie) {
-                    if ($includeDeletedCookies || $cookie->getExpiration() >= time()) {
+                    if ($includeDeletedCookies || !$this->isCookieExpired($cookie)) {
                         $cookies[] = $cookie;
                     }
                 }
@@ -144,6 +137,11 @@ class ResponseHeaders extends Headers
         }
 
         return $cookies;
+    }
+
+    private function isCookieExpired(Cookie $cookie): bool
+    {
+        return $cookie->getExpiration() < time();
     }
 
     public function setCookie(Cookie $cookie)

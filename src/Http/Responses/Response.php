@@ -1,6 +1,8 @@
 <?php
 namespace MA\PHPQUICK\Http\Responses;
 
+use DateTime;
+use DateTimeZone;
 use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Interfaces\Response as IResponse;
 use MA\PHPQUICK\MVC\View;
@@ -24,7 +26,7 @@ class Response implements IResponse
     {
         $this->headers->add('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');
         $this->headers->add('Pragma', 'no-cache');
-        $this->headers->add('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
+        $this->setExpiration(new DateTime('Sat, 26 Jul 1997 05:00:00 GMT'));
     }
 
     public function setNotFound($message = null)
