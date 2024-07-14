@@ -10,13 +10,13 @@ class JwtCookieSession extends Collection
     private const ALGORITHM = 'HS256';
     private string $cookie_name;
     private string $jwt_secret;
-    private int $expiry;
+    private int $expiration;
 
-    public function __construct(string $cookie_name, string $jwt_secret, int $expiry = 3600)
+    public function __construct(string $cookie_name, string $jwt_secret, int $expiration = 3600)
     {
         $this->cookie_name = $cookie_name;
         $this->jwt_secret = $jwt_secret;
-        $this->expiry = $expiry;
+        $this->expiration = $expiration;
 
         $token = request()->getCookies()->get($this->cookie_name);
         if (isset($token)) {
@@ -52,7 +52,7 @@ class JwtCookieSession extends Collection
         response()->getHeaders()->setCookie(new Cookie(
             $this->cookie_name,
             $token,
-            time() + $this->expiry,
+            time() + $this->expiration,
             '/',
             '',
             false,
