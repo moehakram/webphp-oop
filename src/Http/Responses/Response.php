@@ -2,7 +2,6 @@
 namespace MA\PHPQUICK\Http\Responses;
 
 use DateTime;
-use DateTimeZone;
 use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Interfaces\Response as IResponse;
 use MA\PHPQUICK\MVC\View;
@@ -11,7 +10,7 @@ class Response implements IResponse
 {
     protected $content;
     protected int $statusCode;
-    protected string $statusText;
+    protected ?string $statusText;
     protected string $httpVersion = '1.1';
     protected ResponseHeaders $headers;
     

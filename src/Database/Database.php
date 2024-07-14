@@ -13,7 +13,9 @@ class Database
     {
         if (self::$pdo === null) {
 
-            $db = config('database');
+            if(!$db = config('database')){
+                throw new Exception('Config database not found', 500);
+            }
             $dsn = sprintf("%s:host=%s;port=%s;dbname=%s", $db['driver'] ,$db['host'], $db['port'], $db['name']);
             
             try {
