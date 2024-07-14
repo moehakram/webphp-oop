@@ -19,7 +19,7 @@ class GuestMiddleware implements Middleware
     {
         $user = $this->sessionService->current();
         if ($user != null) {
-            response()->redirect('/');
+            return response()->redirect('/');
         }
         return $next($request);
     }
