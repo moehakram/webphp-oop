@@ -2,22 +2,11 @@
 
 namespace MA\PHPQUICK;
 
-class Config
-{
-    protected static $config;
-
-    protected static function loadConfig()
+class Config extends Collection
+{   
+    public function get($key, $default = null)
     {
-        if (!isset(self::$config)) {
-            self::$config = Application::$app->config;
-        }
-    }
-    
-    public static function get($key, $default = null)
-    {
-        self::loadConfig();
-
-        $config = self::$config;
+        $config = $this->items;
         $keys = explode('.', $key);
 
         foreach ($keys as $part) {
@@ -27,7 +16,22 @@ class Config
                 return $default;
             }
         }
-
         return $config;
     }
+
+    public function add(string $key, $value)
+    {
+        $keys = explode('.', $key);
+        $temp = &$this->items;
+
+        foreach ($keys as $k) {
+            if (!isset($temp[$k])) {
+                $temp[$k] = [];
+            }
+            $temp = &$temp[$k];
+        }
+
+        $temp = $value;
+    }
+
 }

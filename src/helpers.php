@@ -85,7 +85,11 @@ if(!function_exists('PHPQuick')){
 }
 
 if(!function_exists('config')){
-    function config($key_name, $default = null){
-        return Config::get($key_name, $default);
+    function config($key = '', $default = null){
+        if($key !== '' && $key !== null){
+            return Application::$app->config->get($key, $default);
+        }
+
+        return Application::$app->config;
     }
 }

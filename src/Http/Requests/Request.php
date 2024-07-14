@@ -33,27 +33,34 @@ class Request implements IRequest
         RequestHeaders::CLIENT_PROTO => 'X_FORWARDED_PROTO'
     ];
 
-    private $path;
-    private $method;
-    private $clientIPAddresses = [];
+    private string $path;
+    private string $method;
+    private array $clientIPAddresses = [];
 
-    private $query = null;
-    private $post = null;
-    private $put = null;
-    private $patch = null;
-    private $delete = null;
-
-    private $headers = null;
-    private $server = null;
-    private $files = null;
-    private $cookies = null;
-    private $previousUrl = '';
-    private $rawBody = null;
-    private $originalMethodCollection = null;
-
+    private Collection $query;
+    private Collection $post;
+    private Collection $put;
+    private Collection $patch;
+    private Collection $delete;
+    private Collection $server;
+    private Collection $cookies;
+    private ?Collection $originalMethodCollection = null;
+    private Files $files;
+    private RequestHeaders $headers;
+    private string $previousUrl = '';
+    private ?string $rawBody = null;
     private ?UserAuth $user = null;
 
     public function __construct() {
+        $this->initializeServerAndHeaders();
+        $this->initializeCollection();
+        $this->setPath();
+        $this->setMethod();
+        $this->setClientIPAddresses();
+        $this->setUnsupportedMethodsCollections();
+    }
+
+    private function initializeServerAndHeaders(){
         $server = $_SERVER;
         if (array_key_exists('HTTP_CONTENT_LENGTH', $server)) {
             $server['CONTENT_LENGTH'] = $server['HTTP_CONTENT_LENGTH'];
@@ -64,18 +71,16 @@ class Request implements IRequest
         }
         $this->server = new Collection($server);
         $this->headers = new RequestHeaders($server);
+    }
 
+    private function initializeCollection(){
         $this->query = new Collection($_GET);
         $this->post = new Collection($_POST);
         $this->put = new Collection([]);
         $this->patch = new Collection([]);
         $this->delete = new Collection([]);
-        $this->cookies = new Collection($_COOKIE);
         $this->files = new Files($_FILES);
-        $this->setPath();
-        $this->setMethod();
-        $this->setClientIPAddresses();
-        $this->setUnsupportedMethodsCollections();
+        $this->cookies = new Collection($_COOKIE);
     }
 
     public static function setTrustedHeaderName(string $name, $value)

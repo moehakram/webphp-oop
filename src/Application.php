@@ -12,7 +12,7 @@ use MA\PHPQUICK\Exception\HttpException;
 class Application
 {
     public static Application $app;
-    public array $config;
+    public Config $config;
     public Router $router;
     public Response $response;
     public Request $request;
@@ -20,8 +20,7 @@ class Application
     public function __construct(array $config)
     {
         self::$app = $this;
-        $this->config = $config;
-        // $session = new Session();
+        $this->config = new Config($config);
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request);
