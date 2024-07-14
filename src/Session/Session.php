@@ -1,46 +1,50 @@
 <?php
 namespace MA\PHPQUICK\Session;
 
-class Session
+use MA\PHPQUICK\Collection;
+
+class Session extends Collection
 {
     protected const FLASH_KEY = 'flash_messages';
 
     public function __construct()
     {
         session_start();
-        $flashMessages = $_SESSION[self::FLASH_KEY] ?? [];
+        parent::__construct($_SESSION);
+
+        $flashMessages = $this->get(self::FLASH_KEY, []);
         foreach ($flashMessages as $key => &$flashMessage) {
             $flashMessage['remove'] = true;
         }
-        $_SESSION[self::FLASH_KEY] = $flashMessages;
+        $this->set(self::FLASH_KEY, $flashMessages);
     }
 
     public function setFlash($key, $message)
     {
-        $_SESSION[self::FLASH_KEY][$key] = [
+        $flashMessages = $this->get(self::FLASH_KEY, []);
+        $flashMessages[$key] = [
             'remove' => false,
             'value' => $message
         ];
+        $this->set(self::FLASH_KEY, $flashMessages);
     }
 
     public function getFlash($key)
     {
-        return $_SESSION[self::FLASH_KEY][$key]['value'] ?? false;
+        $flashMessages = $this->get(self::FLASH_KEY, []);
+        return $flashMessages[$key]['value'] ?? false;
     }
 
     public function set($key, $value)
     {
-        $_SESSION[$key] = $value;
-    }
-
-    public function get($key)
-    {
-        return $_SESSION[$key] ?? false;
+        parent::set($key, $value);
+        $this->syncSession();
     }
 
     public function remove($key)
     {
-        unset($_SESSION[$key]);
+        parent::remove($key);
+        $this->syncSession();
     }
 
     public function __destruct()
@@ -50,12 +54,17 @@ class Session
 
     private function removeFlashMessages()
     {
-        $flashMessages = $_SESSION[self::FLASH_KEY] ?? [];
+        $flashMessages = $this->get(self::FLASH_KEY, []);
         foreach ($flashMessages as $key => $flashMessage) {
             if ($flashMessage['remove']) {
                 unset($flashMessages[$key]);
             }
         }
-        $_SESSION[self::FLASH_KEY] = $flashMessages;
+        $this->set(self::FLASH_KEY, $flashMessages);
+    }
+
+    private function syncSession()
+    {
+        $_SESSION = $this->getAll();
     }
 }
