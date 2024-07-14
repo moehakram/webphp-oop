@@ -121,10 +121,8 @@ class ResponseHeaders extends Headers
     public function __construct(array $values = [])
     {
         foreach ($values as $name => $value) {
-            $this->set(strtoupper($name), $value);
+            $this->set($name, $value);
         }
-
-        parent::__construct();
     }
 
     public function deleteCookie(string $name, string $path = '/', string $domain = '', bool $isSecure = false, bool $isHttpOnly = true){

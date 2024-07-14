@@ -30,8 +30,6 @@ class RequestHeaders extends Headers
                 $this->set($name, $value);
             }
         }
-
-        parent::__construct();
     }
 
     protected function normalizeName(string $name) : string
