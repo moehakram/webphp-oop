@@ -27,7 +27,7 @@ interface Response
 
     public function setContent($content);
 
-    // public function setExpiration(\DateTime $expiration);
+    public function setExpiration(\DateTime $expiration);
 
     public function setHttpVersion(string $httpVersion);
 

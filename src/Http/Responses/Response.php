@@ -135,4 +135,9 @@ class Response implements IResponse
             $this->statusText = $statusText;
         }
     }
+
+    
+    public function setExpiration(\DateTime $expiration){
+        $this->headers->set('Expires', $expiration->format('r'));
+    }
 }
