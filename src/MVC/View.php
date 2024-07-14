@@ -26,7 +26,7 @@ final class View
 
     private static function loadView(string $__VIEW, array $__DATA = []): string
     {
-        $viewFilePath = config('dir.views') . $__VIEW . '.php';
+        $viewFilePath = rtrim(config('dir.views'), '/') . "/$__VIEW.php";
         self::checkViewFile($viewFilePath);
         extract($__DATA);
 
