@@ -2,13 +2,12 @@
 namespace MA\PHPQUICK;
 
 use Exception;
-use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Router\Route;
-use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Router\Router;
 use MA\PHPQUICK\Router\Runner;
+use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Exception\HttpException;
+use MA\PHPQUICK\Http\Responses\Response;
 
 class Application
 {
@@ -71,7 +70,7 @@ class Application
         if (($controller = $route->getController()) === null) {
             return call_user_func_array($action, $parameter);
         } else {
-            return $this->executeController($controller, $route->getAction(), $route->getParameter());
+            return $this->executeController($controller, $action, $parameter);
         }
     }
 

@@ -1,11 +1,8 @@
 <?php
-
 namespace MA\PHPQUICK\Database;
 
-use MA\PHPQUICK\Utility\Config;
-use Exception;
-use MA\PHPQUICK\Application;
 use PDO;
+use Exception;
 use PDOException;
 
 class Database
@@ -16,7 +13,7 @@ class Database
     {
         if (self::$pdo === null) {
 
-            $db = Application::$app->config['database'];
+            $db = config('database');
             $dsn = sprintf("%s:host=%s;port=%s;dbname=%s", $db['driver'] ,$db['host'], $db['port'], $db['name']);
             
             try {
