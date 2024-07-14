@@ -1,6 +1,7 @@
 <?php
 namespace MA\PHPQUICK;
 
+use Exception;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Router\Route;
@@ -41,10 +42,10 @@ class Application
     public function run()
     {
         try {
-            $route = $this->router->dispatch($this->request->getMethod(), $this->getPath());
+            $route = $this->router->dispatch($this->request->getMethod(), $this->request->getPath());
 
             if ($route === null) {
-                $this->setNotFound('Route Not Found');
+                $this->setNotFound("Route Not Found { {$this->request->getPath()} }");
             }
 
             $runner = $this->createRunner($route);
@@ -52,6 +53,8 @@ class Application
             return $runner->handle($this->request)->send();
         } catch (\MA\PHPQUICK\Exception\HttpException $http) {
             return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
+        } catch (\Exception $e) {
+            return (new Response($e->getMessage(), $e->getCode()))->send();
         }
     }
 
@@ -77,21 +80,11 @@ class Application
             if (method_exists($controllerInstance, $method)) {
                 return call_user_func_array([$controllerInstance, $method], $parameter);
             } else {
-                $this->setNotFound(sprintf("Method %s not found in %s", $method, $controller));
+                throw new Exception(sprintf("Method %s not found in %s", $method, $controller), 500);
             }
         } else {
-            $this->setNotFound(sprintf("Controller class %s not found", $controller));
+            throw new Exception(sprintf("Controller class %s not found", $controller), 500);
         }
-    }
-
-    private function cleanPath($path): string
-    {
-        return ($path === '/') ? $path : str_replace(['%20', ' '], '-', rtrim($path, '/'));
-    }
-
-    private function getPath(): string
-    {
-        return $this->cleanPath($this->request->getPath());
     }
 
     public function setNotFound($message = null)
