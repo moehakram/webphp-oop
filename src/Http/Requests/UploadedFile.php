@@ -8,7 +8,7 @@ class UploadedFile extends \SplFileInfo
     private $tmpFilename;
     private $tmpSize;
     private $tmpMimeType;
-    private $error = UPLOAD_ERR_OK;
+    private $error;
 
     public function __construct(string $path, string $tmpFilename, int $tmpSize, string $tmpMimeType = '', int $error = UPLOAD_ERR_OK){
         parent::__construct($path);

@@ -121,7 +121,6 @@ class ResponseHeaders extends Headers
     public function __construct(array $values = [])
     {
         foreach ($values as $name => $value) {
-            $name = strtoupper($name);
             $this->set(strtoupper($name), $value);
         }
 

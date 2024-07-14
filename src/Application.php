@@ -45,15 +45,15 @@ class Application
             $route = $this->router->dispatch($this->request->getMethod(), $this->request->getPath());
 
             if ($route === null) {
-                $this->setNotFound("Route Not Found { {$this->request->getPath()} }");
+                $this->response->setNotFound("Route Not Found { {$this->request->getPath()} }");
             }
 
             $runner = $this->createRunner($route);
 
             return $runner->handle($this->request)->send();
-        } catch (\MA\PHPQUICK\Exception\HttpException $http) {
+        } catch (HttpException $http) {
             return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return (new Response($e->getMessage(), $e->getCode()))->send();
         }
     }
@@ -66,33 +66,28 @@ class Application
 
     private function handleRouteCallback(Route $route)
     {
-        if ($route->getController() === null) {
-            return call_user_func_array($route->getAction(), $route->getParameter());
+        $action = $route->getAction();
+        $parameter = $route->getParameter();
+        if (($controller = $route->getController()) === null) {
+            return call_user_func_array($action, $parameter);
         } else {
-            return $this->executeController($route->getController(), $route->getAction(), $route->getParameter());
+            return $this->executeController($controller, $route->getAction(), $route->getParameter());
         }
     }
 
     private function executeController(string $controller, string $method, $parameter)
     {
-        if (class_exists($controller)) {
-            $controllerInstance = new $controller();
-            if (method_exists($controllerInstance, $method)) {
-                return call_user_func_array([$controllerInstance, $method], $parameter);
-            } else {
-                throw new Exception(sprintf("Method %s not found in %s", $method, $controller), 500);
-            }
-        } else {
+        if (!class_exists($controller)) {
             throw new Exception(sprintf("Controller class %s not found", $controller), 500);
         }
-    }
 
-    public function setNotFound($message = null)
-    {
-        $view = View::render('error/404', [
-            'message' => $message
-        ]);
-        throw new HttpException(404, $view);
+        $controllerInstance = new $controller();
+
+        if (!method_exists($controllerInstance, $method)) {
+            throw new Exception(sprintf("Method %s not found in %s", $method, $controller), 500);
+        }
+
+        return call_user_func_array([$controllerInstance, $method], $parameter);
     }
 
 }

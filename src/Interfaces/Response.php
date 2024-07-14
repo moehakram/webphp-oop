@@ -8,6 +8,8 @@ interface Response
     public function __construct($content = '', int $statusCode = 200, array $headers = []);
 
     public function setNoCache(): Response;
+
+    public function setNotFound($message = null);
     
     public function redirect(string $url): Response;
 
@@ -25,7 +27,7 @@ interface Response
 
     public function setContent($content);
 
-    public function setExpiration(\DateTime $expiration);
+    // public function setExpiration(\DateTime $expiration);
 
     public function setHttpVersion(string $httpVersion);
 

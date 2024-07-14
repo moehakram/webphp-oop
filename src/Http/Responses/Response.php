@@ -1,21 +1,23 @@
 <?php
 namespace MA\PHPQUICK\Http\Responses;
 
+use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Interfaces\Response as IResponse;
+use MA\PHPQUICK\MVC\View;
 
 class Response implements IResponse
 {
-    protected string $content = '';
-    protected ResponseHeaders $headers;
+    protected $content;
     protected int $statusCode;
-    protected string $statusText = 'OK';
+    protected string $statusText;
     protected string $httpVersion = '1.1';
-
+    protected ResponseHeaders $headers;
+    
     public function __construct($content = '', int $statusCode = 200, array $headers = [])
     {
         $this->setContent($content);
-        $this->headers = new ResponseHeaders($headers);
         $this->setStatusCode($statusCode);
+        $this->headers = new ResponseHeaders($headers);
     }
 
     public function setNoCache(): Response
@@ -24,6 +26,14 @@ class Response implements IResponse
         $this->headers->add('Pragma', 'no-cache');
         $this->headers->add('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
         return $this;
+    }
+
+    public function setNotFound($message = null)
+    {
+        $view = View::render('error/404', [
+            'message' => $message
+        ]);
+        throw new HttpException(404, $view);
     }
 
     public function redirect(string $targetUrl): Response
@@ -111,11 +121,6 @@ class Response implements IResponse
         $this->content = $content;
     }
 
-    public function setExpiration(\DateTime $expiration)
-    {
-        $this->headers->set('Expires', $expiration->format('r'));
-    }
-
     public function setHttpVersion(string $httpVersion)
     {
         $this->httpVersion = $httpVersion;
@@ -128,7 +133,7 @@ class Response implements IResponse
         if ($statusText === null && isset(ResponseHeaders::STATUS_TEXTS[$statusCode])) {
             $this->statusText = ResponseHeaders::STATUS_TEXTS[$statusCode];
         } else {
-            $this->statusText = (string)$statusText;
+            $this->statusText = $statusText;
         }
     }
 }
