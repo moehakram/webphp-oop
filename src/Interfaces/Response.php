@@ -7,7 +7,7 @@ interface Response
 {
     public function __construct($content = '', int $statusCode = 200, array $headers = []);
 
-    public function setNoCache(): Response;
+    public function setNoCache();
 
     public function setNotFound($message = null);
     

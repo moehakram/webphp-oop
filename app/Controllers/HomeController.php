@@ -19,7 +19,7 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
-        // response()->setNoCache();
+        response()->setNoCache();
         if (!$user = $this->sessionService->current()) {
             return view('welcome');
         } else {
