@@ -89,18 +89,12 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
         $this->remove($offset);
     }
 
-    // protected function clean($data)
-    // {
-    //     if (is_array($data)) {
-    //         $cleanedArray = [];
-    //         array_walk($data, function (&$value, $key) use (&$cleanedArray) {
-    //             $cleanedKey = $this->clean($key);
-    //             $cleanedValue = $this->clean($value);
-    //             $cleanedArray[$cleanedKey] = $cleanedValue;
-    //         });
-    //         return $cleanedArray;
-    //     } else {
-    //         return htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
-    //     }
-    // }
+    public function clean($data)
+    {
+        if (is_array($data)) {
+            return array_map([$this, 'clean'], $data);
+        } else {
+            return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        }
+    }
 }
