@@ -15,7 +15,7 @@ class OnlyAdminMiddleware implements Middleware
         if ($this->isAdmin($user)) {
             return $next($request);
         }
-        throw new HttpException(403);
+        response()->setForbidden();
     }
 
     private function isAdmin($user): bool

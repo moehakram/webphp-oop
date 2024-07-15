@@ -36,6 +36,12 @@ class Response implements IResponse
         throw new HttpException(404, $view);
     }
 
+    public function setForbidden()
+    {
+        $view = View::render('error/403');
+        throw new HttpException(403, $view);
+    }
+
     public function redirect(string $targetUrl): Response
     {
         if (empty($targetUrl)) {

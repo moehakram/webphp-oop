@@ -11,6 +11,8 @@ interface Response
 
     public function setNotFound($message = null);
     
+    public function setForbidden();
+
     public function redirect(string $url): Response;
 
     public function getContent() : string;
