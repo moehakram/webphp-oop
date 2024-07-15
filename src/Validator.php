@@ -20,7 +20,12 @@ abstract class Validator
     //     return true;
     // }
 
-    protected array $errors = [];
+    protected Collection $errors;
+
+    public function __construct()
+    {
+        $this->errors = new Collection();
+    }
 
     /**
      * Validate
@@ -82,15 +87,15 @@ abstract class Validator
 
     public function hasError($field): bool
     {
-        return isset($this->errors[$field]);
+        return $this->errors->has($field);
     }
 
     public function getError(string $field): ?string
     {
-        return $this->errors[$field] ?? null;
+        return $this->errors->get($field);
     }
 
-    public function getErrors(): array
+    public function getErrors(): Collection
     {
         return $this->errors;
     }

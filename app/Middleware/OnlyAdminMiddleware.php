@@ -2,7 +2,6 @@
 
 namespace App\Middleware;
 
-use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Interfaces\Middleware;
 use MA\PHPQUICK\Interfaces\Request;
 
