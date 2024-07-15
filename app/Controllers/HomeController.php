@@ -41,17 +41,6 @@ class HomeController extends Controller
         
         $validator = new \App\Models\ValidateRequest();
 
-        $data = [
-            'firstname' => '',
-            'lastname' => '',
-            'username' => '15',
-            'address' => 'This kldlahkosodo',
-            'zipcode' => '999',
-            'email' => 'jo@ak.c',
-            'password' => 'test1236828*>L',
-            'password2' => 'test1236828*>L',
-        ];
-
         // $validator->loadData($data);
         $validator->firstname = 'qwer';
         $validator->lastname = 'ujjl9';
@@ -59,7 +48,7 @@ class HomeController extends Controller
         $validator->zipcode = 'ujjl9';
         $validator->email = 'akaaaaaa@d.m';
         $validator->password = 'test1236828*>L';
-        $validator->password2 = 'test1236828*>L';
+        $validator->password2 = 'test123682*>L';
         $isError = $validator->validate();
 
         cetak($validator->getErrors());

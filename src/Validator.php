@@ -12,11 +12,8 @@ abstract class Validator
         'same' => 'The %s must match with %s',
         'alphanumeric' => 'The %s should have only letters and numbers',
         'secure' => 'The %s must have between 8 and 64 characters and contain at least one number, one upper case letter, one lower case letter and one special character',
-        'unique' => 'The %s already exists',
-        // 'new_rule' => "Error message for the new rule"
+        'unique' => 'The %s already exists'
     ];
-
-    // function is_new_rule(string $field, ....$params) : bool
 
     protected array $errors = [];
 
@@ -63,7 +60,7 @@ abstract class Validator
     }
 
     abstract public function rules(): array;
-    
+
     public function errorMessages(): array
     {
        return [];

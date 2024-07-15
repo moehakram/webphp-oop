@@ -44,7 +44,8 @@ class ValidateRequest extends Model
                 'required'=>'tidak boleh kosong',
                 'min' => 'minimal 20 karakter',
                 'between' => 'harus minimal 3 karakter'
-            ]
+            ],
+            'password2' => ['same'=> 'Please enter the same password again']
         ];
     }
 
