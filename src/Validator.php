@@ -1,7 +1,7 @@
 <?php
 namespace MA\PHPQUICK; // @link https://www.phptutorial.net/php-tutorial/php-validation/
 
-class Validator
+abstract class Validator
 {
     const DEFAULT_ERROR_MESSAGES = [
         'required' => 'Please enter the %s',
@@ -62,9 +62,11 @@ class Validator
         return empty($this->errors);
     }
 
-    public function rules(): array
+    abstract public function rules(): array;
+    
+    public function errorMessages(): array
     {
-        return [];
+       return [];
     }
 
     public function loadData($data)
@@ -74,11 +76,6 @@ class Validator
                 $this->{$key} = $value;
             }
         }
-    }
-
-    public function errorMessages(): array
-    {
-       return [];
     }
 
     public function hasError($field): bool
