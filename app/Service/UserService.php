@@ -8,6 +8,8 @@ use MA\PHPQUICK\Exception\ValidationException;
 use App\Domain\User;
 use Exception;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
+use MA\PHPQUICK\Collection;
+use MA\PHPQUICK\Errors;
 
 class UserService
 {
@@ -21,18 +23,13 @@ class UserService
 
     public function register(UserRegisterRequest $request): User
     {
-        // $this->validateUserRegistrationRequest($request);
-
         try {
             Database::beginTransaction();
 
             if(!$request->validate()){
-                throw new ValidationException('error',$request->getErrors());
+                throw new ValidationException('error', $request->getErrors());
             }
-            // $user = $this->userRepository->findById($request->id);
-            // if ($user != null) {
-            //     throw new ValidationException("User Id already exists");
-            // }
+
             $user = new User();
             $user->id = $request->id;
             $user->name = $request->name;
@@ -46,16 +43,6 @@ class UserService
         } catch (ValidationException $exception) {
             Database::rollbackTransaction();
             throw $exception;
-        }
-    }
-
-    private function validateUserRegistrationRequest(UserRegisterRequest $request)
-    {
-        if (
-            $request->id == null || $request->name == null || $request->password == null ||
-            trim($request->id) == "" || trim($request->name) == "" || trim($request->password) == ""
-        ) {
-            throw new ValidationException("Id, Name, Password can not blank");
         }
     }
 
@@ -113,7 +100,7 @@ class UserService
         }
 
         if (!empty($errors)) {
-            throw new ValidationException("Id, Name can not blank", $errors);
+            throw new ValidationException("Id, Name can not blank", new Errors($errors));
         }
     }
 

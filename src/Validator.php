@@ -4,14 +4,23 @@ namespace MA\PHPQUICK; // @link https://www.phptutorial.net/php-tutorial/php-val
 abstract class Validator
 {
     const DEFAULT_ERROR_MESSAGES = [
+        // required
         'required' => 'Please enter the %s',
+        // email
         'email' => 'The %s is not a valid email address',
+        // min:number
         'min' => 'The %s must have at least %s characters',
+        // max:number 
         'max' => 'The %s must have at most %s characters',
+        // between:min,max
         'between' => 'The %s must have between %d and %d characters',
+        // same
         'same' => 'The %s must match with %s',
+        // alphanumeric
         'alphanumeric' => 'The %s should have only letters and numbers',
+        //secure
         'secure' => 'The %s must have between 8 and 64 characters and contain at least one number, one upper case letter, one lower case letter and one special character',
+        // unique:tabel,field
         'unique' => 'The %s already exists',
         // 'new_rule' => "Error message for the new rule"
     ];
@@ -20,17 +29,23 @@ abstract class Validator
     //     return true;
     // }
 
-    protected Collection $errors;
+    protected Errors $errors;
 
     public function __construct()
     {
-        $this->errors = new Collection();
+        $this->errors = new Errors();
+    }
+
+    abstract public function rules(): array;
+
+    public function errorMessages(): array
+    {
+       return [];
     }
 
     /**
      * Validate
-     * @param array $fields
-     * @return array
+     * @return bool
      */
 
     public function validate(): bool
@@ -69,13 +84,6 @@ abstract class Validator
         return empty($this->errors);
     }
 
-    abstract public function rules(): array;
-
-    public function errorMessages(): array
-    {
-       return [];
-    }
-
     public function loadData($data)
     {
         foreach ($data as $key => $value) {
@@ -95,7 +103,7 @@ abstract class Validator
         return $this->errors->get($field);
     }
 
-    public function getErrors(): Collection
+    public function getErrors(): Errors
     {
         return $this->errors;
     }
