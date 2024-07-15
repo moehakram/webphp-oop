@@ -19,9 +19,10 @@ class ValidateRequest extends Model
         return [
             'firstname' => 'required | max:255',
             'lastname' => 'required| max: 255',
-            'address' => '|required|min: 10|max:15',
+            'address' => '|required|between:10,20',
+            // 'address' => '|required|min: 10|max:10',
             'zipcode' => 'between: 5,6',
-            // 'username' => 'required | alphanumeric| between: 3,255| unique: users,id',
+            'username' => 'required | alphanumeric| between: 3,255| unique: users,id',
             'email' => 'required | email',
             'password' => 'required | secure',
             'password2' => 'required | same:password'
