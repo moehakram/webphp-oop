@@ -16,3 +16,5 @@ $app->get("/user/profile", [ProfileController::class, 'edit'], AuthMiddleware::c
 $app->post("/user/profile", [ProfileController::class, 'update'], AuthMiddleware::class, CSRFMiddleware::class);
 $app->get("/user/password", [ProfileController::class, 'changePassword'], AuthMiddleware::class);
 $app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthMiddleware::class, CSRFMiddleware::class);
+
+$app->get("/tes", [\App\Controllers\HomeController::class ,'testingValidationInput']);

@@ -36,4 +36,31 @@ class HomeController extends Controller
             ]
         ]);
     }
+
+    public function testingValidationInput(){        
+        $data = [
+            'firstname' => '',
+            'lastname' => '',
+            'username' => '15',
+            'address' => 'This kldlahkosodo',
+            'zipcode' => '999',
+            'email' => 'jo@ak.c',
+            'password' => 'test1236828*>L',
+            'password2' => 'test1236828*>L',
+        ];
+
+        $validator = new \App\Models\ValidateRequest();
+        // $validator->loadData($data);
+        $validator->firstname = '';
+        $validator->lastname = 'ujjl9';
+        // $validator->username = '';
+        $validator->zipcode = 'ujjl9';
+        $validator->email = 'akaaaaaa@d.m';
+        $validator->password = 'akaaaaaa';
+        $validator->password2 = '';
+        $isError = $validator->validate();
+
+        // cetak($validator->firstname);
+        cetak($validator->getErrors());
+    }
 }

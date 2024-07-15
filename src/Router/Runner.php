@@ -3,8 +3,6 @@
 namespace MA\PHPQUICK\Router;
 
 use MA\PHPQUICK\Http\Requests\Request;
-use MA\PHPQUICK\Http\Responses\Response;
-use MA\PHPQUICK\Http\Responses\JsonResponse;
 use MA\PHPQUICK\Interfaces\Middleware as MiddlewareInterface;
 
 class Runner

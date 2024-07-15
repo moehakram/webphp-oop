@@ -94,7 +94,10 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
         if (is_array($data)) {
             return array_map([$this, 'clean'], $data);
         } else {
-            return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+            return $data;
         }
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use MA\PHPQUICK\Config;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Http\Responses\Response;
