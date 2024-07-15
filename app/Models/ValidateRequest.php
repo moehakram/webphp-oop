@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-use MA\PHPQUICK\Validator;
+use MA\PHPQUICK\MVC\Model;
 
-class ValidateRequest extends Validator
+class ValidateRequest extends Model
 {
     public ?string $firstname = null;
     public ?string $lastname = null;

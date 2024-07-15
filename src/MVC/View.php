@@ -3,7 +3,6 @@
 namespace MA\PHPQUICK\MVC;
 
 use Exception;
-use MA\PHPQUICK\Application;
 
 final class View
 {
