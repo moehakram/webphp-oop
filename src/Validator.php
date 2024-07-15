@@ -84,7 +84,7 @@ abstract class Validator
         return empty($this->errors);
     }
 
-    public function loadData($data)
+    public function loadData(array $data)
     {
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
@@ -93,7 +93,7 @@ abstract class Validator
         }
     }
 
-    public function hasError($field): bool
+    public function hasError(string $field): bool
     {
         return $this->errors->has($field);
     }

@@ -20,7 +20,7 @@ class ValidateRequest extends Model
             'firstname' => 'required | max:255',
             'lastname' => 'required| max: 255',
             'address' => '|required|min: 5|max:50',
-            'zipcode' => 'between: 5,6',
+            'zipcode' => 'between: 5,6|numeric',
             'username' => 'required | alphanumeric| between: 2,7| unique: users,id',
             'email' => 'required | email',
             'password' => 'required | secure',
@@ -31,6 +31,7 @@ class ValidateRequest extends Model
     public function errorMessages(): array
     {
         return [
+            'numeric' => '%s harus numerik',
             'required' => 'Silakan masukkan %s',
             'email' => 'Bukan alamat email yang valid',
             'min' => '%s harus memiliki setidaknya %s karakter',
@@ -43,10 +44,9 @@ class ValidateRequest extends Model
             'username' => [
                 'required'=>'tidak boleh kosong',
                 'min' => 'minimal 20 karakter',
-                'between' => '%s harus minimal %s dan maksimal %s karakter'
+                'between' => '%s harus minimal %s atau maksimal %s karakter'
             ],
             'password2' => ['same'=> 'Please enter the same password again']
         ];
     }
-
 }

@@ -46,7 +46,7 @@ class HomeController extends Controller
         $validator->lastname = 'akram';
         $validator->address = 'btp';
         $validator->username = 't';
-        $validator->zipcode = '29173';
+        $validator->zipcode = '0';
         $validator->email = 'akramgmail.com';
         $validator->password = 'Muh.Akram#123';
         $validator->password2 = 'Muh.Akram#123';
