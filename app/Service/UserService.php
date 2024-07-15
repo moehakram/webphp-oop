@@ -21,15 +21,18 @@ class UserService
 
     public function register(UserRegisterRequest $request): User
     {
-        $this->validateUserRegistrationRequest($request);
+        // $this->validateUserRegistrationRequest($request);
 
         try {
             Database::beginTransaction();
-            $user = $this->userRepository->findById($request->id);
-            if ($user != null) {
-                throw new ValidationException("User Id already exists");
-            }
 
+            if(!$request->validate()){
+                throw new ValidationException('error',$request->getErrors());
+            }
+            // $user = $this->userRepository->findById($request->id);
+            // if ($user != null) {
+            //     throw new ValidationException("User Id already exists");
+            // }
             $user = new User();
             $user->id = $request->id;
             $user->name = $request->name;
@@ -40,7 +43,7 @@ class UserService
 
             Database::commitTransaction();
             return $user;
-        } catch (Exception $exception) {
+        } catch (ValidationException $exception) {
             Database::rollbackTransaction();
             throw $exception;
         }

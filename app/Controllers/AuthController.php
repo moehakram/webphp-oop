@@ -64,12 +64,13 @@ class AuthController extends Controller
 
         try {
             $this->userService->register($req);
-            response()->redirect('/user/login');
+            return response()->redirect('/user/login');
         } catch (ValidationException $exception) {
 
+            $error = $exception->getErrors();
             return $this->view('auth/register', [
                 'title' => 'Register new User',
-                'error' => $exception->getMessage()
+                'error' => $error['id'] ?? $error['name'] ?? $error['password']
             ]);
         }
     }
