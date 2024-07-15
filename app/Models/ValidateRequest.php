@@ -19,10 +19,9 @@ class ValidateRequest extends Model
         return [
             'firstname' => 'required | max:255',
             'lastname' => 'required| max: 255',
-            'address' => '|required|between:10,20',
-            // 'address' => '|required|min: 10|max:10',
+            'address' => '|required|min: 5|max:50',
             'zipcode' => 'between: 5,6',
-            'username' => 'required | alphanumeric| between: 3,255| unique: users,id',
+            'username' => 'required | alphanumeric| between: 2,7| unique: users,id',
             'email' => 'required | email',
             'password' => 'required | secure',
             'password2' => 'required | same:password'
@@ -44,7 +43,7 @@ class ValidateRequest extends Model
             'username' => [
                 'required'=>'tidak boleh kosong',
                 'min' => 'minimal 20 karakter',
-                'between' => 'harus minimal 3 karakter'
+                'between' => '%s harus minimal %s dan maksimal %s karakter'
             ],
             'password2' => ['same'=> 'Please enter the same password again']
         ];

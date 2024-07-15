@@ -85,6 +85,11 @@ abstract class Validator
         return isset($this->errors[$field]);
     }
 
+    public function getError(string $field): ?string
+    {
+        return $this->errors[$field] ?? null;
+    }
+
     public function getErrors(): array
     {
         return $this->errors;

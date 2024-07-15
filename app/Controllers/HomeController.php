@@ -44,10 +44,10 @@ class HomeController extends Controller
         // $validator->loadData($data);
         $validator->firstname = 'muh';
         $validator->lastname = 'akram';
-        $validator->address = 'perintis kemerdekaan km.7';
-        $validator->username = '11';
+        $validator->address = 'btp';
+        $validator->username = 't';
         $validator->zipcode = '29173';
-        $validator->email = 'moeh.akram@gmail.com';
+        $validator->email = 'akramgmail.com';
         $validator->password = 'Muh.Akram#123';
         $validator->password2 = 'Muh.Akram#123';
         $isError = $validator->validate();
