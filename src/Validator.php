@@ -72,7 +72,7 @@ abstract class Validator
                     $pass = $this->$fn($field, ...$params);
                     if (!$pass) {
                         $this->errors[$field] = sprintf(
-                            $this->errorMessages()[$field][$rule_name] ?? $validation_errors[$rule_name],
+                            $this->errorMessages()[$field][$rule_name] ?? $validation_errors[$rule_name] ?? 'The data is not a valid !',
                             $field,
                             ...$params
                         );
