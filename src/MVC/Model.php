@@ -2,7 +2,7 @@
 
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Validator;
+use MA\PHPQUICK\Validation\Validator;
 
 abstract class Model extends Validator
 {
@@ -23,16 +23,22 @@ abstract class Model extends Validator
     //     ];
     // }
 
-    
-    public function clean($data)
+    public function clean(&$data)
     {
         if (is_array($data)) {
-            return array_map([$this, 'clean'], $data);
+            array_walk($data, [$this, 'clean']);
         } else {
-            $data = trim($data);
-            $data = stripslashes($data);
-            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-            return $data;
+            $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
         }
+        return $data;
     }
+
+    protected function is_clean(string $field): bool
+    {
+        if (isset($this->{$field})) {
+            $this->{$field} = htmlspecialchars(stripslashes(trim($this->{$field})), ENT_QUOTES, 'UTF-8');
+        }
+        return true;
+    }
+
 }

@@ -42,14 +42,14 @@ class HomeController extends Controller
         $validator = new \App\Models\ExampleValidateRequest();
 
         // $validator->loadData($data);
-        $validator->firstname = 'muh';
+        $validator->firstname = 'muh.';
         $validator->lastname = 'akram';
-        $validator->address = 'btp';
+        $validator->address = 'btp    ';
         $validator->username = 't';
-        $validator->zipcode = '0p';
-        $validator->email = 'akramgmail.com';
-        $validator->password = 'Muh.Akram#123';
-        $validator->password2 = 'Muh.Akram#123';
+        $validator->zipcode = 'p';
+        $validator->email = 0;
+        $validator->password ='0000000pyJ#41';
+        $validator->password2 = '0000000pyJ#41';
         $isError = $validator->validate();
 
         if(! $isError){

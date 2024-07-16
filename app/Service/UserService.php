@@ -2,14 +2,13 @@
 
 namespace  App\Service;
 
-use MA\PHPQUICK\Database\Database;
-use App\Repository\UserRepository;
-use MA\PHPQUICK\Exception\ValidationException;
-use App\Domain\User;
 use Exception;
-use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
+use App\Domain\User;
 use MA\PHPQUICK\Collection;
-use MA\PHPQUICK\Errors;
+use App\Repository\UserRepository;
+use MA\PHPQUICK\Database\Database;
+use MA\PHPQUICK\Exception\ValidationException;
+use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
 
 class UserService
 {
@@ -100,7 +99,7 @@ class UserService
         }
 
         if (!empty($errors)) {
-            throw new ValidationException("Id, Name can not blank", new Errors($errors));
+            throw new ValidationException("Id, Name can not blank", new Collection($errors));
         }
     }
 

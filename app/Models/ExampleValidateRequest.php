@@ -5,21 +5,21 @@ use MA\PHPQUICK\MVC\Model;
 
 class ExampleValidateRequest extends Model
 {
-    public ?string $firstname = null;
-    public ?string $lastname = null;
-    public ?string $username = null;
-    public ?string $address = null;
-    public ?string $zipcode = null;
-    public ?string $email = null;
-    public ?string $password = null;
-    public ?string $password2 = null;
+    public $firstname = null;
+    public $lastname = null;
+    public $username = null;
+    public $address = null;
+    public $zipcode = null;
+    public $email = null;
+    public $password = null;
+    public $password2 = null;
 
     public function rules(): array
     {
         return [
             'firstname' => 'required | max:255',
             'lastname' => 'required| max: 255',
-            'address' => '|required|min: 5|max:50',
+            'address' => 'required|clean|min: 5|max:7',
             'zipcode' => 'between: 5,6|numeric',
             'username' => 'required | alphanumeric| between: 2,7| unique: users,id',
             'email' => 'required | email',

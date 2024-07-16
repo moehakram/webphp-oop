@@ -92,3 +92,13 @@ if(!function_exists('config')){
         return Application::$app->config;
     }
 }
+if(!function_exists('clean')){
+    function clean($data)
+    {
+        if (is_array($data)) {
+            return array_map('clean', $data);
+        }
+        
+        return htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
+    }
+}
