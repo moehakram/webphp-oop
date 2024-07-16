@@ -18,3 +18,4 @@ $app->get("/user/password", [ProfileController::class, 'changePassword'], AuthMi
 $app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthMiddleware::class, CSRFMiddleware::class);
 
 $app->get("/tes", [\App\Controllers\HomeController::class ,'testingValidationInput']);
+$app->get("/tes2", [\App\Controllers\HomeController::class ,'testingValidationInput2']);

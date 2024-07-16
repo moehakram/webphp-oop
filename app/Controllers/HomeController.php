@@ -70,4 +70,46 @@ class HomeController extends Controller
             'password2' => $validator->password2
         ], 200);
     }
+
+    public function testingValidationInput2(){
+
+        $data = validasi([
+            'firstname' => ' <a>akram</a>    ',
+            'lastname' => ' <a>akram</a>    ',
+            'address' => 'address    ',
+            'username' => '11',
+            'zipcode' => 83293,
+            'email' =>  'eail.sh',
+            'password' => '0000000pyJ#41',
+            'password2' => '0000000pyJ#41'
+        ]);
+        
+        $errorMessages = $data->setRules(function($rule){
+            $rule['firstname'] = '|clean|required | max:255|min:30';
+            $rule->lastname = 'required| max: 255';
+            $rule->address = 'required|clean|min: 5|max:7';
+            $rule->zipcode = 'between: 5,6|numeric';
+            $rule->username = 'required | alphanumeric| between: 2,7';
+            $rule->email = 'required | email|min:10|max:15';
+            $rule->password = 'required | secure';
+            $rule->password2 = 'required | same:password';
+            $rule->tes = 'required |same:firstname';
+        });
+
+        if($errorMessages){
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$data->getErrors()->getAll(), 400);
+        }
+        // return new \MA\PHPQUICK\Http\Responses\JsonResponse($data->getAll());
+
+        return new \MA\PHPQUICK\Http\Responses\JsonResponse([
+            'firstname' => $data->firstname,
+            'lastname' => $data->lastname,
+            'address' => $data->address,
+            'username' => $data['username'],
+            'zipcode' => $data->zipcode,
+            'email' => $data->email,
+            'password' => $data->password,
+            'password2' => $data->password2
+        ], 200);
+    }
 }

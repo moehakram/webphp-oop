@@ -2,9 +2,10 @@
 
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
-use MA\PHPQUICK\Http\Responses\Response;
-use MA\PHPQUICK\Http\Responses\Cookie;
 use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Http\Responses\Cookie;
+use MA\PHPQUICK\Validation\Validation;
+use MA\PHPQUICK\Http\Responses\Response;
 
 if(!function_exists('cetak')){
     function cetak($arr, $die = true)
@@ -103,5 +104,11 @@ if(!function_exists('clean')){
             $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
         }
         return $data;
+    }
+}
+
+if(!function_exists('validasi')){
+    function validasi(array $data): Validation{
+        return new Validation($data);
     }
 }

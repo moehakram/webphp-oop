@@ -93,4 +93,24 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         $this->remove($offset);
     }
+
+    public function __set($name, $value)
+    {
+        $this->set($name, $value);
+    }
+
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    public function __isset($name)
+    {
+        return $this->has($name);
+    }
+
+    public function __unset($name)
+    {
+        $this->remove($name);
+    }
 }
