@@ -47,33 +47,28 @@ abstract class Validator extends ValidationMethods implements ValidatorInterface
     {
         $split = fn($str, $separator) => array_map('trim', explode($separator, $str));
 
-        $rule_messages = array_filter($this->errorMessages(), fn($message) => is_string($message));
-        $validation_errors = array_merge(self::DEFAULT_ERROR_MESSAGES, $rule_messages);
+        $ruleMessages = array_filter($this->errorMessages(), fn($message) => is_string($message));
+        $validationErrors = array_merge(self::DEFAULT_ERROR_MESSAGES, $ruleMessages);
 
-        foreach ($this->rules() as $field => $option) {
-            $rules = $split($option, '|');
-
-            foreach ($rules as $rule) {
+        foreach ($this->rules() as $field => $rules) {
+            foreach ($split($rules, '|') as $rule) {
                 $params = [];
                 if (strpos($rule, ':')) {
-                    [$rule_name, $param_str] = $split($rule, ':');
-                    $params = $split($param_str, ',');
+                    [$ruleName, $paramStr] = $split($rule, ':');
+                    $params = $split($paramStr, ',');
                 } else {
-                    $rule_name = trim($rule);
+                    $ruleName = trim($rule);
                 }
-                $method_name = 'is_' . $rule_name;
+                $methodName = 'is_' . $ruleName;
 
-                if (method_exists($this, $method_name) && !$this->$method_name($field, ...$params)) {
-                    $this->errors[$field] = sprintf(
-                        $this->errorMessages()[$field][$rule_name] ?? $validation_errors[$rule_name] ?? 'The %s is not a valid!',
-                        $field,
-                        ...$params
-                    );
+                if (method_exists($this, $methodName) && !$this->$methodName($field, ...$params)) {
+                    $message = $this->errorMessages()[$field][$ruleName] ?? $validationErrors[$ruleName] ?? 'The %s is not valid!';
+                    $this->errors->set($field ,sprintf($message, $field, ...$params));
                 }
             }
         }
 
-        return $this->errors->count() !== 0;
+        return !$this->errors->isEmpty();
     }
 
     public function loadData(array $data)

@@ -60,6 +60,11 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
         return count($this->items);
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->count() === 0;
+    }
+
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->items);
