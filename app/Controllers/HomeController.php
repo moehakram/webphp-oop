@@ -37,28 +37,37 @@ class HomeController extends Controller
         ]);
     }
 
-    public function testingValidationInput(){        
+    public function testingValidationInput(){
         
         $validator = new \App\Models\ExampleValidateRequest();
 
-        // $validator->loadData($data);
-        $validator->firstname = 'muh.';
-        $validator->lastname = 'akram';
-        $validator->address = 'btp    ';
-        $validator->username = 't';
-        $validator->zipcode = 'p';
-        $validator->email = 0;
-        $validator->password ='0000000pyJ#41';
-        $validator->password2 = '0000000pyJ#41';
+        $data = [
+            'firstname' => ' <a>akram</a>    ',
+            'lastname' => ' <a>akram</a>    ',
+            'address' => 'address    ',
+            'username' => '11',
+            'zipcode' => 192384,
+            'email' =>  'example@email.sh',
+            'password' => '0000000pyJ#41',
+            'password2' => '0000000pyJ#41'
+        ];
+        
+        $validator->loadData($data);
+        
         $isError = $validator->validate();
-
-        if(! $isError){
+        if($isError){
             return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$validator->getErrorsToArray(), 400);
         }
         
         return new \MA\PHPQUICK\Http\Responses\JsonResponse([
-            'message' => 'success',
-            'code' => '200'
+            'firstname' => $validator->firstname,
+            'lastname' => $validator->lastname,
+            'address' => $validator->address,
+            'username' => $validator->username,
+            'zipcode' => $validator->zipcode,
+            'email' => $validator->email,
+            'password' => $validator->password,
+            'password2' => $validator->password2
         ], 200);
     }
 }

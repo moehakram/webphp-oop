@@ -17,11 +17,11 @@ class ExampleValidateRequest extends Model
     public function rules(): array
     {
         return [
-            'firstname' => 'required | max:255',
+            'firstname' => '|clean|required | max:255',
             'lastname' => 'required| max: 255',
             'address' => 'required|clean|min: 5|max:7',
             'zipcode' => 'between: 5,6|numeric',
-            'username' => 'required | alphanumeric| between: 2,7| unique: users,id',
+            // 'username' => 'required | alphanumeric| between: 2,7| unique: users,id',
             'email' => 'required | email',
             'password' => 'required | secure',
             'password2' => 'required | same:password'

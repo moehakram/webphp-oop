@@ -96,9 +96,12 @@ if(!function_exists('clean')){
     function clean($data)
     {
         if (is_array($data)) {
-            return array_map('clean', $data);
+            foreach ($data as $key => $value) {
+                $data[$key] = clean($value);
+            }
+        } else {
+            $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
         }
-        
-        return htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
+        return $data;
     }
 }

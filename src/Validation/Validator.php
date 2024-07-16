@@ -73,7 +73,7 @@ abstract class Validator extends ValidationMethods implements ValidatorInterface
             }
         }
 
-        return empty($this->errors);
+        return $this->errors->count() !== 0;
     }
 
     public function loadData(array $data)
