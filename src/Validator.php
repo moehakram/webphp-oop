@@ -14,7 +14,7 @@ abstract class Validator
         'max' => 'The %s must have at most %s characters',
         // between:min,max
         'between' => 'The %s must have between %d and %d characters',
-        // same
+        // same:field_other
         'same' => 'The %s must match with %s',
         // alphanumeric
         'alphanumeric' => 'The %s should have only letters and numbers',
@@ -22,6 +22,8 @@ abstract class Validator
         'secure' => 'The %s must have between 8 and 64 characters and contain at least one number, one upper case letter, one lower case letter and one special character',
         // unique:tabel,field
         'unique' => 'The %s already exists',
+        // numeric
+        'numeric' => 'The %s must be a numeric value',
         // 'new_rule' => "Error message for the new rule"
     ];
 
@@ -66,17 +68,14 @@ abstract class Validator
                 } else {
                     $rule_name = trim($rule);
                 }
-                $fn = 'is_' . $rule_name;
+                $method_name = 'is_' . $rule_name;
 
-                if (is_callable([$this, $fn])) {
-                    $pass = $this->$fn($field, ...$params);
-                    if (!$pass) {
-                        $this->errors[$field] = sprintf(
-                            $this->errorMessages()[$field][$rule_name] ?? $validation_errors[$rule_name] ?? 'The data is not a valid !',
-                            $field,
-                            ...$params
-                        );
-                    }
+                if (method_exists($this, $method_name) && !$this->$method_name($field, ...$params)) {
+                    $this->errors[$field] = sprintf(
+                        $this->errorMessages()[$field][$rule_name] ?? $validation_errors[$rule_name] ?? 'The %s is not a valid!',
+                        $field,
+                        ...$params
+                    );
                 }
             }
         }
@@ -106,6 +105,11 @@ abstract class Validator
     public function getErrors(): Errors
     {
         return $this->errors;
+    }
+
+    public function getErrorsToArray(): array
+    {
+        return $this->errors->getAll();
     }
 
     /**
@@ -190,11 +194,7 @@ abstract class Validator
             return $this->{$field} === $this->{$other};
         }
 
-        if (!isset($this->{$field}) && !isset($this->{$other})) {
-            return true;
-        }
-
-        return false;
+        return (!isset($this->{$field}) && !isset($this->{$other}));
     }
 
     /**
@@ -247,5 +247,14 @@ abstract class Validator
         $stmt->execute();
 
         return $stmt->fetchColumn() === false;
+    }
+
+    protected function is_numeric(string $field): bool
+    {
+        if (!isset($this->{$field})) {
+            return true;
+        }
+
+        return is_numeric($this->{$field});
     }
 }

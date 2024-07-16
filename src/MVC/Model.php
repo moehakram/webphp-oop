@@ -22,12 +22,4 @@ abstract class Model extends Validator
     //         'unique' => '%s sudah ada'
     //     ];
     // }
-
-    protected function is_numeric(string $field){
-        if (!isset($this->{$field})) {
-            return true;
-        }
-        
-        return is_numeric($this->$field);
-    }
 }

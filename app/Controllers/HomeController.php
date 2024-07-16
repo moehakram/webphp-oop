@@ -39,19 +39,26 @@ class HomeController extends Controller
 
     public function testingValidationInput(){        
         
-        $validator = new \App\Models\ValidateRequest();
+        $validator = new \App\Models\ExampleValidateRequest();
 
         // $validator->loadData($data);
         $validator->firstname = 'muh';
         $validator->lastname = 'akram';
         $validator->address = 'btp';
         $validator->username = 't';
-        $validator->zipcode = '0';
+        $validator->zipcode = '0p';
         $validator->email = 'akramgmail.com';
         $validator->password = 'Muh.Akram#123';
         $validator->password2 = 'Muh.Akram#123';
         $isError = $validator->validate();
 
-        cetak($validator->getErrors());
+        if(! $isError){
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$validator->getErrorsToArray(), 400);
+        }
+        
+        return new \MA\PHPQUICK\Http\Responses\JsonResponse([
+            'message' => 'success',
+            'code' => '200'
+        ], 200);
     }
 }
