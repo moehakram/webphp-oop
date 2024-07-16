@@ -22,4 +22,17 @@ abstract class Model extends Validator
     //         'unique' => '%s sudah ada'
     //     ];
     // }
+
+    
+    public function clean($data)
+    {
+        if (is_array($data)) {
+            return array_map([$this, 'clean'], $data);
+        } else {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+            return $data;
+        }
+    }
 }
