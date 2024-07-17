@@ -5,7 +5,12 @@ use MA\PHPQUICK\Collection;
 
 class Session extends Collection
 {
-    protected const FLASH_KEY = 'flash_messages';
+    protected const FLASH_KEY = 'FLASH_MESSAGES';
+    //type flash
+    protected const FLASH_ERROR = 'error';
+    protected const FLASH_WARNING = 'warning';
+    protected const FLASH_INFO = 'info';
+    protected const FLASH_SUCCESS = 'success';
 
     public function __construct()
     {
@@ -14,28 +19,29 @@ class Session extends Collection
 
         $flashMessages = $this->get(self::FLASH_KEY, []);
         foreach ($flashMessages as $key => &$flashMessage) {
-            $flashMessage['remove'] = true;
+            $flashMessage['is_remove'] = true;
         }
         $this->set(self::FLASH_KEY, $flashMessages);
     }
 
-    public function setFlash($key, $message)
+    public function setFlash(string $name, string $message, string $type)
     {
         $flashMessages = $this->get(self::FLASH_KEY, []);
-        $flashMessages[$key] = [
-            'remove' => false,
-            'value' => $message
+        $flashMessages[$name] = [
+            'is_remove' => false,
+            'message' => $message,
+            'type' => $type
         ];
         $this->set(self::FLASH_KEY, $flashMessages);
     }
 
-    public function getFlash($key)
+    public function getFlash(string $key)
     {
         $flashMessages = $this->get(self::FLASH_KEY, []);
-        return $flashMessages[$key]['value'] ?? false;
+        return $flashMessages[$key]['message'] ?? false;
     }
 
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         parent::set($key, $value);
         $this->syncSession();
@@ -56,7 +62,7 @@ class Session extends Collection
     {
         $flashMessages = $this->get(self::FLASH_KEY, []);
         foreach ($flashMessages as $key => $flashMessage) {
-            if ($flashMessage['remove']) {
+            if ($flashMessage['is_remove']) {
                 unset($flashMessages[$key]);
             }
         }

@@ -7,16 +7,13 @@ use MA\PHPQUICK\Http\Responses\Cookie;
 use MA\PHPQUICK\Validation\Validation;
 use MA\PHPQUICK\Http\Responses\Response;
 
-if(!function_exists('cetak')){
-    function cetak($arr, $die = true)
+if(!function_exists('cc')){
+    function cc($data)
     {
         echo '<pre>';
-        print_r($arr);
+        print_r($data);
         echo '</pre>';
-    
-        if ($die) {
-            die;
-        }
+        die;
     }
 }
 
@@ -111,4 +108,18 @@ if(!function_exists('validasi')){
     function validasi(array $data): Validation{
         return new Validation($data);
     }
+}
+
+function d($data)
+{
+	echo '<pre>';
+	var_dump($data);
+	echo '</pre>';
+}
+
+function dd($data){
+    echo '<pre>';
+    var_dump($data);
+    echo '</pre>';
+    die;
 }

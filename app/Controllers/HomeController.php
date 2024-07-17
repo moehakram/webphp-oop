@@ -85,9 +85,9 @@ class HomeController extends Controller
         ]);
         
         $errorMessages = $data->setRules(function($rule){
-            $rule['firstname'] = '|clean|required | max:255|min:30';
+            $rule['firstname'] = '|required | max:255|min:30';
             $rule->lastname = 'required| max: 255';
-            $rule->address = 'required|clean|min: 5|max:7';
+            $rule->address = 'required|min: 5|max:7';
             $rule->zipcode = 'between: 5,6|numeric';
             $rule->username = 'required | alphanumeric| between: 2,7';
             $rule->email = 'required | email|min:10|max:15';
@@ -95,6 +95,7 @@ class HomeController extends Controller
             $rule->password2 = 'required | same:password';
             $rule->tes = 'required |same:firstname';
         });
+        cc($data);
 
         if($errorMessages){
             return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$errorMessages, 400);

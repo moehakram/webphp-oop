@@ -159,12 +159,4 @@ trait MethodsValidation {
 
         return is_numeric($this->get($field));
     }
-
-    private function is_clean(string $field): bool
-    {
-        if ($this->has($field)) {
-            $this->set($field, htmlspecialchars(stripslashes(trim($this->get($field))), ENT_QUOTES, 'UTF-8'));
-        }
-        return true;
-    }
 }
