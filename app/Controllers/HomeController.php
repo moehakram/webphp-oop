@@ -54,9 +54,9 @@ class HomeController extends Controller
         
         $validator->loadData($data);
         
-        $isError = $validator->validate();
-        if($isError){
-            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$validator->getErrorsToArray(), 400);
+        $error = $validator->validate();
+        if(!empty($error)){
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$error, 400);
         }
         
         return new \MA\PHPQUICK\Http\Responses\JsonResponse([
@@ -80,8 +80,8 @@ class HomeController extends Controller
             'username' => '11',
             'zipcode' => 83293,
             'email' =>  'eail.sh',
-            'password' => '0000000pyJ#41',
-            'password2' => '0000000pyJ#41'
+            'password' => '0000000py#41Hl',
+            'password2' => '0000000py#41H'
         ]);
         
         $errorMessages = $data->setRules(function($rule){
@@ -97,7 +97,7 @@ class HomeController extends Controller
         });
 
         if($errorMessages){
-            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$data->getErrors()->getAll(), 400);
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$errorMessages, 400);
         }
         // return new \MA\PHPQUICK\Http\Responses\JsonResponse($data->getAll());
 

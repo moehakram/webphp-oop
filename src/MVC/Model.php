@@ -45,7 +45,7 @@ abstract class Model implements ValidatorInterface
        return [];
     }
 
-    public function validate(): bool
+    public function validate(): array
     {
         $split = fn($str, $separator) => array_map('trim', explode($separator, $str));
 
@@ -70,7 +70,7 @@ abstract class Model implements ValidatorInterface
             }
         }
 
-        return !$this->errors->isEmpty();
+        return $this->errors->getAll();
     }
 
     public function loadData(array $data)

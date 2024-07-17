@@ -24,7 +24,7 @@ trait MethodsValidation {
             return true;
         }
 
-        return filter_var($this->get($field), FILTER_VALIDATE_EMAIL);
+        return filter_var($this->get($field), FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /**
@@ -84,9 +84,14 @@ trait MethodsValidation {
         if ($this->has($field) && $this->has($other)) {
             return $this->get($field) === $this->get($other);
         }
+        
+        if (!$this->has($field) && !$this->has($other)) {
+            return true;
+        }
 
-        return (!$this->has($field) && !$this->has($other));
+        return false;
     }
+
 
     /**
      * Return true if a string is alphanumeric
@@ -114,7 +119,7 @@ trait MethodsValidation {
         }
 
         $pattern = "#.*^(?=.{8,64})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$#";
-        return preg_match($pattern, $this->get($field));
+        return preg_match($pattern, $this->get($field)) === 1;
     }
 
     /**

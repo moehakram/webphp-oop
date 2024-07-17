@@ -52,7 +52,7 @@ class Validation extends Collection
        return [];
     }
 
-    private function validate(): bool
+    private function validate(): array
     {
         $split = fn($str, $separator) => array_map('trim', explode($separator, $str));
 
@@ -77,7 +77,7 @@ class Validation extends Collection
             }
         }
 
-        return !$this->errors->isEmpty();
+        return $this->errors->getAll();
     }
 
     public function hasError(string $field): bool
