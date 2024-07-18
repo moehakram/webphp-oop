@@ -159,4 +159,35 @@ trait MethodsValidation {
 
         return is_numeric($this->get($field));
     }
+
+    /**
+     * filter sanitize
+     */
+    private function is_fs(string $field, string $fieldType): bool
+    {
+        if(!$this->has($field)){
+            return true;
+        };
+
+        $FILTERS = [
+            'string' => FILTER_SANITIZE_SPECIAL_CHARS,
+            'email' => FILTER_SANITIZE_EMAIL,
+            'int' => FILTER_SANITIZE_NUMBER_INT,
+            'float' => [
+                'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+                'flags' => FILTER_FLAG_ALLOW_FRACTION
+            ],
+            'url' => FILTER_SANITIZE_URL,
+        ];
+
+        $filter = $FILTERS[$fieldType] ?? FILTER_SANITIZE_SPECIAL_CHARS;
+
+        $result = filter_var($this->get($field), $filter);
+        if($result !== false){
+            $this->set($field, trim($result));
+        }
+
+        return $result !== false;
+    }
+
 }

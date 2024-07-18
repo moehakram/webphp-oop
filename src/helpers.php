@@ -93,15 +93,29 @@ if(!function_exists('config')){
 if(!function_exists('clean')){
     function clean($data)
     {
+
+        if (is_string($data)) {
+            return htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
+        }
+        
         if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = clean($value);
-            }
-        } else {
-            $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
+            return array_map('clean', $data);
         }
         return $data;
     }
+}
+
+function _clean(&$data)
+{
+    if (is_array($data)) {
+        array_walk($data, '_clean');
+    }
+
+    if(is_string($data)){
+        $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
+    }
+    
+    return $data;
 }
 
 if(!function_exists('validasi')){

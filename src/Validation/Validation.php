@@ -3,7 +3,7 @@ namespace MA\PHPQUICK\Validation; // @link https://www.phptutorial.net/php-tutor
 
 use MA\PHPQUICK\Collection;
 
-class Validation extends Collection
+class Validation
 {
     use MethodsValidation;
     
@@ -31,35 +31,34 @@ class Validation extends Collection
     ];
 
     protected ErrorsValidation $errors;
-    protected Collection $rules;
+    protected array $rules = [];
+    protected Collection $data;
 
-
-    public function __construct(array $data)
+    public function __construct(array $data = [])
     {
+        $this->data = new Collection([]);
         $this->errors = new ErrorsValidation([]);
-        $this->rules = new Collection([]);
-        parent::__construct($data);
+        $this->loadData($data);
     }
 
-    public function setRules(callable $rule) : array {
-        $rule($this->rules);
-        $this->validate();
-        return $this->errors->getAll();
+    protected function rules(): array
+    {
+        return [];
     }
 
-    public function errorMessages(): array
+    protected function errorMessages(): array
     {
        return [];
     }
 
-    private function validate(): array
+    public function validate($validationRules = []) : Collection
     {
-        $split = fn($str, $separator) => array_map('trim', explode($separator, $str));
+        $split = fn($str, $separator) => array_map('trim', explode($separator, strtolower($str)));
 
         $ruleMessages = array_filter($this->errorMessages(), fn($message) => is_string($message));
         $validationErrors = array_merge(self::DEFAULT_ERROR_MESSAGES, $ruleMessages);
 
-        foreach ($this->rules->getAll() as $field => $rules) {
+        foreach ($validationRules ?: $this->rules() as $field => $rules) {
             foreach ($split($rules, '|') as $rule) {
                 $params = [];
                 if (strpos($rule, ':')) {
@@ -72,12 +71,34 @@ class Validation extends Collection
 
                 if (method_exists($this, $methodName) && !$this->$methodName($field, ...$params)) {
                     $message = $this->errorMessages()[$field][$ruleName] ?? $validationErrors[$ruleName] ?? 'The %s is not valid!';
-                    $this->errors[$field][] = sprintf($message, $field, ...$params);
+                    $this->errors[$field] = sprintf($message, $field, ...$params);
                 }
             }
         }
 
-        return $this->errors->getAll();
+        return $this->data;
+    }
+
+    protected function loadData(array $data)
+    {
+        foreach ($data as $key => $value) {
+            $this->set($key, $value);
+        }
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->data[$key]);
+    }
+
+    public function get(string $key, $default = null)
+    {
+        return $this->data->get($key, $default);
+    }
+
+    public function set(string $key, $value)
+    {
+        $this->data->set($key, $value);
     }
 
     public function hasError(string $field): bool

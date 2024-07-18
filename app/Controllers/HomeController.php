@@ -3,8 +3,10 @@
 namespace App\Controllers;
 
 use App\Service\ServiceTrait;
+use MA\PHPQUICK\Http\Responses\ResponseHeaders;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\MVC\Controller;
+use MA\PHPQUICK\Validation\Validation;
 
 class HomeController extends Controller
 {
@@ -39,67 +41,64 @@ class HomeController extends Controller
 
     public function testingValidationInput(){
         
-        $validator = new \App\Models\ExampleValidateRequest();
-
-        $data = [
+        $request = new \App\Models\ExampleValidateRequest([
             'firstname' => ' <a>akram</a>    ',
             'lastname' => ' <a>akram</a>    ',
-            'address' => 'address    ',
+            'address' => 'address',
             'username' => '11',
             'zipcode' => 192384,
             'email' =>  'example@email.sh',
             'password' => '0000000pyJ#41',
             'password2' => '0000000pyJ#41'
-        ];
-        
-        $validator->loadData($data);
-        
-        $error = $validator->validate();
-        if(!empty($error)){
-            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$error, 400);
+        ]);      
+
+        $errors = $request->validate();
+
+        if(!$errors->isEmpty()){
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$errors->getAll(), 400);
         }
-        
+
         return new \MA\PHPQUICK\Http\Responses\JsonResponse([
-            'firstname' => $validator->firstname,
-            'lastname' => $validator->lastname,
-            'address' => $validator->address,
-            'username' => $validator->username,
-            'zipcode' => $validator->zipcode,
-            'email' => $validator->email,
-            'password' => $validator->password,
-            'password2' => $validator->password2
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'address' => $request->address,
+            'username' => $request->username,
+            'zipcode' => $request->zipcode,
+            'email' => $request->email,
+            'password' => $request->password,
+            'password2' => $request->password2
         ], 200);
     }
 
     public function testingValidationInput2(){
 
-        $data = validasi([
+        $validator = new Validation([
             'firstname' => ' <a>akram</a>    ',
-            'lastname' => ' <a>akram</a>    ',
+            'lastname' => ' <a>akram</a> klaLJSGHJKLHHHH   ',
             'address' => 'address    ',
             'username' => '11',
-            'zipcode' => 83293,
-            'email' =>  'eail.sh',
+            'zipcode' => '83293',
+            'email' =>  'eail@s.h',
             'password' => '0000000py#41Hl',
-            'password2' => '0000000py#41H'
+            'password2' => '0000000py#41Hl'
+        ]);
+
+        $data = $validator->validate([  // fs => filter sanitize
+            'firstname' => 'fs:string|REQUIRED|max:255|min:10',
+            'lastname' => 'fs:string|requireD|max:255',
+            'address' => 'fs:string|reQuired|min:5|max:17',
+            'zipcode' => 'fs:int|between:5,6|numeric',
+            'username' => 'fs:int|required|alphanumeric|between:2,7',
+            'email' => 'fs:email|required|email',
+            'password' => 'fs:string|required|secure',
+            'password2' => 'fs:string|required|same:password'
         ]);
         
-        $errorMessages = $data->setRules(function($rule){
-            $rule['firstname'] = '|required | max:255|min:30';
-            $rule->lastname = 'required| max: 255';
-            $rule->address = 'required|min: 5|max:7';
-            $rule->zipcode = 'between: 5,6|numeric';
-            $rule->username = 'required | alphanumeric| between: 2,7';
-            $rule->email = 'required | email|min:10|max:15';
-            $rule->password = 'required | secure';
-            $rule->password2 = 'required | same:password';
-            $rule->tes = 'required |same:firstname';
-        });
-        cc($data);
-
-        if($errorMessages){
-            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$errorMessages, 400);
+        $errors = $validator->getErrors();
+        if(!$errors->isEmpty()){
+            return new \MA\PHPQUICK\Http\Responses\JsonResponse((array)$errors->getAll(), 400);
         }
+
         // return new \MA\PHPQUICK\Http\Responses\JsonResponse($data->getAll());
 
         return new \MA\PHPQUICK\Http\Responses\JsonResponse([

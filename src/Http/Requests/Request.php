@@ -74,10 +74,8 @@ class Request implements IRequest
     }
 
     private function initializeCollection(){
-        $this->query = new Collection();
-        $this->query->exchangeArray(clean($_GET));
-        $this->post = new Collection();
-        $this->post->exchangeArray(clean($_POST));
+        $this->query = new Collection($_GET);
+        $this->post = new Collection($_POST);
         $this->put = new Collection([]);
         $this->patch = new Collection([]);
         $this->delete = new Collection([]);
