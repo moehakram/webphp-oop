@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\AuthController;
+use App\Controllers\Documentation;
 use App\Controllers\ProfileController;
 use App\Middleware\{AuthMiddleware, CSRFMiddleware, GuestMiddleware, OnlyAdminMiddleware};
 
@@ -17,5 +18,13 @@ $app->post("/user/profile", [ProfileController::class, 'update'], AuthMiddleware
 $app->get("/user/password", [ProfileController::class, 'changePassword'], AuthMiddleware::class);
 $app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthMiddleware::class, CSRFMiddleware::class);
 
-$app->get("/tes", [\App\Controllers\HomeController::class ,'testingValidationInput']);
-$app->get("/tes2", [\App\Controllers\HomeController::class ,'testingValidationInput2']);
+
+/**
+ * Documentation
+ */
+
+$app->get("/tes", [\App\Controllers\Documentation::class ,'validateAndSanitizeUsingModel']);
+$app->get("/tes1", [Documentation::class ,'validateAndSanitizeUsingValidationClass']);
+$app->get("/tes2", [Documentation::class ,'implemtationSessionFlass_tes2']);
+$app->get("/tes3", [Documentation::class ,'implemtationSessionFlass_tes3']);
+$app->get("/tes4", [Documentation::class ,'implemtationSessionFlass_tes4']);

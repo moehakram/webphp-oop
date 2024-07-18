@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\MVC\Model;
 
 class ExampleValidateRequest extends Model

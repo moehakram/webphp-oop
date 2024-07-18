@@ -8,6 +8,7 @@ use MA\PHPQUICK\Router\Runner;
 use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Session\Session;
 
 class Application
 {
@@ -21,7 +22,9 @@ class Application
     {
         self::$app = $this;
         $this->config = new Config($config);
-        $this->request = new Request();
+        session_start();
+        $session = new Session;
+        $this->request = new Request($session);
         $this->response = new Response();
         $this->router = new Router($this->request);
     }

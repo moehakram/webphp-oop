@@ -6,6 +6,7 @@ use MA\PHPQUICK\Interfaces\Request as IRequest;
 use MA\PHPQUICK\Http\Requests\Files;
 use MA\PHPQUICK\Http\Requests\RequestHeaders;
 use MA\PHPQUICK\Interfaces\UserAuth;
+use MA\PHPQUICK\Session\Session;
 
 class Request implements IRequest
 {
@@ -50,8 +51,10 @@ class Request implements IRequest
     private string $previousUrl = '';
     private ?string $rawBody = null;
     private ?UserAuth $user = null;
+    private Session $session;
 
-    public function __construct() {
+    public function __construct(Session $session) {
+        $this->session = $session;
         $this->initializeServerAndHeaders();
         $this->initializeCollection();
         $this->setPath();
@@ -477,5 +480,10 @@ class Request implements IRequest
 
     public function user(): ?UserAuth{
         return $this->user;
+    }
+
+    public function session(): Session
+    {
+        return $this->session;
     }
 }

@@ -1,18 +1,18 @@
 <?php
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Validation\ErrorsValidation;
+use MA\PHPQUICK\Validation\Collection;
 use MA\PHPQUICK\Validation\Validation;
 
 abstract class Model extends Validation
 {
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->loadData($data);
         parent::__construct();
     }
 
-    public function validate($validationRules = []) : ErrorsValidation
+    public function validate($validationRules = []) : Collection
     {
         parent::validate();
         return $this->getErrors();

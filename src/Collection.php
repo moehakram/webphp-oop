@@ -82,35 +82,11 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        if (is_null($offset)) {
-            $this->items[] = $value;
-        } else {
-            $this->items[$offset] = $value;
-        }
+       $this->set($offset, $value);
     }
 
     public function offsetUnset($offset): void
     {
         $this->remove($offset);
-    }
-
-    public function __set($name, $value)
-    {
-        $this->set($name, $value);
-    }
-
-    public function __get($name)
-    {
-        return $this->get($name);
-    }
-
-    public function __isset($name)
-    {
-        return $this->has($name);
-    }
-
-    public function __unset($name)
-    {
-        $this->remove($name);
     }
 }

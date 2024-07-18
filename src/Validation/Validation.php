@@ -1,8 +1,6 @@
 <?php
 namespace MA\PHPQUICK\Validation; // @link https://www.phptutorial.net/php-tutorial/php-validation/
 
-use MA\PHPQUICK\Collection;
-
 class Validation
 {
     use MethodsValidation;
@@ -30,14 +28,14 @@ class Validation
         'numeric' => 'The %s must be a numeric value'
     ];
 
-    protected ErrorsValidation $errors;
-    protected array $rules = [];
+    protected Collection $errors;
     protected Collection $data;
+    protected array $rules = [];
 
     public function __construct(array $data = [])
     {
         $this->data = new Collection([]);
-        $this->errors = new ErrorsValidation([]);
+        $this->errors = new Collection([]);
         $this->loadData($data);
     }
 
@@ -79,7 +77,7 @@ class Validation
         return $this->data;
     }
 
-    protected function loadData(array $data)
+    final protected function loadData(array $data)
     {
         foreach ($data as $key => $value) {
             $this->set($key, $value);
@@ -101,17 +99,17 @@ class Validation
         $this->data->set($key, $value);
     }
 
-    public function hasError(string $field): bool
+    final public function hasError(string $field): bool
     {
         return $this->errors->has($field);
     }
 
-    public function getError(string $field): ?string
+    final public function getError(string $field): ?string
     {
         return $this->errors->get($field);
     }
 
-    public function getErrors(): Collection
+    final public function getErrors(): Collection
     {
         return $this->errors;
     }

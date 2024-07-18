@@ -4,6 +4,7 @@ namespace MA\PHPQUICK\Interfaces;
 use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Http\Requests\Files;
 use MA\PHPQUICK\Http\Requests\RequestHeaders;
+use MA\PHPQUICK\Session\Session;
 
 interface Request
 {
@@ -77,4 +78,6 @@ interface Request
     public function login(?UserAuth $user);
 
     public function user(): ?UserAuth;
+
+    public function session(): Session;
 }

@@ -212,6 +212,4 @@ trait MethodsValidation {
     
         return $result !== false;
     }
-    
-
 }
