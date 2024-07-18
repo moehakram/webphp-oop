@@ -17,14 +17,14 @@ class Application
     public Router $router;
     public Response $response;
     public Request $request;
+    public Session $session;
 
     public function __construct(array $config)
     {
         self::$app = $this;
         $this->config = new Config($config);
-        session_start();
-        $session = new Session;
-        $this->request = new Request($session);
+        $this->session = new Session;
+        $this->request = new Request($this->session);
         $this->response = new Response();
         $this->router = new Router($this->request);
     }

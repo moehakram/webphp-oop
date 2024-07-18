@@ -12,7 +12,10 @@ class CSRFMiddleware implements Middleware
     {
         if ($request->getMethod() == 'POST') {
             $token = $request->getPost()->get('csrf_token', '');
-            if ($token === $request->getCookies()->get('csrf_token')) return $next($request);
+            if ($token === $request->session()->get('token')){
+                $request->session()->remove('token');
+                return $next($request);
+            }
         }
 
         // return response()->setNotFound('CSRF_TOKEN tidak valid !');

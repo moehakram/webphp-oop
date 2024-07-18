@@ -6,7 +6,7 @@ use MA\PHPQUICK\Collection;
 class Session extends Collection
 {
     const FLASH = 'FLASH_MESSAGES';
-    //type flash
+    // Flash message types
     const FLASH_ERROR = 'error';
     const FLASH_WARNING = 'warning';
     const FLASH_INFO = 'info';
@@ -14,6 +14,7 @@ class Session extends Collection
 
     public function __construct()
     {
+        session_start();
         parent::__construct($_SESSION);
         $flashMessages = $this->get(self::FLASH, []);
         foreach ($flashMessages as $key => &$flashMessage) {
@@ -35,30 +36,13 @@ class Session extends Collection
 
     public function getFlash(string $key)
     {
-        $flashMessages = $this->get(self::FLASH);
+        $flashMessages = $this->get(self::FLASH, []);
         return $flashMessages[$key]['message'] ?? false;
-    }
-
-    public function set(string $key, $value)
-    {
-        parent::set($key, $value);
-        $this->syncSession();
-    }
-
-    public function remove($key)
-    {
-        parent::remove($key);
-        $this->syncSession();
-    }
-
-    public function __destruct()
-    {
-        $this->removeFlashMessages();
     }
 
     private function removeFlashMessages()
     {
-        $flashMessages = $this->get(self::FLASH);
+        $flashMessages = $this->get(self::FLASH, []);
         foreach ($flashMessages as $key => $flashMessage) {
             if ($flashMessage['is_remove']) {
                 unset($flashMessages[$key]);
@@ -67,8 +51,9 @@ class Session extends Collection
         $this->set(self::FLASH, $flashMessages);
     }
 
-    private function syncSession()
+    public function __destruct()
     {
+        $this->removeFlashMessages();
         $_SESSION = $this->getAll();
     }
 }

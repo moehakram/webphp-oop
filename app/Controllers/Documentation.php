@@ -93,22 +93,20 @@ class Documentation{
         $session->set('user', [
             'id' => '123',
             'name' => 'akram'
-        ]);
-        $session->remove('user');
-        
+        ]);        
         return response()->redirect('/tes3');
     }
 
     function implemtationSessionFlass_tes3(Request $request){
         $session = $request->session();
-        $session->setFlash('login2', 'berhasil login', Session::FLASH_SUCCESS);
         return new JsonResponse([
              $session->getAll()
         ]);
     }
 
-    function implemtationSessionFlass_tes4(){
-        $session = new \MA\PHPQUICK\Session\Session();
+    function implemtationSessionFlass_tes4(Request $request){
+        $session = $request->session();
+        $session->clear();
         return new JsonResponse([
              $session->getAll()
         ]);

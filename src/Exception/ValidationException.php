@@ -5,15 +5,15 @@ use MA\PHPQUICK\Collection;
 
 class ValidationException extends \Exception
 {
-    private Collection $errors;
+    private ?Collection $errors;
 
-    public function __construct(string $message = "Validation Error", Collection $errors = null)
+    public function __construct(string $message = "Validation Error", ?Collection $errors = null)
     {
         parent::__construct($message);
         $this->errors = $errors;
     }
 
-    public function getErrors(): Collection
+    public function getErrors(): ?Collection
     {
         return $this->errors;
     }

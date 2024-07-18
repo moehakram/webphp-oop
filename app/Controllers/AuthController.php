@@ -24,8 +24,7 @@ class AuthController extends Controller
     {
         response()->setNoCache();
         return $this->view('auth/login', [
-            'title' => 'Login User',
-            'csrf_token' => set_CSRF('/user/login')
+            'title' => 'Login User'
         ]);
     }
 
@@ -50,8 +49,7 @@ class AuthController extends Controller
     public function showRegistration() // Menampilkan formulir registrasi
     {
         return $this->view('auth/register', [
-            'title' => 'Register New User',
-            'csrf_token' => set_CSRF('/user/register')
+            'title' => 'Register New User'
         ]);
     }
 

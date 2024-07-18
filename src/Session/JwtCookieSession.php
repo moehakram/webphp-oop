@@ -27,7 +27,7 @@ class JwtCookieSession extends Collection
 
     private function generateToken(): string
     {
-        return JWT::encode($this->items, $this->jwt_secret, self::ALGORITHM);
+        return JWT::encode($this->getAll(), $this->jwt_secret, self::ALGORITHM);
     }
 
     private function verifyToken(string $token): array

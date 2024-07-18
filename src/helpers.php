@@ -67,6 +67,14 @@ if(!function_exists('set_CSRF')){
     }
 }
 
+if(!function_exists('csrf')){
+    function csrf(): string
+    {  
+         request()->session()->set('token', $token = bin2hex(random_bytes(35)));
+        return $token;
+    }
+}
+
 if(!function_exists('view')){
     function view(string $view, array $data = [], string $extends = '')
     {
