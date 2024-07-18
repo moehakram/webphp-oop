@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Service\ServiceTrait;
-use MA\PHPQUICK\Http\Responses\ResponseHeaders;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\MVC\Controller;
 use MA\PHPQUICK\Validation\Validation;
@@ -50,7 +49,7 @@ class HomeController extends Controller
             'email' =>  'example@email.sh',
             'password' => '0000000pyJ#41',
             'password2' => '0000000pyJ#41'
-        ]);      
+        ]);
 
         $errors = $request->validate();
 

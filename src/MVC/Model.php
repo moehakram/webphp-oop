@@ -1,7 +1,6 @@
 <?php
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Interfaces\ValidatorInterface;
 use MA\PHPQUICK\Validation\ErrorsValidation;
 use MA\PHPQUICK\Validation\Validation;
 
