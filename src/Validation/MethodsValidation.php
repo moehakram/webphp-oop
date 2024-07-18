@@ -161,44 +161,6 @@ trait MethodsValidation {
     }
 
     /**
-     * filter sanitize
-     */
-    private function _is_fs(string $field, string $fieldType): bool
-    {
-        if(!$this->has($field)){
-            return true;
-        };
-
-        $FILTERS = [
-            'string' => FILTER_SANITIZE_SPECIAL_CHARS,
-            'email' => FILTER_SANITIZE_EMAIL,
-            'int' => [
-                'filter' => FILTER_SANITIZE_NUMBER_INT,
-                'flags' => FILTER_REQUIRE_SCALAR
-            ],
-            'float' => [
-                'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
-                'flags' => FILTER_FLAG_ALLOW_FRACTION
-            ],
-            'url' => FILTER_SANITIZE_URL,
-        ];
-
-        $filter = $FILTERS[$fieldType] ?: FILTER_SANITIZE_SPECIAL_CHARS;
-
-        if (is_array($filter)) {
-            $result = filter_var($this->get($field), $filter['filter'], $filter['flags']);
-        } else {
-            $result = filter_var($this->get($field), $filter);
-        }
-
-        if ($result !== false) {
-            $this->set($field, trim($result));
-        }
-
-        return $result !== false;
-    }
-
-    /**
      * Filter sanitize
      */
     private function is_fs(string $field, string $fieldType): bool
@@ -206,7 +168,7 @@ trait MethodsValidation {
         if (!$this->has($field)) {
             return true;
         }
-        
+
         $filters = [
             'string' => FILTER_SANITIZE_SPECIAL_CHARS,
             'string[]' => [
