@@ -163,7 +163,7 @@ trait MethodsValidation {
     /**
      * filter sanitize
      */
-    private function is_fs(string $field, string $fieldType): bool
+    private function _is_fs(string $field, string $fieldType): bool
     {
         if(!$this->has($field)){
             return true;
@@ -172,7 +172,10 @@ trait MethodsValidation {
         $FILTERS = [
             'string' => FILTER_SANITIZE_SPECIAL_CHARS,
             'email' => FILTER_SANITIZE_EMAIL,
-            'int' => FILTER_SANITIZE_NUMBER_INT,
+            'int' => [
+                'filter' => FILTER_SANITIZE_NUMBER_INT,
+                'flags' => FILTER_REQUIRE_SCALAR
+            ],
             'float' => [
                 'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
                 'flags' => FILTER_FLAG_ALLOW_FRACTION
@@ -180,14 +183,73 @@ trait MethodsValidation {
             'url' => FILTER_SANITIZE_URL,
         ];
 
-        $filter = $FILTERS[$fieldType] ?? FILTER_SANITIZE_SPECIAL_CHARS;
+        $filter = $FILTERS[$fieldType] ?: FILTER_SANITIZE_SPECIAL_CHARS;
 
-        $result = filter_var($this->get($field), $filter);
-        if($result !== false){
+        if (is_array($filter)) {
+            $result = filter_var($this->get($field), $filter['filter'], $filter['flags']);
+        } else {
+            $result = filter_var($this->get($field), $filter);
+        }
+
+        if ($result !== false) {
             $this->set($field, trim($result));
         }
 
         return $result !== false;
     }
+
+    /**
+     * Filter sanitize
+     */
+    private function is_fs(string $field, string $fieldType): bool
+    {
+        if (!$this->has($field)) {
+            return true;
+        }
+        
+        $filters = [
+            'string' => FILTER_SANITIZE_SPECIAL_CHARS,
+            'string[]' => [
+                'filter' => FILTER_SANITIZE_SPECIAL_CHARS,
+                'flags' => FILTER_REQUIRE_ARRAY
+            ],
+            'email' => FILTER_SANITIZE_EMAIL,
+            'int' => [
+                'filter' => FILTER_SANITIZE_NUMBER_INT,
+                'flags' => FILTER_REQUIRE_SCALAR
+            ],
+            'int[]' => [
+                'filter' => FILTER_SANITIZE_NUMBER_INT,
+                'flags' => FILTER_REQUIRE_ARRAY
+            ],
+            'float' => [
+                'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+                'flags' => FILTER_FLAG_ALLOW_FRACTION
+            ],
+            'float[]' => [
+                'filter' => FILTER_SANITIZE_NUMBER_FLOAT,
+                'flags' => FILTER_REQUIRE_ARRAY
+            ],
+            'url' => FILTER_SANITIZE_URL,
+        ];
+    
+        $filter = $filters[$fieldType] ?? FILTER_SANITIZE_SPECIAL_CHARS;
+    
+        $value = $this->get($field);
+    
+        if (is_array($filter)) {
+            $result = filter_var($value, $filter['filter'], $filter['flags']);
+        } else {
+            $result = filter_var($value, $filter);
+        }
+
+        if ($result !== false) {
+            $result = is_array($result) ? array_map('trim', $result) : trim($result);
+            $this->set($field, $result);
+        }
+    
+        return $result !== false;
+    }
+    
 
 }
