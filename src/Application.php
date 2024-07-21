@@ -13,18 +13,18 @@ use MA\PHPQUICK\Session\Session;
 class Application
 {
     public static Application $app;
-    public Config $config;
-    public Router $router;
-    public Response $response;
-    public Request $request;
-    public Session $session;
+    public readonly Config $config;
+    public readonly Router $router;
+    public readonly Response $response;
+    public readonly Request $request;
+    public readonly Session $session;
 
     public function __construct(array $config)
     {
         self::$app = $this;
         $this->config = new Config($config);
         $this->session = new Session;
-        $this->request = new Request($this->session);
+        $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request);
     }

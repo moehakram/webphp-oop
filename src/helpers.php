@@ -7,6 +7,13 @@ use MA\PHPQUICK\Http\Responses\Cookie;
 use MA\PHPQUICK\Validation\Validation;
 use MA\PHPQUICK\Http\Responses\Response;
 
+if(!function_exists('app')){
+    function app() : Application
+    {
+        return Application::$app;
+    }
+}
+
 if(!function_exists('cc')){
     function cc($data)
     {
@@ -124,12 +131,6 @@ function _clean(&$data)
     }
     
     return $data;
-}
-
-if(!function_exists('validasi')){
-    function validasi(array $data): Validation{
-        return new Validation($data);
-    }
 }
 
 function d($data)

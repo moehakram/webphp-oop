@@ -1,6 +1,7 @@
 <?php
 namespace MA\PHPQUICK\Http\Requests;
 
+use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Interfaces\Request as IRequest;
 use MA\PHPQUICK\Http\Requests\Files;
@@ -51,10 +52,8 @@ class Request implements IRequest
     private string $previousUrl = '';
     private ?string $rawBody = null;
     private ?UserAuth $user = null;
-    private Session $session;
 
-    public function __construct(Session $session) {
-        $this->session = $session;
+    public function __construct() {
         $this->initializeServerAndHeaders();
         $this->initializeCollection();
         $this->setPath();
@@ -484,6 +483,6 @@ class Request implements IRequest
 
     public function session(): Session
     {
-        return $this->session;
+        return app()->session;
     }
 }

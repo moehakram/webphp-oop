@@ -49,9 +49,10 @@ class Router
 
     public function dispatch(string $method, string $path): ?Route
     {
+        $clean = fn($path) => str_replace(['%20', ' '], '-', rtrim($path, '/')) ?: '/';
         foreach ($this->routes[$method] ?? [] as $route) {
-            $pattern = '#^' . $this->cleanPath($route['path']) . '$#';
-            if (preg_match($pattern, $this->cleanPath($path), $variabels)) {
+            $pattern = '#^' . $clean($route['path']) . '$#';
+            if (preg_match($pattern, $clean($path), $variabels)) {
                 array_shift($variabels);
                 $variabels[] = $this->request;
                 return new Route($route['callback'], $route['middlewares'], $variabels);
@@ -59,10 +60,4 @@ class Router
         }
         return null;
     }
-
-    private function cleanPath($path): string
-    {
-        return ($path === '/') ? $path : str_replace(['%20', ' '], '-', rtrim($path, '/'));
-    }
-
 }
