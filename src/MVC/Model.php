@@ -1,38 +1,78 @@
 <?php
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Validation\Collection;
-use MA\PHPQUICK\Validation\Validation;
+use MA\PHPQUICK\Validation\InputHandler;
 
-abstract class Model extends Validation
+abstract class Model extends InputHandler
 {
-    public function __construct(array $data = [])
+    final public function __construct(array $data = [])
     {
-        $this->loadData($data);
-        parent::__construct();
+        parent::__construct($data, $this->rules(), $this->messages());
     }
 
-    public function validate($validationRules = []) : Collection
+    protected function rules(): array
     {
-        parent::validate();
-        return $this->getErrors();
-        
+        return [];
     }
 
-    public function has(string $key): bool
+    protected function messages(): array
+    {
+       return [];
+    }
+
+    final public function has(string $key): bool
     {
         return isset($this->$key);
     }
 
-    public function get(string $key, $default = null)
+    final public function get(string $key, $default = null)
     {
         return $this->$key ?? $default;
     }
 
-    public function set(string $key, $value)
+    final public function set(string $key, $value)
     {
         if (property_exists($this, $key)) {
             $this->$key = $value;
         }
     }
+
+    final public function sanitize(): array {
+        $data = [];
+        foreach ($this->sanitizationRule as $field => $fieldType) {
+            $data[$field] = $this->sanitizeField($field, $fieldType);
+        }
+        return $data;
+    }
+    
+    private function sanitizeField(string $field, string $fieldType) {
+        if (!$this->has($field)) {
+            return null;
+        }
+    
+        $filter = $this->getFilter($fieldType);
+        $value = $this->get($field);
+    
+        $result = is_array($filter) ? $this->filterArray($value, $filter) : filter_var($value, $filter);
+    
+        if ($result !== false) {
+            $result = $this->trimValue($result);
+            $this->set($field, $result);
+            return $result;
+        }
+    
+        return $value;
+    }
+    
+    private function getFilter(string $fieldType) {
+        return $this->filterKey()[$fieldType] ?? FILTER_SANITIZE_SPECIAL_CHARS;
+    }
+    
+    private function filterArray($value, array $filter) {
+        if (isset($filter['flags'])) {
+            return filter_var($value, $filter['filter'], ['flags' => $filter['flags']]);
+        }
+        return filter_var($value, $filter['filter'], ['options' => $filter['options']]);
+    }
+    
 }
