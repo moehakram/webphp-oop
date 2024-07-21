@@ -55,12 +55,7 @@ class Application
             return $runner->handle($this->request)->send();
         } catch (HttpException $http) {
             return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
-        } 
-        // catch (\Throwable $ex) {
-        //     // return (new Response($e->getMessage(), $e->getCode()))->send();
-        //     echo sprintf("Exception thrown in %s on line %s: [Code %s] %s", $ex->getFile(), $ex->getLine(), $ex->getCode(), $ex->getMessage());
-        //     cetak($ex->getTraceAsString(), false);
-        // }
+        }
     }
 
     private function createRunner($route): Runner

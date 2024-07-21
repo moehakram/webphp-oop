@@ -4,8 +4,21 @@ use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Http\Responses\Cookie;
-use MA\PHPQUICK\Validation\Validation;
 use MA\PHPQUICK\Http\Responses\Response;
+
+set_exception_handler(function(\Throwable $ex) {
+
+    $time = date('Y-m-d H:i:s');
+    $message = "[{$time}] Uncaught exception: " . $ex->getMessage() . "\n";
+    $message .= "In file: " . $ex->getFile() . " on line " . $ex->getLine() . "\n";
+    $message .= "Stack trace:\n" . $ex->getTraceAsString() . "\n";
+
+    // Menulis log ke file
+    error_log($message, 3, __DIR__ . '/../logs/errors.log');
+
+    // Mengeluarkan pesan ke pengguna
+    echo 'Whoops, looks like something went wrong!';
+});
 
 if(!function_exists('app')){
     function app() : Application
