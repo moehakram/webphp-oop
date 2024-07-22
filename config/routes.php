@@ -22,9 +22,6 @@ $app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthM
 /**
  * Documentation
  */
-
-$app->get("/tes", [\App\Controllers\Documentation::class ,'validateAndSanitizeUsingModel']);
-$app->get("/tes1", [Documentation::class ,'validateAndSanitizeUsingValidationClass']);
 $app->get("/tes2", [Documentation::class ,'implemtationSessionFlass_tes2']);
 $app->get("/tes3", [Documentation::class ,'implemtationSessionFlass_tes3']);
 $app->get("/tes4", [Documentation::class ,'implemtationSessionFlass_tes4']);
