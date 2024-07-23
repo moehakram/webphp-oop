@@ -14,7 +14,7 @@
             <form class="p-4 p-md-5 border rounded-3 bg-light" method="post" action="/user/login">
                 <input type="hidden" name="csrf_token" value="<?= csrf()?>" >
                 <div class="form-floating mb-3">
-                    <input name="id" type="text" class="form-control" id="id" placeholder="id" value="<?= $_POST['id']??'' ?>">
+                    <input name="id" type="text" class="form-control" id="id" placeholder="id" value="<?= $inputs['id']??'' ?>">
                     <label for="id">Id</label>
                 </div>
                 <div class="form-floating mb-3">

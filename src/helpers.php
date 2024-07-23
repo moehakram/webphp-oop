@@ -3,8 +3,8 @@
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Interfaces\Request;
-use MA\PHPQUICK\Http\Responses\Cookie;
 use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Session\Session;
 
 set_exception_handler(function(\Throwable $ex) {
 
@@ -27,20 +27,17 @@ if(!function_exists('app')){
     }
 }
 
-if(!function_exists('cc')){
-    function cc($data)
+if(!function_exists('session')){
+    function session() : Session
     {
-        echo '<pre>';
-        print_r($data);
-        echo '</pre>';
-        die;
+        return app()->session;
     }
 }
 
 if(!function_exists('response')){
     function response($content = '', $statusCode = 200): Response
     {
-        $res = Application::$app->response;
+        $res = app()->response;
         if($content !== ''){
             $res->setContent($content);
             $res->setStatusCode($statusCode);
@@ -52,7 +49,7 @@ if(!function_exists('response')){
 if(!function_exists('request')){
     function request(): Request
     {
-        return Application::$app->request;
+        return app()->request;
     }
 }
 
@@ -77,20 +74,20 @@ if(!function_exists('strRandom')){
     }
 }
 
-if(!function_exists('set_CSRF')){
-    function set_CSRF(string $path): string
-    {
-        $token = strRandom(17);
-        // response()->setCookie('csrf_token', $token, time() + 60 * 60 * 30, $path);
-        response()->getHeaders()->setCookie(new Cookie('csrf_token', $token, time()+3600));
-        return $token;
-    }
-}
+// if(!function_exists('set_CSRF')){
+//     function set_CSRF(string $path): string
+//     {
+//         $token = strRandom(17);
+//         // response()->setCookie('csrf_token', $token, time() + 60 * 60 * 30, $path);
+//         response()->headers()->setCookie(new Cookie('csrf_token', $token, time()+3600));
+//         return $token;
+//     }
+// }
 
 if(!function_exists('csrf')){
     function csrf(): string
     {  
-         request()->session()->set('token', $token = bin2hex(random_bytes(35)));
+        session()->set('token', $token = bin2hex(random_bytes(35)));
         return $token;
     }
 }
@@ -133,19 +130,6 @@ if(!function_exists('clean')){
     }
 }
 
-function _clean(&$data)
-{
-    if (is_array($data)) {
-        array_walk($data, '_clean');
-    }
-
-    if(is_string($data)){
-        $data = htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
-    }
-    
-    return $data;
-}
-
 function d($data)
 {
 	echo '<pre>';
@@ -153,9 +137,9 @@ function d($data)
 	echo '</pre>';
 }
 
-function dd($data){
+function dd($data, $callback = 'print_r'){
     echo '<pre>';
-    var_dump($data);
+    $callback($data);
     echo '</pre>';
     die;
 }

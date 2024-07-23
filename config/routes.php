@@ -1,7 +1,7 @@
 <?php
 
 use App\Controllers\AuthController;
-use App\Controllers\Documentation;
+use App\Controllers\Testing;
 use App\Controllers\ProfileController;
 use App\Middleware\{AuthMiddleware, CSRFMiddleware, GuestMiddleware, OnlyAdminMiddleware};
 
@@ -22,6 +22,6 @@ $app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthM
 /**
  * Documentation
  */
-$app->get("/tes2", [Documentation::class ,'implemtationSessionFlass_tes2']);
-$app->get("/tes3", [Documentation::class ,'implemtationSessionFlass_tes3']);
-$app->get("/tes4", [Documentation::class ,'implemtationSessionFlass_tes4']);
+$app->get("/tes2", [Testing::class ,'implemtationSessionFlass_tes2']);
+$app->get("/tes3", [Testing::class ,'implemtationSessionFlass_tes3']);
+$app->get("/tes4", [Testing::class ,'implemtationSessionFlass_tes4']);

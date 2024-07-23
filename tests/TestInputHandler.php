@@ -1,21 +1,24 @@
 <?php
+
+use MA\PHPQUICK\Validation\InputHandler;
+
 require __DIR__ . '/../vendor/autoload.php';
 
-use MA\PHPQUICK\InputHandler;
-
+// Input data
 $inputs = [
     'firstname' => ' <a>akram</a>455    ',
     'lastname' => ' <a>akram</a> klaLJ\'SGHJKLHHHH   ',
     'address' => 'addr     ',
     'username' => '11',
     'zipcode' => '83293khhh',
-    'email' =>  'eail@s.h',
+    'email' => 'eail@s.h',
     'password' => '0000000py#41Hl',
     'password2' => '0000000py#41Hl'
 ];
 
-$fields = [  // @ => filter sanitize
-    'firstname ' => '|REQUIRED| @trim |max:255|min:10',
+// Validation rules
+$fields = [
+    'firstname ' => 'REQUIRED| @trim |max:255|min:10',
     'lastname' => 'requireD|@trim|max:255',
     'address' => '@string|reQuired|min:5|max:17',
     'zipcode' => 'between:5,6|numeric|@int',
@@ -25,6 +28,7 @@ $fields = [  // @ => filter sanitize
     'password2' => 'required|same:password'
 ];
 
+// Custom error messages
 $messages = [
     'required' => '%s wajib diisi',
     'email' => '%s bukan alamat email yang valid',
@@ -47,28 +51,38 @@ $messages = [
     ]
 ];
 
-$inputHandler = new InputHandler($inputs, $fields, $messages);
 
-$ruleSan = $inputHandler->getSanitizationRule();
-$ruleVal = $inputHandler->getValidationRules();
-// echo 'rule sanitization' . PHP_EOL;
-// cc($ruleSan);
-// echo 'rule validation' . PHP_EOL;
-// print_r($ruleVal);
-// echo 'data sanitize' . PHP_EOL;
-// var_dump($inputHandler->getInputs());
-// var_dump($inputHandler->sanitize());
-// // echo 'data validate' . PHP_EOL;
-// print_r($inputHandler->validate());
-// echo 'data clean' . PHP_EOL;
-// print_r($inputHandler->getData());
-// echo 'data inputs' . PHP_EOL;
-// print_r($inputHandler->getInputs());
-// echo 'data filter' . PHP_EOL;
-cc($inputHandler->filter());
-// ($inputHandler->sanitize());
-// print_r($inputHandler->validate());
-// echo 'data valid' . PHP_EOL;
-// cc($inputHandler->getInputs());
-// dd($inputHandler->getSanitizationRule());
-// cc($inputHandler->getValidationRules());
+function displayResultData(InputHandler $handler){
+    echo 'data' . PHP_EOL;
+    var_dump($handler->getInputs());
+}
+
+function displayRules(InputHandler $handler){
+    echo 'Sanitization Rules: ' . PHP_EOL;
+    print_r($handler->getSanitizationRule());
+    echo 'Validation Rules: ' . PHP_EOL;
+    print_r($handler->getValidationRules());
+}
+
+function displayResultsSanitize(InputHandler $handler) {
+    echo 'Sanitized Inputs: ' . PHP_EOL;
+    var_dump($handler->sanitize());
+}
+
+function displayResultsValidate(InputHandler $handler) {
+    echo 'Validation Results: ' . PHP_EOL;
+    var_dump($handler->validate());
+}
+
+function displayResultsFilter(InputHandler $handler) {
+    echo 'Filtered Data: ' . PHP_EOL;
+    var_dump($handler->filter());
+}
+
+
+$inputHandler = new InputHandler($inputs, $fields, $messages);
+displayResultsSanitize($inputHandler);
+// displayResultsValidate($inputHandler);
+// displayResultsFilter($inputHandler);
+displayResultData($inputHandler);
+

@@ -99,7 +99,7 @@ class InputHandler{
     /**
      * @return errors
      */
-    public function validate()
+    public function validate() : array
     {
         $ruleMessages = array_filter($this->messages, fn($message) => is_string($message));
         $validationErrors = array_merge(self::DEFAULT_ERROR_MESSAGES, $ruleMessages);
@@ -132,13 +132,15 @@ class InputHandler{
         return [$data, $this->errors];
     }
 
-    public function getInputs(){
+    public function getInputs() : array
+    {
         return $this->inputs;
     }
 
 
-    public function getErrors(){
-        return $this->errors;
+    public function getErrors() : Collection
+    {
+        return new Collection($this->errors);
     }
 
 

@@ -43,13 +43,13 @@ class JwtCookieSession extends Collection
     public function clear(): void
     {
         parent::clear();
-        response()->getHeaders()->deleteCookie($this->cookie_name);
+        response()->headers()->deleteCookie($this->cookie_name);
     }
 
     public function push(): void
     {
         $token = $this->generateToken();
-        response()->getHeaders()->setCookie(new Cookie(
+        response()->headers()->setCookie(new Cookie(
             $this->cookie_name,
             $token,
             time() + $this->expiration,

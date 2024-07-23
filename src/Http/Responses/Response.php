@@ -21,11 +21,12 @@ class Response implements IResponse
         $this->headers = new ResponseHeaders($headers);
     }
 
-    public function setNoCache()
+    public function setNoCache() : self
     {
         $this->headers->add('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');
         $this->headers->add('Pragma', 'no-cache');
         $this->setExpiration(new DateTime('Sat, 26 Jul 1997 05:00:00 GMT'));
+        return $this;
     }
 
     public function setNotFound($message = null)
@@ -42,38 +43,34 @@ class Response implements IResponse
         throw new HttpException(403, $view);
     }
 
-    public function redirect(string $targetUrl): Response
+    public function redirect(string $targetUrl, int $statusCode = 302): RedirectResponse
     {
-        if (empty($targetUrl)) {
-            throw new \InvalidArgumentException('Invalid URL provided for redirect.');
-        }
-
-        $this->setStatusCode(302);
-        $this->headers->set('Location', str_replace(['&amp;', '\n', '\r'], ['&', '', ''], $targetUrl));
-        return $this;
+        $response = new RedirectResponse($targetUrl, $statusCode, $this->headers->getAll());
+        $response->headers()->setCookies($this->headers->getCookies(true));
+        return $response;
     }
 
-    public function getContent() : string
+    final public function getContent() : string
     {
         return $this->content;
     }
 
-    public function getHeaders() : ResponseHeaders
+    public function headers() : ResponseHeaders
     {
         return $this->headers;
     }
 
-    public function getHttpVersion() : string
+    final public function getHttpVersion() : string
     {
         return $this->httpVersion;
     }
 
-    public function getStatusCode() : int
+    final public function getStatusCode() : int
     {
         return $this->statusCode;
     }
 
-    public function send(): void
+    final public function send(): void
     {
         if (!headers_sent()) {
             $this->sendHeaders();
@@ -81,12 +78,12 @@ class Response implements IResponse
         $this->sendContent();
     }
 
-    protected function sendContent(): void
+    final protected function sendContent(): void
     {
         echo $this->content;
     }
 
-    public function sendHeaders()
+    final protected function sendHeaders()
     { 
         header(
             sprintf(
@@ -122,17 +119,19 @@ class Response implements IResponse
         }
     }
 
-    public function setContent($content)
+    public function setContent($content) : self
     {
         $this->content = $content;
+        return $this;
     }
 
-    public function setHttpVersion(string $httpVersion)
+    public function setHttpVersion(string $httpVersion): self
     {
         $this->httpVersion = $httpVersion;
+        return $this;
     }
 
-    public function setStatusCode(int $statusCode, string $statusText = null)
+    final public function setStatusCode(int $statusCode, string $statusText = null): self
     {
         $this->statusCode = $statusCode;
 
@@ -141,10 +140,13 @@ class Response implements IResponse
         } else {
             $this->statusText = $statusText;
         }
+        return $this;
     }
 
     
-    public function setExpiration(\DateTime $expiration){
+    public function setExpiration(\DateTime $expiration): self
+    {
         $this->headers->set('Expires', $expiration->format('r'));
+        return $this;
     }
 }

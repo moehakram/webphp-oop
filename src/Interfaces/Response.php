@@ -1,23 +1,22 @@
 <?php
 namespace MA\PHPQUICK\Interfaces;
 
+use MA\PHPQUICK\Http\Responses\RedirectResponse;
 use MA\PHPQUICK\Http\Responses\ResponseHeaders;
 
 interface Response
 {
-    public function __construct($content = '', int $statusCode = 200, array $headers = []);
-
-    public function setNoCache();
+    public function setNoCache() : self;
 
     public function setNotFound($message = null);
     
     public function setForbidden();
 
-    public function redirect(string $url): Response;
+    public function redirect(string $url): RedirectResponse;
 
     public function getContent() : string;
 
-    public function getHeaders() : ResponseHeaders;
+    public function headers() : ResponseHeaders;
 
     public function getHttpVersion() : string;
 
@@ -25,13 +24,11 @@ interface Response
 
     public function send();
 
-    public function sendHeaders();
+    public function setContent($content) : self;
 
-    public function setContent($content);
+    public function setExpiration(\DateTime $expiration) : self;
 
-    public function setExpiration(\DateTime $expiration);
+    public function setHttpVersion(string $httpVersion) : self;
 
-    public function setHttpVersion(string $httpVersion);
-
-    public function setStatusCode(int $statusCode, string $statusText = null);
+    public function setStatusCode(int $statusCode, string $statusText = null) : self;
 }

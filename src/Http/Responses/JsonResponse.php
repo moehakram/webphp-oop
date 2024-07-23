@@ -10,7 +10,7 @@ class JsonResponse extends Response
         $this->headers->set('Content-Type', ResponseHeaders::CONTENT_TYPE_JSON);
     }
 
-    public function setContent($content)
+    public function setContent($content) : self
     {
         if ($content instanceof \ArrayObject) {
             $content = $content->getArrayCopy();
@@ -23,5 +23,7 @@ class JsonResponse extends Response
         }
 
         parent::setContent($json);
+
+        return $this;
     }
 }

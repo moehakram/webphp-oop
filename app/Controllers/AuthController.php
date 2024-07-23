@@ -64,9 +64,8 @@ class AuthController extends Controller
             $this->userService->register($req);
             return response()->redirect('/user/login');
         } catch (ValidationException $exception) {
-
             $error = $exception->getErrors();
-            return $this->view('auth/register', [
+            return response()->redirect('/user/register')->with([
                 'title' => 'Register new User',
                 'error' => $error['id'] ?? $error['name'] ?? $error['password']
             ]);

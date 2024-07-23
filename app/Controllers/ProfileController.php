@@ -34,8 +34,7 @@ class ProfileController extends Controller
             "user" => [
                 "id" => $user->id,
                 "name" => $user->name
-            ],
-            'csrf_token' => set_CSRF('/user/profile')
+            ]
         ]);
     }
 
@@ -71,8 +70,7 @@ class ProfileController extends Controller
             "title" => "Update user password",
             "user" => [
                 "id" => $user->id
-            ],
-            'csrf_token' => set_CSRF('/user/password')
+            ]
         ]);
     }
 

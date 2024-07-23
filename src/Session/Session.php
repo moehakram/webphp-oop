@@ -42,8 +42,8 @@ class Session extends Collection
 
     private function removeFlashMessages()
     {
-        $flashMessages = $this->get(self::FLASH, []);
-        foreach ($flashMessages as $key => $flashMessage) {
+        $flashMessages = $this->get(self::FLASH);
+        foreach ($flashMessages ?? [] as $key => $flashMessage) {
             if ($flashMessage['is_remove']) {
                 unset($flashMessages[$key]);
             }

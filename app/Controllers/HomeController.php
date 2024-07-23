@@ -17,7 +17,7 @@ class HomeController extends Controller
         $this->authService();        
     }
 
-    public function index(Request $request)
+    public function index()
     {
         response()->setNoCache();
         if (!$user = $this->sessionService->current()) {

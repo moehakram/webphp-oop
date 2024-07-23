@@ -483,6 +483,6 @@ class Request implements IRequest
 
     public function session(): Session
     {
-        return app()->session;
+        return session();
     }
 }
