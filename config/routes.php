@@ -7,16 +7,17 @@ use App\Middleware\{AuthMiddleware, CSRFMiddleware, GuestMiddleware, OnlyAdminMi
 
 $app->get('/', 'HomeController@index');
 
-$app->get("/user/register", [AuthController::class, 'showRegistration'], GuestMiddleware::class);
-$app->post("/user/register", [AuthController::class, 'register'], GuestMiddleware::class, CSRFMiddleware::class);
-$app->get("/user/login", [AuthController::class, 'showLogin'], GuestMiddleware::class);
-$app->post("/user/login", [AuthController::class, 'login'], GuestMiddleware::class, CSRFMiddleware::class);
-$app->get("/user/logout", [AuthController::class, 'logout'], AuthMiddleware::class);
+$app->get("/users/register", [AuthController::class, 'showRegistration'], GuestMiddleware::class);
+$app->post("/users/register", [AuthController::class, 'register'], GuestMiddleware::class, CSRFMiddleware::class);
+$app->get("/users/login", [AuthController::class, 'showLogin'], GuestMiddleware::class);
+$app->post("/users/login", [AuthController::class, 'login'], GuestMiddleware::class, CSRFMiddleware::class);
+$app->get("/users/logout", [AuthController::class, 'logout'], AuthMiddleware::class);
+$app->get("/users/activate", [AuthController::class, 'activate'], GuestMiddleware::class);
 
-$app->get("/user/profile", [ProfileController::class, 'edit'], AuthMiddleware::class, OnlyAdminMiddleware::class);
-$app->post("/user/profile", [ProfileController::class, 'update'], AuthMiddleware::class, CSRFMiddleware::class);
-$app->get("/user/password", [ProfileController::class, 'changePassword'], AuthMiddleware::class);
-$app->post("/user/password", [ProfileController::class, 'updatePassword'], AuthMiddleware::class, CSRFMiddleware::class);
+$app->get("/users/profile", [ProfileController::class, 'edit'], AuthMiddleware::class, OnlyAdminMiddleware::class);
+$app->post("/users/profile", [ProfileController::class, 'update'], AuthMiddleware::class, CSRFMiddleware::class);
+$app->get("/users/password", [ProfileController::class, 'changePassword'], AuthMiddleware::class);
+$app->post("/users/password", [ProfileController::class, 'updatePassword'], AuthMiddleware::class, CSRFMiddleware::class);
 
 
 /**

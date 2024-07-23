@@ -9,11 +9,15 @@ use App\Repository\UserRepository;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Exception\ValidationException;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
+use MA\PHPQUICK\Token;
 
 class UserService
 {
 
     private UserRepository $userRepository;
+
+    const expireActivationEmail =  1 * 24  * 60 * 60;
+    const token_secret_jwt =  'fe1ed383b50832081d04bef6067540efffaaa54c66066a83cc1cf994af07883359012';
 
     public function __construct(UserRepository $userRepository)
     {
@@ -22,36 +26,100 @@ class UserService
 
     public function register(UserRegisterRequest $request): User
     {
+        if ($request->validate()) {
+            throw new ValidationException('errors', $request->getErrors());
+        }
+
         try {
             Database::beginTransaction();
-
-            if(!$request->validate()){
-                throw new ValidationException('error', $request->getErrors());
-            }
-
             $user = new User();
-            $user->id = $request->id;
             $user->name = $request->name;
+            $user->username = $request->username;
+            $user->email = $request->email;
             $user->password = password_hash($request->password, PASSWORD_BCRYPT);
             $user->role = 0;
-
-            $this->userRepository->save($user);
-
+            $user->is_active = 0;
+            $user->activated_at = null;
+            $data = $this->userRepository->save($user);
+            $this->sendActivationEmail($data);
             Database::commitTransaction();
             return $user;
-        } catch (ValidationException $exception) {
+        } catch (\Exception $exception) {
             Database::rollbackTransaction();
             throw $exception;
         }
     }
 
+
+    public function sendActivationEmail(User $user): void
+    {
+        $token = new Token(self::token_secret_jwt, [
+            'email' => $user->email,
+            'expiry' => time() + self::expireActivationEmail
+        ]);
+
+        // create the activation link
+        $activation_link = sprintf(config('app.url') . "/users/activate?activation_code=%s", $token->generateToken());
+        write_log("activation_link : " . $activation_link);
+
+        // $subject = 'Please activate your account';
+        // $message = <<<MESSAGE
+        //         Hi,
+        //         Please click the following link to activate your account:
+        //         $activation_link
+        //         MESSAGE;
+        // // email header
+        // $header = "From:" . SENDER_EMAIL_ADDRESS;
+
+        // send the email
+        // mail($email, $subject, nl2br($message), $header);
+
+    }
+
+    public function activationAccount($tokenJwt): bool
+    {
+            $token = new Token(self::token_secret_jwt);
+            if (!$token->verifyToken($tokenJwt)) {
+                return false;
+            }
+
+            if ($token->expiry < time()) {
+                $this->userRepository->deleteUnverifiedUser($token->email);
+                return false;
+            }
+
+            $user = $this->userRepository->findByEmail($token->email);
+            if($user->is_active === 1){
+                write_log([
+                        'username' => $user->username,
+                        'status' => 'sudah active'
+                ]);
+                return true;
+            }
+            
+            $this->userRepository->activateUser($user->id);
+            write_log([
+                'username' => $user->username,
+                'email' => $user->email,
+                'password' => $user->password
+            ]);
+            return true;
+    }
+
+
+    function find_unverified_user(string $activation_code, string $email)
+    {
+
+        return null;
+    }
+
     public function login(UserLoginRequest $request): User
     {
-       if(!$request->validate()){
+        if (!$request->validate()) {
             throw new ValidationException("Id and Password can not blank");
-       }
+        }
 
-        $user = $this->userRepository->findById($request->id);
+        $user = $this->userRepository->findById($request->username);
         if ($user == null) {
             throw new ValidationException("Id or password Anda salah !");
         }

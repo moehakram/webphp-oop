@@ -6,14 +6,19 @@ use MA\PHPQUICK\Interfaces\UserAuth;
 
 class User implements UserAuth
 {
-    public string $id;
-    public string $name;
-    public string $password;
-    public int $role;
+    public $id;
+    public $name;
+    public $username;
+    public $email;
+    public $password;
+    public $role;
+    public $is_active;
+    public $activated_at;
 
     public function getId(){
         return $this->id;
     }
+    
     public function getName() {
         return $this->name;
     }

@@ -5,5 +5,5 @@ namespace App\Domain;
 class Session
 {
     public string $id;
-    public string $userId;
+    public string $user_id;
 }

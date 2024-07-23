@@ -20,7 +20,7 @@ class RedirectResponse extends Response
     public function with(array $items): self
     {
         foreach ($items as $key => $value) {
-            session()->set($key, $value);
+            session()->setFlash($key, $value);
         }
         return $this;
     }

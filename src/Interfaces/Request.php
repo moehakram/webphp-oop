@@ -19,9 +19,9 @@ interface Request
 
     public function getFiles() : Files;
 
-    public function get(string $key, $default = null);
+    public function get(string $key = '');
 
-    public function post(string $key, $default = null);
+    public function post(string $key = '');
 
     public function getQuery() : Collection;
 

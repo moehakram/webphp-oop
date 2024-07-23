@@ -1,28 +1,31 @@
-<div class="container col-xl-10 col-xxl-8 px-4 py-5">
-<?php if(isset($error)): ?>
-    <div class="row">
-        <div class="alert alert-danger" role="alert">
-            <?= $error ?>
-        </div>
+<?php if (isset($errors['login'])) : ?>
+    <div class="alert alert-error">
+        <?= $errors['login'] ?>
     </div>
-    <?php endif ?>
-    <div class="row align-items-center g-lg-5 py-5">
-        <div class="col-lg-7 text-center text-lg-start">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Login</h1>
-        </div>
-        <div class="col-md-10 mx-auto col-lg-5">
-            <form class="p-4 p-md-5 border rounded-3 bg-light" method="post" action="/user/login">
-                <input type="hidden" name="csrf_token" value="<?= csrf()?>" >
-                <div class="form-floating mb-3">
-                    <input name="id" type="text" class="form-control" id="id" placeholder="id" value="<?= $inputs['id']??'' ?>">
-                    <label for="id">Id</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input name="password" type="password" class="form-control" id="password" placeholder="password">
-                    <label for="password">Password</label>
-                </div>
-                <button class="w-100 btn btn-lg btn-primary" type="submit">Sign On</button>
-            </form>
-        </div>
+<?php endif ?>
+
+<form action="/users/login" method="post">
+    <h1>Login</h1>
+    <input type="hidden" name="csrf_token" value="<?= csrf() ?>" >
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="<?= $inputs['username'] ?? '' ?>">
+        <small><?= $errors['username'] ?? '' ?></small>
     </div>
-</div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password">
+        <small><?= $errors['password'] ?? '' ?></small>
+    </div>
+    <div>
+        <label for="remember_me">
+            <input type="checkbox" name="remember_me" id="remember_me" value="checked" <?= $inputs['remember_me'] ?? '' ?> />
+            Remember Me
+        </label>
+        <small><?= $errors['agree'] ?? '' ?></small>
+    </div>
+    <section>
+        <button type="submit">Login</button>
+        <footer>Not a member yet? <a href="/users/register">Register here</a></footer>
+    </section>
+</form>

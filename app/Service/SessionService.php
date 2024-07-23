@@ -26,7 +26,7 @@ class SessionService
     {
         $session = new Session();
         $session->id = strRandom(11);
-        $session->userId = $user->id;
+        $session->user_id = $user->id;
 
         $this->sessionRepository->save($session);
         $this->setSession($user, $session->id);
@@ -83,7 +83,7 @@ class SessionService
             return null;
         }
 
-        return $session->userId;
+        return $session->user_id;
     }
 
     private function createUserFromSession(string $userId): User

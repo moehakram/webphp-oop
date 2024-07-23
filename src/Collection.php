@@ -89,4 +89,9 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         $this->remove($offset);
     }
+
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
 }

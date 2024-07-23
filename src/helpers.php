@@ -143,3 +143,9 @@ function dd($data, $callback = 'print_r'){
     echo '</pre>';
     die;
 }
+
+function write_log($message, $filename = 'app.log') {
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[$timestamp] " . (is_array($message) ? json_encode($message) : $message) . PHP_EOL;
+    file_put_contents(rtrim(config('dir.logs'), '/') . '/'. $filename, $logMessage, FILE_APPEND);
+}

@@ -6,15 +6,15 @@ use MA\PHPQUICK\MVC\Model;
 
 class UserLoginRequest extends Model
 {
-    public ?string $id = null;
-    public ?string $password = null;
-
+    public $username = null;
+    public $password = null;
+    public $remember_me = null;
+    
     public function rules(): array
     {
         return [
-            'id' => 'required',
+            'username' => 'required',
             'password' => 'required'
         ];
     }
-
 }

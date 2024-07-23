@@ -23,7 +23,7 @@ class Session extends Collection
         $this->set(self::FLASH, $flashMessages);
     }
 
-    public function setFlash(string $name, string $message, string $type = self::FLASH_SUCCESS)
+    public function setFlash(string $name, $message, string $type = self::FLASH_SUCCESS)
     {
         $flashMessages = $this->get(self::FLASH, []);
         $flashMessages[$name] = [
@@ -40,10 +40,21 @@ class Session extends Collection
         return $flashMessages[$key]['message'] ?? false;
     }
 
+    function getAllMessages(): void
+    {
+        $flashMessages = $this->get(self::FLASH, []);
+        foreach ($flashMessages as $flash_message) {
+            echo sprintf('<div class="alert alert-%s">%s</div>',
+                $flash_message['type'],
+                $flash_message['message']
+            );
+        }
+    }
+
     private function removeFlashMessages()
     {
-        $flashMessages = $this->get(self::FLASH);
-        foreach ($flashMessages ?? [] as $key => $flashMessage) {
+        $flashMessages = $this->get(self::FLASH, []);
+        foreach ($flashMessages as $key => $flashMessage) {
             if ($flashMessage['is_remove']) {
                 unset($flashMessages[$key]);
             }

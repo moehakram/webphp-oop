@@ -1,20 +1,17 @@
-<div class="container col-xl-10 col-xxl-8 px-4 py-5">
-    <div class="row align-items-center g-lg-5 py-5">
-        <div class="col-lg-7 text-center text-lg-start">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Hallo <?= $user['name']??'' ?></h1>
-        </div>
-        <div class="col-md-10 mx-auto col-lg-5">
-            <div class="p-4 p-md-5 border rounded-3 bg-light">
-                <div class="form-floating mb-3">
-                    <a href="/user/profile" class="w-100 btn btn-lg btn-primary">Profile</a>
-                </div>
-                <div class="form-floating mb-3">
-                    <a href="/user/password" class="w-100 btn btn-lg btn-primary">Password</a>
-                </div>
-                <div class="form-floating mb-3">
-                    <a href="/user/logout" class="w-100 btn btn-lg btn-danger">Logout</a>
-                </div>
-            </div>
+<main class="container">
+    <div class="position-relative text-center">
+        <h1>Login Management</h1>
+        <p>
+            Hallo <?= $user['name'] ?? '' ?>
+            Selamat datang di sistem manajemen login.
+        </p>
+        <div>
+            <a href="/users/password" class=" btn btn-login">
+                Password
+            </a>
+            <a href="/users/logout" class="btn btn-registrasi">
+                Logout
+            </a>
         </div>
     </div>
-</div>
+</main>

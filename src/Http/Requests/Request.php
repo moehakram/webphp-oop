@@ -110,14 +110,20 @@ class Request implements IRequest
         return $this->files;
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key = '')
     {
-        return $this->query->get($key, $default);
+        if($key !== ''){
+            return $this->query->get($key);
+        }
+        return $this->query->getAll();
     }
 
-    public function post(string $key, $default = null)
+    public function post(string $key = '')
     {
-        return $this->post->get($key, $default);
+        if($key !== ''){
+            return $this->post->get($key);
+        }
+        return $this->post->getAll();
     }
 
     public function getQuery() : Collection
