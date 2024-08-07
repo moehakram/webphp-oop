@@ -19,7 +19,7 @@ class Config extends Collection
         return $config;
     }
 
-    public function add(string $key, $value)
+    public function set(string $key, $value)
     {
         $keys = explode('.', $key);
         $temp = &$this->items;
@@ -33,5 +33,4 @@ class Config extends Collection
 
         $temp = $value;
     }
-
 }

@@ -1,18 +1,24 @@
 <?php
 
-namespace App\Middleware;
+namespace MA\PHPQUICK;
 
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Interfaces\Middleware;
+use App\Service\ServiceTrait;
 
 class AuthMiddleware implements Middleware{
 
+    use ServiceTrait;
+
+    public function __construct()
+    {
+        $this->authService();
+    }
+
     public function execute(Request $request, \Closure $next)
     {
-        if ($request->user() == null) {
-            return response()->redirect('/users/login');
-        }
-        
+        $user = $this->sessionService->current();
+        $request->login($user);
         return $next($request);
     }
 }

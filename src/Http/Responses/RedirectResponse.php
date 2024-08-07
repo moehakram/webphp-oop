@@ -1,8 +1,6 @@
 <?php
 namespace MA\PHPQUICK\Http\Responses;
 
-use MA\PHPQUICK\Session\Session;
-
 class RedirectResponse extends Response
 {
 
@@ -17,17 +15,29 @@ class RedirectResponse extends Response
         $this->headers->set('Location', str_replace(['&amp;', '\n', '\r'], ['&', '', ''], $targetUrl));
     }
 
-    public function with(array $items): self
+    public function with($key, $value = null)
     {
-        foreach ($items as $key => $value) {
-            session()->setFlash($key, $value);
-        }
+        session()->flash($key, $value);
         return $this;
     }
 
-    public function withMessage(string $message, string $type = Session::FLASH_SUCCESS): self
+    public function withMessage(string $message, string $type = 'success'): self
     {
-        session()->setFlash(strRandom(), $message, $type);
+        $this->with('message', [
+            'message' => $message,
+            'type' => $type
+        ]);
+        return $this;
+    }
+    public function withErrors($errors): self
+    {
+        $this->with('errors', $errors);
+        return $this;
+    }
+
+    public function withInputs(?array $input = null): self
+    {
+        $this->with('inputs',  is_null($input) ? (request()->post() ?: request()->query()) : $input);    
         return $this;
     }
 }

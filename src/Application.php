@@ -4,15 +4,15 @@ namespace MA\PHPQUICK;
 use Exception;
 use MA\PHPQUICK\Router\Route;
 use MA\PHPQUICK\Router\Router;
-use MA\PHPQUICK\Router\Runner;
 use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Router\MiddlewarePipeline;
 use MA\PHPQUICK\Session\Session;
 
 class Application
 {
-    public static Application $app;
+    private static Application $app;
     public readonly Config $config;
     public readonly Router $router;
     public readonly Response $response;
@@ -29,16 +29,19 @@ class Application
         $this->router = new Router($this->request);
     }
 
-    public function get(string $path, $callback, ...$middlewares): void
+    public static function make($attribute = null)
     {
-        $this->router->register(Request::GET, $path, $callback, $middlewares);
-        
-    }
+        if (is_null($attribute)) {
+            return self::$app;
+        }
 
-    public function post(string $path, $callback, ...$middlewares): void
-    {
-        $this->router->register(Request::POST, $path, $callback, $middlewares);
-        
+        $validAttributes = ['session', 'request', 'response', 'config', 'router'];
+
+        if (in_array($attribute, $validAttributes)) {
+            return self::$app->$attribute;
+        }
+
+        throw new \InvalidArgumentException("Invalid attribute: $attribute");
     }
 
     public function run()
@@ -50,25 +53,25 @@ class Application
                 $this->response->setNotFound("Route Not Found { {$this->request->getPath()} }");
             }
 
-            $runner = $this->createRunner($route);
-
-            return $runner->handle($this->request)->send();
+            return $this->createRunMiddle($route)->handle($this->request)->send();
         } catch (HttpException $http) {
             return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
         }
     }
 
-    private function createRunner($route): Runner
+    private function createRunMiddle(Route $route): MiddlewarePipeline
     {
-        $middlewares = array_merge($route->getMiddlewares(), [fn() => $this->handleRouteCallback($route)]);
-        return new Runner($middlewares);
+        $middlewares = $route->getMiddlewares();
+        array_unshift($middlewares, AuthMiddleware::class);
+        array_push($middlewares, fn() => $this->handleRouteCallback($route));
+        return new MiddlewarePipeline($middlewares);
     }
 
     private function handleRouteCallback(Route $route)
     {
         $action = $route->getAction();
         $parameter = $route->getParameter();
-        if (($controller = $route->getController()) === null) {
+        if (!$controller = $route->getController()) {
             return call_user_func_array($action, $parameter);
         } else {
             return $this->executeController($controller, $action, $parameter);

@@ -1,34 +1,25 @@
 <?php
 namespace MA\PHPQUICK\Validation;
 
-class InputHandler{
+use MA\PHPQUICK\Exception\ValidationException;
+
+class Validator{
     use MethodsValidation;
 
-        
     protected const DEFAULT_ERROR_MESSAGES = [
-        // required
         'required' => 'Please enter the %s',
-        // email
         'email' => 'The %s is not a valid email address',
-        // min:number
         'min' => 'The %s must have at least %s characters',
-        // max:number 
         'max' => 'The %s must have at most %s characters',
-        // between:min,max
         'between' => 'The %s must have between %d and %d characters',
-        // same:field_other
         'same' => 'The %s must match with %s',
-        // alphanumeric
         'alphanumeric' => 'The %s should have only letters and numbers',
-        //secure
         'secure' => 'The %s must have between 8 and 64 characters and contain at least one number, one upper case letter, one lower case letter and one special character',
-        // unique:tabel,column
         'unique' => 'The %s already exists',
-        // numeric
         'numeric' => 'The %s must be a numeric value'
     ];
 
-    protected $inputs = [];
+    protected $data = [];
     protected $sanitizationRule = [];
     protected $validationRules = [];
     protected $messages = [];
@@ -74,13 +65,13 @@ class InputHandler{
         $inputs = [];
         if ($this->sanitizationRule) {
             $options = array_map(fn($field) => $this->filterKey()[$field], $this->sanitizationRule);
-            $inputs = filter_var_array($this->inputs, $options);
+            $inputs = filter_var_array($this->data, $options);
         } else {
-            $inputs = filter_var_array($this->inputs, FILTER_SANITIZE_SPECIAL_CHARS);
+            $inputs = filter_var_array($this->data, FILTER_SANITIZE_SPECIAL_CHARS);
         }
     
-        $this->inputs = array_merge($this->inputs, $inputs);
-        return $this->trimValue($this->inputs);
+        $this->data = array_merge($this->data, $inputs);
+        return $this->trimValue($this->data);
     }
 
     final protected function trimValue(&$data)
@@ -127,14 +118,17 @@ class InputHandler{
 
     public function filter() : array 
     {
-        $data = $this->sanitize();
-        $this->validate();
-        return [$data, $this->errors];
+        $this->sanitize();
+        if($this->validate()){
+            throw new ValidationException(reset($this->errors), $this->getErrors());
+        }
+
+        return $this->data;
     }
 
     public function getInputs() : array
     {
-        return $this->inputs;
+        return $this->data;
     }
 
 
@@ -146,17 +140,17 @@ class InputHandler{
 
     public function has(string $key): bool
     {
-        return isset($this->inputs[$key]);
+        return isset($this->data[$key]);
     }
 
     public function get(string $key, $default = null)
     {
-        return $this->inputs[$key] ?? $default;
+        return $this->data[$key] ?? $default;
     }
 
     public function set(string $key, $value)
     {
-        $this->inputs[$key] = $value;
+        $this->data[$key] = $value;
     }
 
     final protected function loadData(array $data)

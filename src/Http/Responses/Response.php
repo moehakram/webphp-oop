@@ -43,6 +43,10 @@ class Response implements IResponse
         throw new HttpException(403, $view);
     }
 
+    public function back(){
+        return $this->redirect(request()->getPreviousUrl());
+    }
+
     public function redirect(string $targetUrl, int $statusCode = 302): RedirectResponse
     {
         $response = new RedirectResponse($targetUrl, $statusCode, $this->headers->getAll());

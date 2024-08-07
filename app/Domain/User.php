@@ -2,9 +2,9 @@
 
 namespace App\Domain;
 
-use MA\PHPQUICK\Interfaces\UserAuth;
+use MA\PHPQUICK\Interfaces\Authenticable;
 
-class User implements UserAuth
+class User implements Authenticable
 {
     public $id;
     public $name;
@@ -15,16 +15,36 @@ class User implements UserAuth
     public $is_active;
     public $activated_at;
 
-    public function getId(){
-        return $this->id;
-    }
-    
-    public function getName() {
-        return $this->name;
-    }
-    
-    public function getRole(){
-        return $this->role;
+    // private $rememberToken;
+
+    public function getAuthIdentifier()
+    {
+        return $this->username;
     }
 
+    public function getAuthPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getAuthIdentifierName(): string
+    {
+        return 'username';
+    }
+
+    public function getRememberToken(): ?string
+    {
+        // return $this->rememberToken;
+        return null;
+    }
+
+    public function setRememberToken(string $value): void
+    {
+        // $this->rememberToken = $value;
+    }
+
+    public function getRememberTokenName(): string
+    {
+        return 'remember_token';
+    }
 }

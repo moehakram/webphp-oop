@@ -28,13 +28,9 @@ class ProfileController extends Controller
     public function edit(Request $request) // Menampilkan formulir pengeditan profil
     {
         $user = $request->user();
-
         return $this->view('profile/profile', [
             "title" => "Update user profile",
-            "user" => [
-                "id" => $user->id,
-                "name" => $user->name
-            ]
+            "user" => $this->userService->getUser($user->id)
         ]);
     }
 
@@ -51,14 +47,9 @@ class ProfileController extends Controller
             $this->sessionService->create($user); //update cookie session setelah update profile
             return response()->redirect('/');
         } catch (ValidationException $exception) {
-            response()->setStatusCode(422);
-            return $this->view('profile/profile', [
-                "title" => "Update user profile",
-                "error" => $exception->getMessage(),
-                "user" => [
-                    "id" => $user->id,
-                    "name" => $request->post('name')
-                ]
+            return response()->redirect('/users/profile')->with([
+                'inputs' => $request->post(),
+                'errors' => $exception->getErrors()
             ]);
         }
     }
@@ -68,9 +59,7 @@ class ProfileController extends Controller
         $user = $request->user();
         return $this->view('profile/password', [
             "title" => "Update user password",
-            "user" => [
-                "id" => $user->id
-            ]
+            "username" => $this->userService->getUser($user->id)->username
         ]);
     }
 
@@ -86,12 +75,9 @@ class ProfileController extends Controller
             $this->userService->updatePassword($req);
             return response()->redirect('/');
         } catch (ValidationException $exception) {
-            return $this->view('profile/password', [
-                "title" => "Update user password",
-                "error" => $exception->getMessage(),
-                "user" => [
-                    "id" => $user->id
-                ]
+            return response()->back()->with([
+                'inputs' => $request->post(),
+                'errors' => $exception->getErrors()
             ]);
         }
     }

@@ -1,12 +1,12 @@
 <?php
 
-use MA\PHPQUICK\Validation\InputHandler;
+use MA\PHPQUICK\Validation\Validator;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 // Input data
 $inputs = [
-    'firstname' => ' <a>akram</a>455    ',
+    // 'firstname' => ' <a>akram</a>455    ',
     'lastname' => ' <a>akram</a> klaLJ\'SGHJKLHHHH   ',
     'address' => 'addr     ',
     'username' => '11',
@@ -52,37 +52,37 @@ $messages = [
 ];
 
 
-function displayResultData(InputHandler $handler){
+function displayResultData(Validator $handler){
     echo 'data' . PHP_EOL;
     var_dump($handler->getInputs());
 }
 
-function displayRules(InputHandler $handler){
+function displayRules(Validator $handler){
     echo 'Sanitization Rules: ' . PHP_EOL;
     print_r($handler->getSanitizationRule());
     echo 'Validation Rules: ' . PHP_EOL;
     print_r($handler->getValidationRules());
 }
 
-function displayResultsSanitize(InputHandler $handler) {
+function displayResultsSanitize(Validator $handler) {
     echo 'Sanitized Inputs: ' . PHP_EOL;
     var_dump($handler->sanitize());
 }
 
-function displayResultsValidate(InputHandler $handler) {
+function displayResultsValidate(Validator $handler) {
     echo 'Validation Results: ' . PHP_EOL;
     var_dump($handler->validate());
 }
 
-function displayResultsFilter(InputHandler $handler) {
+function displayResultsFilter(Validator $handler) {
     echo 'Filtered Data: ' . PHP_EOL;
     var_dump($handler->filter());
 }
 
 
-$inputHandler = new InputHandler($inputs, $fields, $messages);
-displayResultsSanitize($inputHandler);
-// displayResultsValidate($inputHandler);
+$inputHandler = new Validator($inputs, $fields, $messages);
+// displayResultsSanitize($inputHandler);
+displayResultsValidate($inputHandler);
 // displayResultsFilter($inputHandler);
-displayResultData($inputHandler);
+// displayResultData($inputHandler);
 

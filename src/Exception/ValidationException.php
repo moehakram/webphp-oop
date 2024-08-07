@@ -13,8 +13,8 @@ class ValidationException extends \Exception
         $this->errors = $errors;
     }
 
-    public function getErrors(): ?Collection
+    public function getErrors(): ?array
     {
-        return $this->errors;
+        return $this->errors->getAll();
     }
 }

@@ -17,7 +17,7 @@ class UserRegisterRequest extends Model
     {
         return [
             'name' => '@string|required',
-            'username' => 'required|@trim|unique:users, username',
+            'username' => 'required|unique:users, username',
             'email' => '@email|required|email|unique:users,email',
             'password' => 'required|secure',
             'password2' => 'required|same:password',

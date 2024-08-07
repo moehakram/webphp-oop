@@ -26,7 +26,7 @@
             <div class="col-md-6">
                 <div class="my-5 p-5 card">
                     <h3>What happened?</h3>
-                    <p class="fs-5">A 500 error status implies there is a problem with the web server's software causing it to malfunction.</p>
+                    <p class="fs-5"><?= $errors ?? "A 500 error status implies there is a problem with the web server's software causing it to malfunction." ?> </p>
                 </div>
                 <div class="my-5 p-5 card">
                     <h3>What can I do?</h3>

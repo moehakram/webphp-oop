@@ -8,7 +8,7 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     public function __construct(array $items = [])
     {
         foreach ($items as $key => $value) {
-            $this->add($key, $value);
+            $this->set($key, $value);
         }
     }
 
@@ -23,11 +23,6 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     }
 
     public function set(string $key, $value)
-    {
-        $this->items[$key] = $value;
-    }
-
-    public function add(string $key, $value)
     {
         $this->items[$key] = $value;
     }
@@ -93,5 +88,27 @@ class Collection implements \IteratorAggregate, \Countable, \ArrayAccess
     public function __get($name)
     {
         return $this->get($name);
+    }
+
+    public function add($key, $value = null)
+    {
+        $keys = is_array($key) ? $key : [$key => $value];
+        
+        foreach ($keys as $k => $v) {
+            $this->items[$k] = $v;
+        }
+    }
+
+    public function getOrSet($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return $this;
+        }
+
+        if (is_array($key)) {
+            return $this->add($key);
+        }
+
+        return $this->get($key, $default);
     }
 }

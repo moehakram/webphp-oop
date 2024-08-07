@@ -4,40 +4,34 @@ use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Http\Responses\Response;
-use MA\PHPQUICK\Session\Session;
 
-set_exception_handler(function(\Throwable $ex) {
-
+function log_exception(\Throwable $ex): void
+{
     $time = date('Y-m-d H:i:s');
     $message = "[{$time}] Uncaught exception: " . $ex->getMessage() . "\n";
     $message .= "In file: " . $ex->getFile() . " on line " . $ex->getLine() . "\n";
     $message .= "Stack trace:\n" . $ex->getTraceAsString() . "\n";
-
-    // Menulis log ke file
     error_log($message, 3, __DIR__ . '/../logs/errors.log');
+}
 
-    // Mengeluarkan pesan ke pengguna
-    echo 'Whoops, looks like something went wrong!';
-});
-
-if(!function_exists('app')){
-    function app() : Application
+if (!function_exists('app')) {
+    function app(string $attribute = null)
     {
-        return Application::$app;
+        return Application::make($attribute);
     }
 }
 
 if(!function_exists('session')){
-    function session() : Session
+    function session($key = null, $default = null)
     {
-        return app()->session;
+        return app('session')->getOrSet($key, $default);
     }
 }
 
 if(!function_exists('response')){
     function response($content = '', $statusCode = 200): Response
     {
-        $res = app()->response;
+        $res = app('response');
         if($content !== ''){
             $res->setContent($content);
             $res->setStatusCode($statusCode);
@@ -49,7 +43,7 @@ if(!function_exists('response')){
 if(!function_exists('request')){
     function request(): Request
     {
-        return app()->request;
+        return app('request');
     }
 }
 
@@ -102,23 +96,25 @@ if(!function_exists('view')){
 if(!function_exists('PHPQuick')){
     function PHPQuick(array $config)
     {
-        return new Application($config);
+        static $app = null;
+
+        if(is_null($app)){
+            $app = new Application($config);   
+        }
+
+        return $app;
     }
 }
 
 if(!function_exists('config')){
-    function config($key = '', $default = null){
-        if($key !== '' && $key !== null){
-            return Application::$app->config->get($key, $default);
-        }
-
-        return Application::$app->config;
+    function config($key = null, $default = null)
+    {
+        return app('config')->getOrSet($key, $default);
     }
 }
 if(!function_exists('clean')){
     function clean($data)
     {
-
         if (is_string($data)) {
             return htmlspecialchars(stripslashes(trim($data)), ENT_QUOTES, 'UTF-8');
         }
@@ -130,16 +126,9 @@ if(!function_exists('clean')){
     }
 }
 
-function d($data)
-{
-	echo '<pre>';
-	var_dump($data);
-	echo '</pre>';
-}
-
 function dd($data, $callback = 'print_r'){
     echo '<pre>';
-    $callback($data);
+        $callback($data);
     echo '</pre>';
     die;
 }
@@ -148,4 +137,22 @@ function write_log($message, $filename = 'app.log') {
     $timestamp = date('Y-m-d H:i:s');
     $logMessage = "[$timestamp] " . (is_array($message) ? json_encode($message) : $message) . PHP_EOL;
     file_put_contents(rtrim(config('dir.logs'), '/') . '/'. $filename, $logMessage, FILE_APPEND);
+}
+
+function displayAlert(array $value): string
+{
+    return sprintf('<div class="alert alert-%s">%s</div>',
+        $value['type'],
+        $value['message']
+    );
+}
+
+function inputs($key)
+{
+    return session()->getFlash('inputs')[$key] ?? '';
+}
+
+function errors($key)
+{
+    return session()->getFlash('errors')[$key] ?? '';
 }

@@ -1,28 +1,23 @@
-<div class="container col-xl-10 col-xxl-8 px-4 py-5">
-<?php if(isset($error)): ?>
-    <div class="row">
-        <div class="alert alert-danger" role="alert">
-            <?= $error ?>
-        </div>
+<form action="/users/profile" method="post">
+    <h1 class="display-4 fw-bold lh-1 mb-3">Profile</h1>
+    <input type="hidden" name="csrf_token" value="<?= csrf() ?>">
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" value="<?= inputs('name') ?: $user->name ?>">
+        <small><?= errors('name') ?></small>
     </div>
-    <?php endif ?>
-    <div class="row align-items-center g-lg-5 py-5">
-        <div class="col-lg-7 text-center text-lg-start">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Profile</h1>
-        </div>
-        <div class="col-md-10 mx-auto col-lg-5">
-            <form class="p-4 p-md-5 border rounded-3 bg-light" method="post" action="/user/profile">
-                <input type="hidden" name="csrf_token" value="<?= csrf() ?>">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="id" placeholder="id" value="<?= $user['id']??'' ?>" disabled>
-                    <label for="id">Id</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input name="name" type="text" class="form-control" id="name" value="<?= $user['name']??'' ?>" placeholder="name">
-                    <label for="name">Name</label>
-                </div>
-                <button class="w-100 btn btn-lg btn-primary" type="submit">Update Profile</button>
-            </form>
-        </div>
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="<?= inputs('username') ?: $user->username ?>">
+        <small><?= errors('username') ?></small>
     </div>
-</div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="<?= inputs('email') ?: $user->email ?>">
+        <small><?= errors('email') ?></small>
+    </div>
+    <section>
+        <button type="submit">Update Profile</button>
+        <footer><a href="/">cancel</a></footer>
+    </section>
+</form>

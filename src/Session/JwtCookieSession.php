@@ -18,7 +18,7 @@ class JwtCookieSession extends Collection
         $this->jwt_secret = $jwt_secret;
         $this->expiration = $expiration;
 
-        $token = request()->getCookies()->get($this->cookie_name);
+        $token = request()->cookies()->get($this->cookie_name);
         if (isset($token)) {
             $data = $this->verifyToken($token);
             parent::__construct($data);

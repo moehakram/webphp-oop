@@ -8,17 +8,9 @@ use MA\PHPQUICK\Interfaces\Request;
 
 class GuestMiddleware implements Middleware
 {
-    use ServiceTrait;
-
-    public function __construct()
+    public function execute(Request $request, \Closure $next)
     {
-        $this->authService();
-    }
-
-    public function execute(Request $request, callable $next)
-    {
-        $user = $this->sessionService->current();
-        if ($user != null) {
+        if ($request->user() != null) {
             return response()->redirect('/');
         }
         return $next($request);

@@ -1,34 +1,28 @@
-<div class="container col-xl-10 col-xxl-8 px-4 py-5">
-    <?php if(isset($error)): ?>
-    <div class="row">
-        <div class="alert alert-danger" role="alert">
-            <?= $error ?>
-        </div>
+<form action="/users/password" method="post">
+    <h1 class="display-4 fw-bold lh-1 mb-3">Profile</h1>
+    <input type="hidden" name="csrf_token" value="<?= csrf() ?>">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" value="<?= inputs('username') ?: $username ?>">
+        <small><?= errors('username') ?></small>
     </div>
-    <?php endif ?>
-    <div class="row align-items-center g-lg-5 py-5">
-        <div class="col-lg-7 text-center text-lg-start">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Password</h1>
-        </div>
-        <div class="col-md-10 mx-auto col-lg-5">
-            <form class="p-4 p-md-5 border rounded-3 bg-light" method="post" action="/user/password">
-                <input type="hidden" name="csrf_token" value="<?= csrf() ?>">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="id" placeholder="id" value="<?= $user['id']??''?>" disabled>
-                    <label for="id">Id</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input name="oldPassword" type="password" class="form-control" id="oldPassword"
-                        placeholder="old password">
-                    <label for="oldPassword">Old Password</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input name="newPassword" type="password" class="form-control" id="newPassword"
-                        placeholder="password">
-                    <label for="newPassword">New Password</label>
-                </div>
-                <button class="w-100 btn btn-lg btn-primary" type="submit">Change Password</button>
-            </form>
-        </div>
+    <div>
+        <label for="oldPassword">Password:</label>
+        <input type="password" name="oldPassword" id="oldPassword">
+        <small><?= errors('oldPassword') ?></small>
     </div>
-</div>
+    <div>
+        <label for="password">new Password:</label>
+        <input type="password" name="password" id="password">
+        <small><?= errors('password') ?></small>
+    </div>
+    <div>
+        <label for="password2">new Password Again:</label>
+        <input type="password" name="password2" id="password2">
+        <small><?= errors('password2') ?></small>
+    </div>
+    <section>
+        <button type="submit">Change Password</button>
+        <footer><a href="/">cancel</a></footer>
+    </section>
+</form>

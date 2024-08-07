@@ -9,7 +9,10 @@ class Testing{
 
     function implemtationSessionFlass_tes2(Request $request){
         $session = $request->session();
-        $session->setFlash('login', 'berhasil login', Session::FLASH_SUCCESS);
+        $session->setFlash('login', [
+            'message' => 'berhasil login',
+            'type' => 'success'
+        ]);
         $session->set('user', [
             'id' => '123',
             'name' => 'akram'
@@ -20,6 +23,8 @@ class Testing{
     function implemtationSessionFlass_tes3(Request $request){
         $session = $request->session();
         return new JsonResponse([
+            //  $session->getFlash('login')
+            session('message', []),
              $session->getAll()
         ]);
     }

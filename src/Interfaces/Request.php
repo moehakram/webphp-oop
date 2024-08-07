@@ -15,43 +15,31 @@ interface Request
 
     public function getClientIPAddress() : string;
 
-    public function getCookies() : Collection;
+    public function cookies() : Collection;
 
-    public function getFiles() : Files;
+    public function files() : Files;
 
-    public function get(string $key = '');
+    public function post($key = null, $default = null);
 
-    public function post(string $key = '');
-
-    public function getQuery() : Collection;
-
-    public function getPost() : Collection;
-
-    public function getDelete() : Collection;
-    
-    public function getPut() : Collection;
-
-    public function getPatch() : Collection;
+    public function query($key = null, $default = null);
 
     public function getFullUrl() : string;
 
-    public function getHeaders() : RequestHeaders;
+    public function headers() : RequestHeaders;
     
     public function getHost() : string;
 
-    public function getInput(string $name, $default = null);
+    public function input(string $name, $default = null);
 
     public function getJsonBody() : array;
 
     public function getMethod() : string;
 
-    public function getPassword();
-
     public function getPath() : string;
 
     public function getPort() : int;
 
-    public function getPreviousUrl(bool $fallBackToReferer = true) : string;
+    public function getPreviousUrl() : string;
 
     public function getRawBody() : string;
 
@@ -75,9 +63,9 @@ interface Request
 
     public function setPreviousUrl(string $previousUrl);
 
-    public function login(?UserAuth $user);
+    public function login(?Authenticable $user);
 
-    public function user(): ?UserAuth;
+    public function user(): ?Authenticable;
 
     public function session(): Session;
 }

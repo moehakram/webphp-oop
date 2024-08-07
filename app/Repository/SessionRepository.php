@@ -16,8 +16,9 @@ class SessionRepository
 
     public function save(Session $session): Session
     {
-        $statement = $this->connection->prepare("INSERT INTO sessions(id, user_id) VALUES (?, ?)");
-        $statement->execute([$session->id, $session->userId]);
+        $statement = $this->connection->prepare("INSERT INTO sessions(user_id) VALUES (?)");
+        $statement->execute([$session->user_id]);
+        $session->id = $this->connection->lastInsertId();
         return $session;
     }
 
@@ -30,7 +31,7 @@ class SessionRepository
             if ($row = $statement->fetch()) {
                 $session = new Session();
                 $session->id = $row['id'];
-                $session->userId = $row['user_id'];
+                $session->user_id = $row['user_id'];
                 return $session;
             } else {
                 return null;

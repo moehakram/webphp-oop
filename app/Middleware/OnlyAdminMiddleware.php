@@ -2,12 +2,13 @@
 
 namespace App\Middleware;
 
+use App\Domain\User;
 use MA\PHPQUICK\Interfaces\Middleware;
 use MA\PHPQUICK\Interfaces\Request;
 
 class OnlyAdminMiddleware implements Middleware
 {
-    public function execute(Request $request, callable $next)
+    public function execute(Request $request, \Closure $next)
     {
         $user = $request->user();
 
@@ -17,8 +18,8 @@ class OnlyAdminMiddleware implements Middleware
         response()->setForbidden();
     }
 
-    private function isAdmin($user): bool
+    private function isAdmin(User $user): bool
     {
-        return $user !== null && $user->getRole() == 1;
+        return $user !== null && $user->role == 1;
     }
 }

@@ -1,12 +1,11 @@
 <?php
 namespace MA\PHPQUICK\Http\Requests;
 
-use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Interfaces\Request as IRequest;
 use MA\PHPQUICK\Http\Requests\Files;
 use MA\PHPQUICK\Http\Requests\RequestHeaders;
-use MA\PHPQUICK\Interfaces\UserAuth;
+use MA\PHPQUICK\Interfaces\Authenticable;
 use MA\PHPQUICK\Session\Session;
 
 class Request implements IRequest
@@ -51,7 +50,7 @@ class Request implements IRequest
     private RequestHeaders $headers;
     private string $previousUrl = '';
     private ?string $rawBody = null;
-    private ?UserAuth $user = null;
+    private ?Authenticable $user = null;
 
     public function __construct() {
         $this->initializeServerAndHeaders();
@@ -100,56 +99,68 @@ class Request implements IRequest
         return $this->clientIPAddresses[0];
     }
 
-    public function getCookies() : Collection
+    public function cookies() : Collection
     {
         return $this->cookies;
     }
 
-    public function getFiles() : Files
+    public function files() : Files
     {
         return $this->files;
     }
 
-    public function get(string $key = '')
+    public function post($name = null, $default = null) : null|array|string
     {
-        if($key !== ''){
-            return $this->query->get($key);
+        if (is_null($name)) {
+            return $this->post->getAll();
         }
-        return $this->query->getAll();
+        return $this->post->get($name, $default);
     }
 
-    public function post(string $key = '')
+    public function query($name = null, $default = null) : null|array|string
     {
-        if($key !== ''){
-            return $this->post->get($key);
+        if (is_null($name)) {
+            return $this->query->getAll();
         }
-        return $this->post->getAll();
+        return $this->query->get($name, $default);
     }
 
-    public function getQuery() : Collection
+    public function input(string $name, $default = null)
     {
-        return $this->query;
-    }
+        if ($this->isJson()) {
+            $json = $this->getJsonBody();
 
-    public function getPost() : Collection
-    {
-        return $this->post;
-    }
+            if (array_key_exists($name, $json)) {
+                return $json[$name];
+            } else {
+                return $default;
+            }
+        } else {
+            $value = null;
 
-    public function getDelete() : Collection
-    {
-        return $this->delete;
-    }
+            switch ($this->method) {
+                case Request::GET:
+                    return $this->query->get($name, $default);
+                case Request::POST:
+                    $value = $this->post->get($name, $default);
+                    break;
+                case Request::DELETE:
+                    $value = $this->delete->get($name, $default);
+                    break;
+                case Request::PUT:
+                    $value = $this->put->get($name, $default);
+                    break;
+                case Request::PATCH:
+                    $value = $this->patch->get($name, $default);
+                    break;
+            }
 
-    
-    public function getPut() : Collection
-    {
-        return $this->put;
-    }
+            if ($value === null) {
+                $value = $this->query->get($name, $default);
+            }
 
-    public function getPatch() : Collection
-    {
-        return $this->patch;
+            return $value;
+        }
     }
 
     public function getFullUrl() : string
@@ -170,7 +181,7 @@ class Request implements IRequest
         return $parsedProtocol . '://' . $host . $port . $this->server->get('REQUEST_URI');
     }
 
-    public function getHeaders() : RequestHeaders
+    public function headers() : RequestHeaders
     {
         return $this->headers;
     }
@@ -209,44 +220,6 @@ class Request implements IRequest
         return $host;
     }
 
-    public function getInput(string $name, $default = null)
-    {
-        if ($this->isJson()) {
-            $json = $this->getJsonBody();
-
-            if (array_key_exists($name, $json)) {
-                return $json[$name];
-            } else {
-                return $default;
-            }
-        } else {
-            $value = null;
-
-            switch ($this->method) {
-                case Request::GET:
-                    return $this->query->get($name, $default);
-                case Request::POST:
-                    $value = $this->post->get($name, $default);
-                    break;
-                case Request::DELETE:
-                    $value = $this->delete->get($name, $default);
-                    break;
-                case Request::PUT:
-                    $value = $this->put->get($name, $default);
-                    break;
-                case Request::PATCH:
-                    $value = $this->patch->get($name, $default);
-                    break;
-            }
-
-            if ($value === null) {
-                $value = $this->query->get($name, $default);
-            }
-
-            return $value;
-        }
-    }
-
     public function getJsonBody() : array
     {
         $json = json_decode($this->getRawBody(), true);
@@ -261,11 +234,6 @@ class Request implements IRequest
     public function getMethod() : string
     {
         return $this->method;
-    }
-
-    public function getPassword()
-    {
-        return $this->server->get('PHP_AUTH_PW');
     }
 
     public function getPath() : string
@@ -286,17 +254,12 @@ class Request implements IRequest
         return (int)$this->server->get('SERVER_PORT');
     }
 
-    public function getPreviousUrl(bool $fallBackToReferer = true) : string
+    public function getPreviousUrl() : string
     {
         if (!empty($this->previousUrl)) {
             return $this->previousUrl;
-        }
-
-        if ($fallBackToReferer) {
-            return $this->headers->get('REFERER', '');
-        }
-
-        return '';
+        }       
+        return $this->headers->get('REFERER', '');
     }
 
     public function getRawBody() : string
@@ -479,11 +442,11 @@ class Request implements IRequest
     }
 
     
-    public function login(?UserAuth $user){
+    public function login(?Authenticable $user){
         $this->user = $user;
     }
 
-    public function user(): ?UserAuth{
+    public function user(): ?Authenticable{
         return $this->user;
     }
 

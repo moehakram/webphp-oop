@@ -7,9 +7,13 @@ use MA\PHPQUICK\Collection;
 class Headers extends Collection
 {
 
-    public function add(string $name, $values, bool $shouldReplace = true) : void
+    public function add($key, $values = null, bool $shouldReplace = true) : void
     {
-        $this->set($name, $values, $shouldReplace);
+        $keys = is_array($key) ? $key : [$key => $values];
+        
+        foreach ($keys as $name => $value) {
+            $this->set($name, $value, $shouldReplace);
+        }
     }
 
     public function get(string $name, $default = null, bool $onlyReturnFirst = true)

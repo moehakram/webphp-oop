@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $title ?? 'Login Management' ?></title>
-    <link rel="stylesheet" type="text/css" href="/assets/style.css">
+    <link rel="stylesheet" type="text/css" href="/assets/styles.css">
 </head>
 <body>
     <main class="container">
-        <div class="position-relative text-center">
+        <div>
             <h1>Login Management</h1>
             <p>
                 Selamat datang di sistem manajemen login.

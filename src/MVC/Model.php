@@ -1,9 +1,9 @@
 <?php
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Validation\InputHandler;
+use MA\PHPQUICK\Validation\Validator;
 
-abstract class Model extends InputHandler
+abstract class Model extends Validator
 {
     final public function __construct(array $data = [])
     {

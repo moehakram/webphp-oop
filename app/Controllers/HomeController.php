@@ -12,18 +12,13 @@ class HomeController extends Controller
 
     protected $layout = 'app';
 
-    public function __construct()
-    {
-        $this->authService();        
-    }
-
-    public function index()
+    public function index(Request $request)
     {
         response()->setNoCache();
-        if (!$user = $this->sessionService->current()) {
+        if (!$user = $request->user()) {
             return view('welcome');
         } else {
-            return $this->home($user->getName());
+            return $this->home($user->name);
         }
     }
 
@@ -36,5 +31,4 @@ class HomeController extends Controller
             ]
         ]);
     }
-
 }

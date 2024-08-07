@@ -8,9 +8,7 @@ use App\Models\User\UserLoginRequest;
 use App\Models\User\UserRegisterRequest;
 use App\Service\ServiceTrait;
 use MA\PHPQUICK\Exception\ValidationException;
-use MA\PHPQUICK\Session\Session;
-use MA\PHPQUICK\Validation\InputHandler;
-use MA\PHPQUICK\Validation\Validation;
+use MA\PHPQUICK\Validation\Validator;
 
 class AuthController extends Controller
 {
@@ -27,25 +25,23 @@ class AuthController extends Controller
     {
         response()->setNoCache();
         return $this->view('auth/login', [
-            'title' => 'Login User'
+            'title' => 'Login User',
+            'errors' => session()->getFlash('message')
         ]);
     }
 
     public function login(Request $request) // Proses login pengguna
     {
         $req = new UserLoginRequest();
-        // $req->id = $request->post('id');
-        // $req->password = $request->post('password');
+        $req->username = $request->post('username');
+        $req->password = $request->post('password');
 
         try {
             $user = $this->userService->login($req);
             $this->sessionService->create($user);
             return response()->redirect('/');
-        } catch (ValidationException $exception) {
-            return $this->view('auth/login', [
-                'title' => 'Login User',
-                'errors' => $exception->getMessage()
-            ]);
+        } catch (ValidationException $ex) {
+            return response()->back()->withMessage($ex->getMessage(), 'error');
         }
     }
 
@@ -53,8 +49,7 @@ class AuthController extends Controller
     {
         return $this->view('auth/register', [
             'title' => 'Register New User',
-            'inputs' => $request->session()->getFlash('inputs'),
-            'errors' => $request->session()->getFlash('errors')
+            'errors' => $request->session()->getFlash('message')
         ]);
     }
 
@@ -63,38 +58,29 @@ class AuthController extends Controller
         $req = new UserRegisterRequest($request->post());
         try {
             $this->userService->register($req);
-            return response()->redirect('/users/login');
+            write_log(['username' => $req->username, 'password' => $req->password]);
+            return response()->redirect('/users/login')
+            ->withMessage('Silakan buka email untuk aktivasi akun!');
         } catch (ValidationException $exception) {
-            return response()->redirect('/users/register')->with([
-                'inputs' => $request->post(),
-                'errors' => $exception->getErrors()->getAll()
-            ]);
+            return response()->back()->withErrors($exception->getErrors())->withInputs();
         }
     }
 
     public function activate(Request $req){
-        $handler = new InputHandler($req->get(), [
-            'activation_code' => 'required|@string'
-        ]);
-        
-        $data = $handler->sanitize();
-        if($handler->validate()){
+        try{
+            $handler = new Validator($req->query(), [
+                'activation_code' => 'required|@string'
+            ], ['required' => 'Tautan aktivasi tidak valid']);
+            
+            $data = $handler->filter();
+            $this->userService->activationAccount($data['activation_code']);
             return response()->redirect('/users/login')
-            ->withMessage('Tautan aktivasi tidak valid, silakan daftarkan kembali.');
+            ->withMessage('login', 'Akun sudah aktif silakan login');
+        }catch(ValidationException $val){
+            return response()->redirect('/users/register')
+            ->withMessage($val->getMessage(), 'error');
         }
-        
-        
-        if($this->userService->activationAccount($data['activation_code'])){
-            return response()->redirect('/users/login')
-            ->withMessage('Akun sudah aktif silakan login');
-        }
-
-        return response()->redirect('/users/register')
-        ->withMessage('Tautan aktivasi tidak valid, silakan daftarkan kembali.',
-        Session::FLASH_ERROR);
     }
-
-   
 
     public function showResetPassword() // Menampilkan formulir reset password
     {

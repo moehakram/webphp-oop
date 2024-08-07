@@ -10,6 +10,7 @@ use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Exception\ValidationException;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
 use MA\PHPQUICK\Token;
+use MA\PHPQUICK\Validation\InputHandler;
 
 class UserService
 {
@@ -76,59 +77,71 @@ class UserService
 
     }
 
-    public function activationAccount($tokenJwt): bool
+    public function activationAccount(string $activation_code): bool
     {
-            $token = new Token(self::token_secret_jwt);
-            if (!$token->verifyToken($tokenJwt)) {
-                return false;
-            }
 
-            if ($token->expiry < time()) {
-                $this->userRepository->deleteUnverifiedUser($token->email);
-                return false;
-            }
+        $token = new Token(self::token_secret_jwt);
+        if (!$token->verifyToken($activation_code)) {
+            throw new ValidationException('Ativation code tidak valid');
+        }
+        
+        $user = $this->userRepository->findByEmail($token->email);
+        if ($token->expiry > time()) {
+            return $this->activateUserIfNotActive($user);
+        } else {
+            return $this->handleExpiredToken($user, $token);
+        }
+    }
 
-            $user = $this->userRepository->findByEmail($token->email);
-            if($user->is_active === 1){
-                write_log([
-                        'username' => $user->username,
-                        'status' => 'sudah active'
-                ]);
-                return true;
-            }
-            
+    private function activateUserIfNotActive($user): bool
+    {
+        if ($user->is_active === 0) {
             $this->userRepository->activateUser($user->id);
             write_log([
                 'username' => $user->username,
-                'email' => $user->email,
-                'password' => $user->password
+                'status' => 'sudah active'
             ]);
             return true;
+        } else {
+            write_log([
+                'username' => $user->username,
+                'status' => 'sudah active sejak: ' . $user->activated_at
+            ]);
+            return true;
+        }
     }
 
-
-    function find_unverified_user(string $activation_code, string $email)
+    private function handleExpiredToken($user, $token): bool
     {
-
-        return null;
+        if ($user->is_active === 1) {
+            write_log([
+                'username' => $user->username,
+                'status' => 'sudah active sejak: ' . $user->activated_at
+            ]);
+            return true;
+        }
+        
+        $this->userRepository->deleteById($user->id);
+        throw new ValidationException('Activation code sudah kedaluarsa, silakan daftarkan kembali.');
     }
+
 
     public function login(UserLoginRequest $request): User
     {
-        if (!$request->validate()) {
+        if ($request->validate()) {
             throw new ValidationException("Id and Password can not blank");
         }
 
-        $user = $this->userRepository->findById($request->username);
+        $user = $this->userRepository->findByUsername($request->username);
         if ($user == null) {
             throw new ValidationException("Id or password Anda salah !");
         }
-
-        if (password_verify($request->password, $user->password)) {
-            return $user;
-        } else {
+        
+        if (!password_verify($request->password, $user->password)) {
             throw new ValidationException("Id or password Anda Salah !");
         }
+
+        return $user;
     }
 
     public function updateProfile(UserProfileUpdateRequest $request): User
@@ -206,5 +219,9 @@ class UserService
         ) {
             throw new ValidationException("Id, Old Password, New Password can not blank");
         }
+    }
+
+    public function getUser($id){
+        return $this->userRepository->findById($id);
     }
 }

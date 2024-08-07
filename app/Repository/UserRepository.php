@@ -23,7 +23,7 @@ class UserRepository
         $statement->bindValue(':name', $user->name);
         $statement->bindValue(':username', $user->username);
         $statement->bindValue(':email', $user->email);
-        $statement->bindValue(':password', password_hash($user->password, PASSWORD_BCRYPT));
+        $statement->bindValue(':password', $user->password);
         $statement->bindValue(':email', $user->email);
         $statement->bindValue(':role', (int)$user->role, PDO::PARAM_INT);
         $statement->bindValue(':is_active', (int)$user->is_active, PDO::PARAM_INT);
@@ -44,16 +44,20 @@ class UserRepository
 
     public function findById(string $id): ?User
     {
-        $statement = $this->connection->prepare("SELECT id, name, password, role FROM users WHERE id = ?");
+        $statement = $this->connection->prepare("SELECT id, name, username, email, password, role, is_active, activated_at FROM users WHERE id = ?");
         $statement->execute([$id]);
 
         try {
-            if ($row = $statement->fetch()) {
+            if ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 $user = new User();
                 $user->id = $row['id'];
                 $user->name = $row['name'];
+                $user->username = $row['username'];
+                $user->email = $row['email'];
                 $user->password = $row['password'];
                 $user->role = $row['role'];
+                $user->is_active = $row['is_active'];
+                $user->activated_at = $row['activated_at'];
                 return $user;
             } else {
                 return null;
@@ -63,13 +67,38 @@ class UserRepository
         }
     }
 
+    public function findByUsername(string $username): ?User
+    {
+        $statement = $this->connection->prepare("SELECT id, name, username, email, password, role, is_active, activated_at FROM users WHERE username = :username");
+        $statement->bindValue(':username', $username);
+        $statement->execute();
+
+        try {
+            if ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+                $user = new User();
+                $user->id = $row['id'];
+                $user->name = $row['name'];
+                $user->username = $row['username'];
+                $user->email = $row['email'];
+                $user->password = $row['password'];
+                $user->role = $row['role'];
+                $user->is_active = $row['is_active'];
+                $user->activated_at = $row['activated_at'];
+                return $user;
+            } else {
+                return null;
+            }
+        } finally {
+            $statement->closeCursor();
+        }
+    }
     public function findByEmail(string $email): ?User
     {
         $statement = $this->connection->prepare("SELECT id, name, username, email, password, role, is_active, activated_at FROM users WHERE email = ?");
         $statement->execute([$email]);
-
+        write_log($email);
         try {
-            if ($row = $statement->fetch()) {
+            if ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 $user = new User();
                 $user->id = $row['id'];
                 $user->name = $row['name'];
@@ -110,7 +139,13 @@ class UserRepository
         $statement = $this->connection->prepare($sql);
 
         $statement->bindValue(':email', $email);
-        return $statement->execute();        
+        return $statement->execute();       
+    }
+
+    public function deleteById(string $id): void
+    {
+        $statement = $this->connection->prepare("DELETE FROM users WHERE id = ?");
+        $statement->execute([$id]);
     }
 
     
