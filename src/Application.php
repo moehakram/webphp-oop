@@ -12,21 +12,21 @@ use MA\PHPQUICK\Session\Session;
 
 class Application
 {
-    private static Application $app;
-    private readonly Config $config;
-    private readonly Router $router;
-    private readonly Response $response;
-    private readonly Request $request;
-    private readonly Session $session;
+    protected static Application $app;
+    protected readonly Router $router;
+    protected readonly Config $config;
+    protected readonly Response $response;
+    protected readonly Request $request;
+    protected readonly Session $session;
 
     public function __construct(array $config)
     {
         self::$app = $this;
+        $this->router = new Router();
         $this->config = new Config($config);
         $this->session = new Session;
         $this->request = new Request();
         $this->response = new Response();
-        $this->router = new Router();
     }
 
     public static function __callStatic($name, $arguments): mixed

@@ -6,7 +6,7 @@ use Exception;
 
 final class View
 {
-    public static function render(string $view, array $data = [], string $extends = '')
+    public static function render(string $view, array $data = [], ?string $extends = null)
     {
         try {
             $content = self::loadView($view, $data);
