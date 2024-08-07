@@ -16,7 +16,6 @@ $config = require __DIR__ . '/../config/config.php';
 
 $app = new Application($config);
 
-$router = $app->router;
 require __DIR__ . '/../config/routes.php';
 
 $app->run();

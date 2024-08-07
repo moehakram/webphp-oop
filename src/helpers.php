@@ -14,24 +14,18 @@ function log_exception(\Throwable $ex): void
     error_log($message, 3, __DIR__ . '/../logs/errors.log');
 }
 
-if (!function_exists('app')) {
-    function app(string $attribute = null)
-    {
-        return Application::make($attribute);
-    }
-}
 
 if(!function_exists('session')){
     function session($key = null, $default = null)
     {
-        return app('session')->getOrSet($key, $default);
+        return Application::session()->getOrSet($key, $default);
     }
 }
 
 if(!function_exists('response')){
     function response($content = '', $statusCode = 200): Response
     {
-        $res = app('response');
+        $res = Application::response();
         if($content !== ''){
             $res->setContent($content);
             $res->setStatusCode($statusCode);
@@ -43,7 +37,7 @@ if(!function_exists('response')){
 if(!function_exists('request')){
     function request(): Request
     {
-        return app('request');
+        return Application::request();
     }
 }
 
@@ -109,7 +103,7 @@ if(!function_exists('PHPQuick')){
 if(!function_exists('config')){
     function config($key = null, $default = null)
     {
-        return app('config')->getOrSet($key, $default);
+        return Application::config()->getOrSet($key, $default);
     }
 }
 if(!function_exists('clean')){

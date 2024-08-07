@@ -1,0 +1,42 @@
+[2024-08-07 14:29:16] Uncaught exception: Too few arguments to function MA\PHPQUICK\Router\Router::register(), 2 passed in C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 47 and exactly 4 expected
+In file: C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 53
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(47): MA\PHPQUICK\Router\Router->register('/', 'HomeController@...')
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::__callStatic('get', Array)
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(20): require('C:\\laragon\\www\\...')
+#3 {main}
+[2024-08-07 14:30:46] Uncaught exception: Too few arguments to function MA\PHPQUICK\Router\Router::register(), 3 passed in C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 47 and exactly 4 expected
+In file: C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 53
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(47): MA\PHPQUICK\Router\Router->register('get', '/', 'HomeController@...')
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::__callStatic('get', Array)
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(20): require('C:\\laragon\\www\\...')
+#3 {main}
+[2024-08-07 14:30:47] Uncaught exception: Too few arguments to function MA\PHPQUICK\Router\Router::register(), 3 passed in C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 47 and exactly 4 expected
+In file: C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 53
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(47): MA\PHPQUICK\Router\Router->register('get', '/', 'HomeController@...')
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::__callStatic('get', Array)
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(20): require('C:\\laragon\\www\\...')
+#3 {main}
+[2024-08-07 14:33:17] Uncaught exception: Too few arguments to function MA\PHPQUICK\Router\Router::register(), 3 passed in C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 52 and exactly 4 expected
+In file: C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 58
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(52): MA\PHPQUICK\Router\Router->register('get', '/', 'HomeController@...')
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::__callStatic('get', Array)
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(20): require('C:\\laragon\\www\\...')
+#3 {main}
+[2024-08-07 14:33:17] Uncaught exception: Too few arguments to function MA\PHPQUICK\Router\Router::register(), 3 passed in C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 52 and exactly 4 expected
+In file: C:\laragon\www\PHPQuick-MVC\src\Router\Router.php on line 58
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(52): MA\PHPQUICK\Router\Router->register('get', '/', 'HomeController@...')
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::__callStatic('get', Array)
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(20): require('C:\\laragon\\www\\...')
+#3 {main}
+[2024-08-07 14:47:05] Uncaught exception: Typed static property MA\PHPQUICK\Application::$app must not be accessed before initialization
+In file: C:\laragon\www\PHPQuick-MVC\src\Application.php on line 35
+Stack trace:
+#0 C:\laragon\www\PHPQuick-MVC\src\Router\Router.php(15): MA\PHPQUICK\Application::__callStatic('router', Array)
+#1 C:\laragon\www\PHPQuick-MVC\config\routes.php(9): MA\PHPQUICK\Router\Router::get('/', 'HomeController@...')
+#2 C:\laragon\www\PHPQuick-MVC\public\index.php(17): require('C:\\laragon\\www\\...')
+#3 {main}

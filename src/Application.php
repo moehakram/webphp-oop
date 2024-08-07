@@ -13,11 +13,11 @@ use MA\PHPQUICK\Session\Session;
 class Application
 {
     private static Application $app;
-    public readonly Config $config;
-    public readonly Router $router;
-    public readonly Response $response;
-    public readonly Request $request;
-    public readonly Session $session;
+    private readonly Config $config;
+    private readonly Router $router;
+    private readonly Response $response;
+    private readonly Request $request;
+    private readonly Session $session;
 
     public function __construct(array $config)
     {
@@ -26,22 +26,16 @@ class Application
         $this->session = new Session;
         $this->request = new Request();
         $this->response = new Response();
-        $this->router = new Router($this->request);
+        $this->router = new Router();
     }
 
-    public static function make($attribute = null)
+    public static function __callStatic($name, $arguments): mixed
     {
-        if (is_null($attribute)) {
-            return self::$app;
+        if (property_exists(self::$app, $name)) {
+            return self::$app->$name;
         }
 
-        $validAttributes = ['session', 'request', 'response', 'config', 'router'];
-
-        if (in_array($attribute, $validAttributes)) {
-            return self::$app->$attribute;
-        }
-
-        throw new \InvalidArgumentException("Invalid attribute: $attribute");
+        throw new \InvalidArgumentException("Invalid property: $name");
     }
 
     public function run()
@@ -53,32 +47,36 @@ class Application
                 $this->response->setNotFound("Route Not Found { {$this->request->getPath()} }");
             }
 
-            return $this->createRunMiddle($route)->handle($this->request)->send();
+            return $this->createMiddlewarePipeline($route)->handle($this->request)->send();
         } catch (HttpException $http) {
             return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
         }
     }
 
-    private function createRunMiddle(Route $route): MiddlewarePipeline
+    private function createMiddlewarePipeline(Route $route): MiddlewarePipeline
     {
-        $middlewares = $route->getMiddlewares();
-        array_unshift($middlewares, AuthMiddleware::class);
-        array_push($middlewares, fn() => $this->handleRouteCallback($route));
+        $middlewares = array_merge(
+            [AuthMiddleware::class],
+            $route->getMiddlewares(),
+            [fn() => $this->handleRouteCallback($route)]
+        );
         return new MiddlewarePipeline($middlewares);
     }
 
-    private function handleRouteCallback(Route $route)
+    private function handleRouteCallback(Route $route): mixed
     {
         $action = $route->getAction();
-        $parameter = $route->getParameter();
-        if (!$controller = $route->getController()) {
-            return call_user_func_array($action, $parameter);
-        } else {
-            return $this->executeController($controller, $action, $parameter);
+        $arguments = $route->getArguments();
+        array_push($arguments, $this->request);
+
+        if ($controller = $route->getController()) {
+            return $this->executeController($controller, $action, $arguments);
         }
+
+        return call_user_func_array($action, $arguments);
     }
 
-    private function executeController(string $controller, string $method, $parameter)
+    private function executeController(string $controller, string $method, array $arguments): mixed
     {
         if (!class_exists($controller)) {
             throw new Exception(sprintf("Controller class %s not found", $controller), 500);
@@ -90,7 +88,7 @@ class Application
             throw new Exception(sprintf("Method %s not found in %s", $method, $controller), 500);
         }
 
-        return call_user_func_array([$controllerInstance, $method], $parameter);
+        return call_user_func_array([$controllerInstance, $method], $arguments);
     }
 
 }

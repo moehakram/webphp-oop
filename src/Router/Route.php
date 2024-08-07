@@ -7,12 +7,12 @@ final class Route
     private ?string $controller;
     private $action;
     private array $middlewares;
-    private array $parameter;
+    private array $arguments;
 
-    public function __construct($callback, array $middlewares, $parameter)
+    public function __construct($callback, array $middlewares, array $arguments)
     {
         $this->middlewares = $middlewares;
-        $this->parameter = $parameter;
+        $this->arguments = $arguments;
         $this->parseCallback($callback);
     }
 
@@ -51,9 +51,9 @@ final class Route
         return $this->action;
     }
 
-    public function getParameter(): array
+    public function getArguments(): array
     {
-        return $this->parameter;
+        return $this->arguments;
     }
 
     public function getMiddlewares(): array
