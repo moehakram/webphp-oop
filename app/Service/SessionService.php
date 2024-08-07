@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Domain\Session;
 use App\Domain\User;
-use MA\PHPQUICK\Session\JwtCookieSession;
+use MA\PHPQUICK\Session\CookieSession;
 use App\Repository\SessionRepository;
 
 class SessionService
@@ -14,12 +14,12 @@ class SessionService
     protected const EXPIRY = 3600 * 1; // 1 hour
 
     private SessionRepository $sessionRepository;
-    private JwtCookieSession $session;
+    private CookieSession $session;
 
     public function __construct(SessionRepository $sessionRepository)
     {
         $this->sessionRepository = $sessionRepository;
-        $this->session = new JwtCookieSession(self::COOKIE_NAME, self::JWT_SECRET, self::EXPIRY);
+        $this->session = new CookieSession(self::COOKIE_NAME, self::JWT_SECRET, self::EXPIRY);
     }
 
     public function create(User $user): Session
@@ -61,10 +61,12 @@ class SessionService
 
     private function setSession(User $user, string $sessionId): void
     {
-        $this->session->set('id', $sessionId);
-        $this->session->set('name', $user->name);
-        $this->session->set('role', $user->role);
-        $this->session->set('exp', time() + self::EXPIRY);
+        $this->session->add([
+            'id' => $sessionId,
+            'name' => $user->name,
+            'role' => $user->role,
+            'exp' => time() + self::EXPIRY
+        ]);
         $this->session->push();
     }
 

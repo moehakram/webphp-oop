@@ -4,27 +4,21 @@ namespace MA\PHPQUICK;
 
 use Firebase\JWT\{JWT, Key};
 
-class Token extends Collection
+trait Token
 {
-    private const ALGORITHM = 'HS256';
-    private string $jwtSecret;
+    private static $ALGORITHM = 'HS256';
+    protected static string $secretToken;
 
-    public function __construct(string $jwtSecret, array $data = [])
+    protected function generateToken(array $payload): string
     {
-        parent::__construct($data);
-        $this->jwtSecret = $jwtSecret;
+        return JWT::encode($payload, self::$secretToken, self::$ALGORITHM);
     }
 
-    public function generateToken(): string
-    {
-        return JWT::encode($this->getAll(), $this->jwtSecret, self::ALGORITHM);
-    }
-
-    public function verifyToken(string $token): bool
+    protected function verifyToken(string $token, Collection $collection): bool
     {
         try {
-            $data = (array) JWT::decode($token, new Key($this->jwtSecret, self::ALGORITHM));
-            $this->exchangeArray($data);
+            $data = (array) JWT::decode($token, new Key(self::$secretToken, self::$ALGORITHM));
+            $collection->exchangeArray($data);
             return true;
         } catch (\Exception $e) {
             return false;

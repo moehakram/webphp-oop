@@ -10,19 +10,20 @@ use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Exception\ValidationException;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
 use MA\PHPQUICK\Token;
-use MA\PHPQUICK\Validation\InputHandler;
 
 class UserService
 {
+    use Token;
 
     private UserRepository $userRepository;
 
     const expireActivationEmail =  1 * 24  * 60 * 60;
-    const token_secret_jwt =  'fe1ed383b50832081d04bef6067540efffaaa54c66066a83cc1cf994af07883359012';
 
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+        self::$secretToken = 'fe1ed383b50832081d04bef6067540efffaaa54c66066a83cc1cf994af07883359012';
+        
     }
 
     public function register(UserRegisterRequest $request): User
@@ -54,13 +55,14 @@ class UserService
 
     public function sendActivationEmail(User $user): void
     {
-        $token = new Token(self::token_secret_jwt, [
-            'email' => $user->email,
-            'expiry' => time() + self::expireActivationEmail
-        ]);
-
         // create the activation link
-        $activation_link = sprintf(config('app.url') . "/users/activate?activation_code=%s", $token->generateToken());
+        $activation_link = sprintf(
+            config('app.url') . "/users/activate?activation_code=%s", 
+            $this->generateToken([
+                'email' => $user->email,
+                'expiry' => time() + self::expireActivationEmail
+            ])
+        );
         write_log("activation_link : " . $activation_link);
 
         // $subject = 'Please activate your account';
@@ -79,9 +81,7 @@ class UserService
 
     public function activationAccount(string $activation_code): bool
     {
-
-        $token = new Token(self::token_secret_jwt);
-        if (!$token->verifyToken($activation_code)) {
+        if (! $this->verifyToken($activation_code, $token = new Collection())) {
             throw new ValidationException('Ativation code tidak valid');
         }
         

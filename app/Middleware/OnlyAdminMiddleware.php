@@ -18,7 +18,7 @@ class OnlyAdminMiddleware implements Middleware
         response()->setForbidden();
     }
 
-    private function isAdmin(User $user): bool
+    private function isAdmin(?User $user): bool
     {
         return $user !== null && $user->role == 1;
     }

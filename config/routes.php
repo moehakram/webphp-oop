@@ -24,6 +24,6 @@ Router::post("/users/password", [ProfileController::class, 'updatePassword'], Au
 /**
  * Documentation
  */
-Router::get("/tes2", [Testing::class ,'implemtationSessionFlass_tes2']);
-Router::get("/tes3", [Testing::class ,'implemtationSessionFlass_tes3']);
-Router::get("/tes4", [Testing::class ,'implemtationSessionFlass_tes4']);
+Router::get("/tes2", [Testing::class, 'implemtationSessionFlass_tes2']);
+Router::get("/tes3", [Testing::class, 'implemtationSessionFlass_tes3']);
+Router::get("/tes4", [Testing::class, 'implemtationSessionFlass_tes4']);
