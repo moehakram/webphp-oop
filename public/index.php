@@ -6,7 +6,7 @@ use MA\PHPQUICK\MVC\View;
 set_exception_handler(function (\Throwable $ex) {
     log_exception($ex);
     $errors = 'Whoops, looks like something went wrong!';
-    echo View::render('error/500', compact('errors'));
+    echo View::error_500(compact('errors'));
 });
 
 // Include the autoloader to load necessary classes
