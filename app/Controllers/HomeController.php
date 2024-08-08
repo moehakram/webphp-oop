@@ -2,14 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Service\ServiceTrait;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\MVC\Controller;
 
 class HomeController extends Controller
 {
-    use ServiceTrait;
-
     protected $layout = 'app';
 
     public function index(Request $request)

@@ -3,7 +3,6 @@ namespace App\Controllers;
 
 use MA\PHPQUICK\Http\Responses\JsonResponse;
 use MA\PHPQUICK\Interfaces\Request;
-use MA\PHPQUICK\Session\Session;
 
 class Testing{
 

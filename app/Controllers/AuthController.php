@@ -6,21 +6,13 @@ use MA\PHPQUICK\MVC\Controller;
 use MA\PHPQUICK\Interfaces\Request;
 use App\Models\User\UserLoginRequest;
 use App\Models\User\UserRegisterRequest;
-use App\Service\ServiceTrait;
 use MA\PHPQUICK\Exception\ValidationException;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validator;
 
 class AuthController extends Controller
 {
-    use ServiceTrait;
-
     protected $layout = 'app';
-
-    public function __construct()
-    {
-        $this->authService();        
-    }
 
     public function showLogin() // Menampilkan formulir login
     {
@@ -38,8 +30,8 @@ class AuthController extends Controller
         $req->password = $request->post('password');
 
         try {
-            $user = $this->userService->login($req);
-            $this->sessionService->create($user);
+            $user = app('userService')->login($req);
+            app('sessionService')->create($user);
             return response()->redirect('/');
         } catch (ValidationException $ex) {
             return response()->back()->withMessage($ex->getMessage(), 'error');
@@ -64,7 +56,7 @@ class AuthController extends Controller
     {
         $req = new UserRegisterRequest($request->post());
         try {
-            $this->userService->register($req);
+            app('userService')->register($req);
             write_log(['username' => $req->username, 'password' => $req->password]);
             return response()->redirect('/users/login')
             ->withMessage('Silakan buka email untuk aktivasi akun!');
@@ -80,7 +72,7 @@ class AuthController extends Controller
             ], ['required' => 'Tautan aktivasi tidak valid']);
             
             $data = $handler->filter();
-            $this->userService->activationAccount($data['activation_code']);
+            app('userService')->activationAccount($data['activation_code']);
             return response()->redirect('/users/login')
             ->withMessage('login', 'Akun sudah aktif silakan login');
         }catch(ValidationException $val){
@@ -101,7 +93,7 @@ class AuthController extends Controller
 
     public function logout() // Proses logout pengguna
     {
-        $this->sessionService->destroy();
+        app('sessionService')->destroy();
         return response()->redirect('/');
     }
 }

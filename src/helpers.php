@@ -26,6 +26,18 @@ if (!function_exists('write_log')) {
     }
 }
 
+if (!function_exists('app')) {
+
+    function app($key = null)
+    {
+        if (is_null($key)) {
+            return Application::app();
+        }
+
+        return Application::$key();
+    }
+}
+
 if (!function_exists('session')) {
 
     function session($key = null, $default = null)
@@ -105,18 +117,18 @@ if (!function_exists('view')) {
     }
 }
 
-if (!function_exists('PHPQuick')) {
-    function PHPQuick(array $config)
-    {
-        static $app = null;
+// if (!function_exists('PHPQuick')) {
+//     function PHPQuick(array $config)
+//     {
+//         static $app = null;
 
-        if (is_null($app)) {
-            $app = new Application($config);
-        }
+//         if (is_null($app)) {
+//             $app = new Application($config);
+//         }
 
-        return $app;
-    }
-}
+//         return $app;
+//     }
+// }
 
 if (!function_exists('config')) {
     function config($key = null, $default = null)

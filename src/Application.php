@@ -10,7 +10,7 @@ use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Router\MiddlewarePipeline;
 use MA\PHPQUICK\Session\Session;
 
-class Application
+class Application extends Container
 {
     protected static Application $app;
     protected readonly Router $router;
@@ -27,15 +27,23 @@ class Application
         $this->session = new Session;
         $this->request = new Request();
         $this->response = new Response();
+
+       $this->bindInstances();
+    }
+
+    protected function bindInstances(): void
+    {
+        $this->instance('app', $this);
+        $this->instance('router', $this->router);
+        $this->instance('config', $this->config);
+        $this->instance('response', $this->response);
+        $this->instance('request', $this->request);
+        $this->instance('session', $this->session);
     }
 
     public static function __callStatic($name, $arguments): mixed
     {
-        if (property_exists(self::$app, $name)) {
-            return self::$app->$name;
-        }
-
-        throw new \InvalidArgumentException("Invalid property: $name");
+        return self::$app->resolve($name);
     }
 
     public function run()
