@@ -1,12 +1,43 @@
 <?php
-
 namespace MA\PHPQUICK\MVC;
 
 use Exception;
 
 final class View
 {
-    public static function render(string $view, array $data = [], ?string $layout = null)
+    private function __construct(
+        private string $view, 
+        private array $data = [], 
+        private ?string $layout = null
+    ) {}
+
+    public static function __callStatic(string $name, array $arguments)
+    {
+        $view = str_replace('_', '/', $name);
+        $data = $arguments[0] ?? [];
+        $layout = $arguments[1] ?? null;
+
+        return new self($view, $data, $layout);
+    }
+
+    public function withData(array $data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function withLayout(?string $layout)
+    {
+        $this->layout = $layout;
+        return $this;
+    }
+
+    public function display(): string
+    {
+        return self::render($this->view, $this->data, $this->layout);
+    }
+
+    public static function render(string $view, array $data = [], ?string $layout = null): string
     {
         try {
             $content = self::loadView($view, $data);
@@ -58,14 +89,5 @@ final class View
     private static function handleException(Exception $e): string
     {
         return "Terjadi kesalahan: " . $e->getMessage();
-    }
-
-    public static function __callStatic($name, $arguments)
-    {
-        $view = str_replace('_', '/', $name);
-        $data = $arguments[0] ?? [];
-        $layout = $arguments[1] ?? null;
-
-        return self::render($view, $data, $layout);
     }
 }

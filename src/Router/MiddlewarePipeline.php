@@ -5,6 +5,7 @@ namespace MA\PHPQUICK\Router;
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\Interfaces\Middleware;
 use MA\PHPQUICK\Interfaces\Response;
+use MA\PHPQUICK\MVC\View;
 
 class MiddlewarePipeline
 {
@@ -53,8 +54,21 @@ class MiddlewarePipeline
 
     private function createResponse($result): Response
     {
-        return $result instanceof Response ? $result : response($result);
+        if ($result instanceof Response) {
+            return $result;
+        }
+    
+        if ($result instanceof View) {
+            return $this->createViewResponse($result);
+        }
+    
+        return response($result);
     }
+    
+    private function createViewResponse(View $view): Response
+    {
+        return response($view->display());
+    }    
 
     private function next(): \Closure
     {
