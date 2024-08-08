@@ -20,9 +20,15 @@ final class View
         return new self($view, $data, $layout);
     }
 
-    public function withData(array $data)
+    public function withData($key, $value = null)
     {
-        $this->data = $data;
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->data[$k] = $v;
+            }
+        } else {
+            $this->data[$key] = $value;
+        }
         return $this;
     }
 
