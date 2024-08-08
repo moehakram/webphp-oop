@@ -5,80 +5,72 @@ use Exception;
 
 final class View
 {
-    private function __construct(
+    public function __construct(
         private string $view, 
         private array $data = [], 
         private ?string $layout = null
     ) {}
 
-    public static function __callStatic(string $name, array $arguments)
+    public static function __callStatic(string $name, array $arguments): self
     {
-        $view = str_replace('_', '/', $name);
-        $data = $arguments[0] ?? [];
-        $layout = $arguments[1] ?? null;
-
-        return new self($view, $data, $layout);
+        return new self(
+            view: str_replace('_', '/', $name),
+            data: $arguments[0] ?? [],
+            layout: $arguments[1] ?? null
+        );
     }
 
-    public function withData($key, $value = null)
+    public function withData(array|string $key, mixed $value = null): self
     {
-        if (is_array($key)) {
-            foreach ($key as $k => $v) {
-                $this->data[$k] = $v;
-            }
-        } else {
-            $this->data[$key] = $value;
-        }
+        $this->data = is_array($key) ? array_merge($this->data, $key) : [...$this->data, $key => $value];
         return $this;
     }
 
-    public function withLayout(?string $layout)
+    public function withLayout(string $layout): self
     {
         $this->layout = $layout;
         return $this;
     }
 
-    public function display(): string
+    public function render(): string
     {
-        return self::render($this->view, $this->data, $this->layout);
+        return $this->renderView($this->view, $this->data, $this->layout);
     }
 
-    public static function render(string $view, array $data = [], ?string $layout = null): string
+    private function renderView(string $view, array $data = [], ?string $layout = null): string
     {
         try {
-            $content = self::loadView($view, $data);
+            $content = $this->loadView($view, $data);
 
-            if (!empty($layout)) {
-                return self::renderLayout($layout, $content, $data);
-            }
-
-            return $content;
+            return $layout 
+                ? $this->renderLayout($content, $data, $layout) 
+                : $content;
         } catch (Exception $e) {
-            return self::handleException($e);
+            return $this->handleException($e);
         }
     }
 
-    private static function loadView(string $view, array $data = []): string
+    private function loadView(string $view, array $data = []): string
     {
-        $viewFilePath = self::getViewFilePath($view);
-        self::ensureViewFileExists($viewFilePath);
+        $viewFilePath = $this->getViewFilePath($view);
+        $this->ensureViewFileExists($viewFilePath);
 
-        return self::renderFile($viewFilePath, $data);
+        return $this->renderFile($viewFilePath, $data);
     }
 
-    private static function getViewFilePath(string $view): string
+    private function getViewFilePath(string $view): string
     {
         return rtrim(config('dir.views'), '/') . '/' . str_replace('.', '/', $view) . '.php';
     }
 
-    private static function ensureViewFileExists(string $viewFilePath): void
+    private function ensureViewFileExists(string $viewFilePath): void
     {
         if (!file_exists($viewFilePath)) {
             throw new Exception("File View '" . basename($viewFilePath) . "' tidak ditemukan di [$viewFilePath]");
         }
     }
 
-    private static function renderFile(string $filePath, array $data): string
+    private function renderFile(string $filePath, array $data): string
     {
         extract($data);
         ob_start();
@@ -86,13 +78,13 @@ final class View
         return ob_get_clean();
     }
 
-    private static function renderLayout(string $layout, string $content, array $data): string
+    private function renderLayout(string $content, array $data, string $layout): string
     {
-        $layoutContent = self::loadView("layouts/$layout", $data);
+        $layoutContent = $this->loadView('layouts/' . $layout, $data);
         return str_replace('{{content}}', $content, $layoutContent);
     }
 
-    private static function handleException(Exception $e): string
+    private function handleException(Exception $e): string
     {
         return "Terjadi kesalahan: " . $e->getMessage();
     }

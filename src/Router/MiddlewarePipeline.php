@@ -67,7 +67,7 @@ class MiddlewarePipeline
     
     private function createViewResponse(View $view): Response
     {
-        return response($view->display());
+        return response($view->render());
     }    
 
     private function next(): \Closure

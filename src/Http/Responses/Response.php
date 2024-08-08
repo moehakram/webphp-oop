@@ -4,7 +4,6 @@ namespace MA\PHPQUICK\Http\Responses;
 use DateTime;
 use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Interfaces\Response as IResponse;
-use MA\PHPQUICK\MVC\View;
 
 class Response implements IResponse
 {
@@ -31,15 +30,15 @@ class Response implements IResponse
 
     public function setNotFound($message = null)
     {
-        $view = View::render('error/404', [
+        $view = view('error.400', [
             'message' => $message
-        ]);
+        ])->render();
         throw new HttpException(404, $view);
     }
 
     public function setForbidden()
     {
-        $view = View::render('error/403');
+        $view = view('error/403')->render();
         throw new HttpException(403, $view);
     }
 

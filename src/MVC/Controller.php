@@ -4,11 +4,11 @@ namespace MA\PHPQUICK\MVC;
 
 abstract class Controller
 {
-    protected $layout = '';
+    protected $layout = null;
 
-    protected function view(string $view, array $data = [])
+    protected function view(string $view, array $data = [], ?string $layout = null): View
     {
-        return View::render($view, $data, $this->layout);
+        return view($view, $data, $layout ?? $this->layout);
     }
 
     protected function model(string $modelName)

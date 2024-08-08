@@ -99,9 +99,9 @@ if (!function_exists('csrf')) {
 }
 
 if (!function_exists('view')) {
-    function view(string $view, array $data = [], ?string $extends = null)
+    function view(string $view, array $data = [], ?string $layout = null): View
     {
-        return View::render($view, $data, $extends);
+        return new View($view, $data, $layout);
     }
 }
 
