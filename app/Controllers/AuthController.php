@@ -48,10 +48,16 @@ class AuthController extends Controller
 
     public function showRegistration(Request $request) // Menampilkan formulir registrasi
     {
-        return $this->view('auth/register', [
+        return View::auth_register()->withLayout('app')
+        ->withData([
             'title' => 'Register New User',
             'errors' => $request->session()->getFlash('message')
         ]);
+
+        // return $this->view('auth/register', [
+        //     'title' => 'Register New User',
+        //     'errors' => $request->session()->getFlash('message')
+        // ]);
     }
 
     public function register(Request $request)  // Proses registrasi pengguna
