@@ -14,21 +14,26 @@ class MiddlewarePipeline
 
     public function __construct(array $middlewares)
     {
-        $this->middlewares = array_map([$this, 'resolveMiddleware'], $middlewares);
+        foreach($middlewares as $middleware){
+            $this->middlewares[] = $this->resolveMiddleware($middleware);
+        }
     }
 
     private function resolveMiddleware($middleware)
     {
         if (is_string($middleware) && class_exists($middleware)) {
-            return new $middleware;
+            $middleware = new $middleware;
         }
-
-        if (is_callable($middleware) || $middleware instanceof Middleware) {
+    
+        if ($middleware instanceof Middleware || is_callable($middleware)) {
             return $middleware;
         }
-
-        throw new \InvalidArgumentException('Invalid middleware provided.');
+    
+        throw new \InvalidArgumentException(
+            'The middleware must be an instance of Middleware, a callable, or a valid class name that implements Middleware.'
+        );
     }
+    
 
     public function handle(Request $request): Response
     {
