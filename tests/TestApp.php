@@ -16,10 +16,10 @@ function tesConfig(){
 function tesUser(){
     $user = new User;
     $user->name = 'akram';
-    app('request')->login($user);
-    dd(app('request')->user());
+    request()->login($user);
+    dd(request()->user());
 }
 
 
 // tesConfig();
-// tesUser();
+tesUser();
