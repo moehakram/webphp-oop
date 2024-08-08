@@ -8,6 +8,7 @@ use App\Models\User\UserLoginRequest;
 use App\Models\User\UserRegisterRequest;
 use App\Service\ServiceTrait;
 use MA\PHPQUICK\Exception\ValidationException;
+use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validator;
 
 class AuthController extends Controller
@@ -24,10 +25,10 @@ class AuthController extends Controller
     public function showLogin() // Menampilkan formulir login
     {
         response()->setNoCache();
-        return $this->view('auth/login', [
+        return View::auth_login([
             'title' => 'Login User',
             'errors' => session()->getFlash('message')
-        ]);
+        ], 'app');
     }
 
     public function login(Request $request) // Proses login pengguna
