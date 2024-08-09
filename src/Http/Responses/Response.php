@@ -30,15 +30,15 @@ class Response implements IResponse
 
     public function setNotFound($message = null)
     {
-        $view = view('error.400', [
+        $view = view('error.404', [
             'message' => $message
-        ])->render();
+        ]);
         throw new HttpException(404, $view);
     }
 
     public function setForbidden()
     {
-        $view = view('error/403')->render();
+        $view = view('error.403');
         throw new HttpException(403, $view);
     }
 

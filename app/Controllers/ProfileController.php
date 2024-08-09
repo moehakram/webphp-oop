@@ -24,7 +24,7 @@ class ProfileController extends Controller
         $user = $request->user();
         return $this->view('profile/profile', [
             "title" => "Update user profile",
-            "user" => app(UserService::class)->getUser($user->id)
+            "user" => $this->make(UserService::class)->getUser($user->id)
         ]);
     }
 
@@ -37,8 +37,8 @@ class ProfileController extends Controller
         $req->name = $request->post('name');
 
         try {
-            $user = app(UserService::class)->updateProfile($req);
-            app(SessionService::class)->create($user); //update cookie session setelah update profile
+            $user = $this->make(UserService::class)->updateProfile($req);
+            $this->make(SessionService::class)->create($user); //update cookie session setelah update profile
             return response()->redirect('/');
         } catch (ValidationException $exception) {
             return response()->redirect('/users/profile')->with([
@@ -53,7 +53,7 @@ class ProfileController extends Controller
         $user = $request->user();
         return $this->view('profile/password', [
             "title" => "Update user password",
-            "username" => app(UserService::class)->getUser($user->id)->username
+            "username" => $this->make(UserService::class)->getUser($user->id)->username
         ]);
     }
 
@@ -66,7 +66,7 @@ class ProfileController extends Controller
         $req->newPassword = $request->post('newPassword');
 
         try {
-            app(UserService::class)->updatePassword($req);
+            $this->make(UserService::class)->updatePassword($req);
             return response()->redirect('/');
         } catch (ValidationException $exception) {
             return response()->back()->with([

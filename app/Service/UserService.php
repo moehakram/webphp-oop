@@ -63,7 +63,7 @@ class UserService
                 'expiry' => time() + self::expireActivationEmail
             ])
         );
-        write_log("activation_link : " . $activation_link);
+        write_log('activation_link : ' . $activation_link);
 
         // $subject = 'Please activate your account';
         // $message = <<<MESSAGE
@@ -99,13 +99,7 @@ class UserService
             $this->userRepository->activateUser($user->id);
             write_log([
                 'username' => $user->username,
-                'status' => 'sudah active'
-            ]);
-            return true;
-        } else {
-            write_log([
-                'username' => $user->username,
-                'status' => 'sudah active sejak: ' . $user->activated_at
+                'active sejak' => $user->activated_at
             ]);
             return true;
         }
@@ -116,7 +110,7 @@ class UserService
         if ($user->is_active === 1) {
             write_log([
                 'username' => $user->username,
-                'status' => 'sudah active sejak: ' . $user->activated_at
+                'active sejak' => $user->activated_at
             ]);
             return true;
         }

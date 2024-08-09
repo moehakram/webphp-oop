@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use MA\PHPQUICK\Interfaces\Request;
 use MA\PHPQUICK\MVC\Controller;
+use MA\PHPQUICK\MVC\View;
 
 class HomeController extends Controller
 {
@@ -13,7 +14,7 @@ class HomeController extends Controller
     {
         response()->setNoCache();
         if (!$user = $request->user()) {
-            return view('welcome');
+            return View::welcome();
         } else {
             return $this->home($user->name);
         }
@@ -21,11 +22,9 @@ class HomeController extends Controller
 
     private function home($name)
     {
-        return $this->view('home/index', [
-            "title" => "Dashboard",
-            "user" => [
-                "name" => $name
-            ]
+        return $this->view('home.index')->with([
+            'title' => 'Dashboard',
+            'user' => ['name' => $name]
         ]);
     }
 }

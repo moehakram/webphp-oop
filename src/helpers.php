@@ -111,9 +111,9 @@ if (!function_exists('csrf')) {
 }
 
 if (!function_exists('view')) {
-    function view(string $view, array $data = [], ?string $layout = null): View
+    function view(string $view, array $data = [], ?string $extend = null): View
     {
-        return new View($view, $data, $layout);
+        return View::make($view, $data, $extend);
     }
 }
 
@@ -184,5 +184,5 @@ if (!function_exists('errors')) {
 }
 
 function base_path($path = ''): string{
-    return dirname(__DIR__) . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    return dirname(__DIR__) . ($path ? DIRECTORY_SEPARATOR . $path : DIRECTORY_SEPARATOR);
 }

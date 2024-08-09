@@ -22,7 +22,7 @@ class AuthController extends Controller
         return View::auth_login([
             'title' => 'Login User',
             'errors' => session()->getFlash('message')
-        ], 'app');
+        ])->extend('app');
     }
 
     public function login(Request $request) // Proses login pengguna
@@ -32,8 +32,9 @@ class AuthController extends Controller
         $req->password = $request->post('password');
 
         try {
-            $user = app(UserService::class)->login($req);
-            app(SessionService::class)->create($user);
+            $user = $this->make(UserService::class)->login($req);
+            $session = $this->make(SessionService::class)->create($user);
+            write_log("login : $user->username, session_id : $session->id ");
             return response()->redirect('/');
         } catch (ValidationException $ex) {
             return response()->back()->withMessage($ex->getMessage(), 'error');
@@ -42,8 +43,8 @@ class AuthController extends Controller
 
     public function showRegistration(Request $request) // Menampilkan formulir registrasi
     {
-        return View::auth_register()->withLayout('app')
-        ->withData([
+        return View::auth_register()->extend('app')
+        ->with([
             'title' => 'Register New User',
             'errors' => $request->session()->getFlash('message')
         ]);
@@ -58,7 +59,7 @@ class AuthController extends Controller
     {
         $req = new UserRegisterRequest($request->post());
         try {
-            app(UserService::class)->register($req);
+            $this->make(UserService::class)->register($req);
             write_log(['username' => $req->username, 'password' => $req->password]);
             return response()->redirect('/users/login')
             ->withMessage('Silakan buka email untuk aktivasi akun!');
@@ -74,7 +75,7 @@ class AuthController extends Controller
             ], ['required' => 'Tautan aktivasi tidak valid']);
             
             $data = $handler->filter();
-            app(UserService::class)->activationAccount($data['activation_code']);
+            $this->make(UserService::class)->activationAccount($data['activation_code']);
             return response()->redirect('/users/login')
             ->withMessage('login', 'Akun sudah aktif silakan login');
         }catch(ValidationException $val){
@@ -95,7 +96,7 @@ class AuthController extends Controller
 
     public function logout() // Proses logout pengguna
     {
-        app(SessionService::class)->destroy();
+        $this->make(SessionService::class)->destroy();
         return response()->redirect('/');
     }
 }
