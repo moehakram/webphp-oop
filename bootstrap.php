@@ -16,20 +16,20 @@ set_exception_handler(function (\Throwable $ex) {
 
 $app = new Application(require __DIR__ . '/config/config.php');
 
-$app->singleton('sessionRepository', function(){
+$app->singleton(SessionRepository::class, function(){
     return new SessionRepository(Database::getConnection());
 });
 
-$app->singleton('sessionService', function($app){
-    return new SessionService($app->resolve('sessionRepository'));
+$app->singleton(SessionService::class, function($app){
+    return new SessionService($app->resolve(SessionRepository::class));
 });
 
-$app->singleton('userRepository', function(){
+$app->singleton(UserRepository::class, function(){
     return new UserRepository(Database::getConnection());
 });
 
-$app->singleton('userService', function($app){
-    return new UserService($app->resolve('userRepository'));
+$app->singleton(UserService::class, function($app){
+    return new UserService($app->resolve(UserRepository::class));
 });
 
 return $app;

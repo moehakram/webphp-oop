@@ -2,9 +2,17 @@
 
 namespace MA\PHPQUICK\MVC;
 
+use MA\PHPQUICK\Application;
+
 abstract class Controller
 {
     protected $layout = null;
+
+    protected Application $app;
+    public function __construct()
+    {
+        $this->app = app();
+    }
 
     protected function view(string $view, array $data = [], ?string $layout = null): View
     {

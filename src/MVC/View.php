@@ -60,7 +60,7 @@ final class View
 
     private function getViewFilePath(string $view): string
     {
-        return rtrim(config('dir.views'), '/') . '/' . str_replace('.', '/', $view) . '.php';
+        return base_path(str_replace('.', DIRECTORY_SEPARATOR , "app.views." . trim($view, '/')) . '.php');
     }
 
     private function ensureViewFileExists(string $viewFilePath): void

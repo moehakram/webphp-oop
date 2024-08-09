@@ -6,6 +6,8 @@ use MA\PHPQUICK\MVC\Controller;
 use MA\PHPQUICK\Exception\ValidationException;
 use App\Models\User\UserProfileUpdateRequest;
 use App\Models\User\UserPasswordUpdateRequest;
+use App\Service\SessionService;
+use App\Service\UserService;
 use MA\PHPQUICK\Interfaces\Request;
 
 class ProfileController extends Controller
@@ -22,7 +24,7 @@ class ProfileController extends Controller
         $user = $request->user();
         return $this->view('profile/profile', [
             "title" => "Update user profile",
-            "user" => app('userService')->getUser($user->id)
+            "user" => app(UserService::class)->getUser($user->id)
         ]);
     }
 
@@ -35,8 +37,8 @@ class ProfileController extends Controller
         $req->name = $request->post('name');
 
         try {
-            $user = app('userService')->updateProfile($req);
-            app('sessionService')->create($user); //update cookie session setelah update profile
+            $user = app(UserService::class)->updateProfile($req);
+            app(SessionService::class)->create($user); //update cookie session setelah update profile
             return response()->redirect('/');
         } catch (ValidationException $exception) {
             return response()->redirect('/users/profile')->with([
@@ -51,7 +53,7 @@ class ProfileController extends Controller
         $user = $request->user();
         return $this->view('profile/password', [
             "title" => "Update user password",
-            "username" => app('userService')->getUser($user->id)->username
+            "username" => app(UserService::class)->getUser($user->id)->username
         ]);
     }
 
@@ -64,7 +66,7 @@ class ProfileController extends Controller
         $req->newPassword = $request->post('newPassword');
 
         try {
-            app('userService')->updatePassword($req);
+            app(UserService::class)->updatePassword($req);
             return response()->redirect('/');
         } catch (ValidationException $exception) {
             return response()->back()->with([

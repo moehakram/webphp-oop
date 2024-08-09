@@ -6,6 +6,8 @@ use MA\PHPQUICK\MVC\Controller;
 use MA\PHPQUICK\Interfaces\Request;
 use App\Models\User\UserLoginRequest;
 use App\Models\User\UserRegisterRequest;
+use App\Service\SessionService;
+use App\Service\UserService;
 use MA\PHPQUICK\Exception\ValidationException;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validator;
@@ -30,8 +32,8 @@ class AuthController extends Controller
         $req->password = $request->post('password');
 
         try {
-            $user = app('userService')->login($req);
-            app('sessionService')->create($user);
+            $user = app(UserService::class)->login($req);
+            app(SessionService::class)->create($user);
             return response()->redirect('/');
         } catch (ValidationException $ex) {
             return response()->back()->withMessage($ex->getMessage(), 'error');
@@ -56,7 +58,7 @@ class AuthController extends Controller
     {
         $req = new UserRegisterRequest($request->post());
         try {
-            app('userService')->register($req);
+            app(UserService::class)->register($req);
             write_log(['username' => $req->username, 'password' => $req->password]);
             return response()->redirect('/users/login')
             ->withMessage('Silakan buka email untuk aktivasi akun!');
@@ -72,7 +74,7 @@ class AuthController extends Controller
             ], ['required' => 'Tautan aktivasi tidak valid']);
             
             $data = $handler->filter();
-            app('userService')->activationAccount($data['activation_code']);
+            app(UserService::class)->activationAccount($data['activation_code']);
             return response()->redirect('/users/login')
             ->withMessage('login', 'Akun sudah aktif silakan login');
         }catch(ValidationException $val){
@@ -93,7 +95,7 @@ class AuthController extends Controller
 
     public function logout() // Proses logout pengguna
     {
-        app('sessionService')->destroy();
+        app(SessionService::class)->destroy();
         return response()->redirect('/');
     }
 }

@@ -13,16 +13,16 @@ if (!function_exists('log_exception')) {
         $message = "[{$time}] Uncaught exception: " . $ex->getMessage() . "\n";
         $message .= "In file: " . $ex->getFile() . " on line " . $ex->getLine() . "\n";
         $message .= "Stack trace:\n" . $ex->getTraceAsString() . "\n";
-        error_log($message, 3, __DIR__ . '/../logs/errors.log');
+        error_log($message, 3, base_path('logs/error.log'));
     }
 }
 
 if (!function_exists('write_log')) {
-    function write_log($message, $filename = 'app.log')
+    function write_log($message, $filename = 'app')
     {
         $timestamp = date('Y-m-d H:i:s');
         $logMessage = "[$timestamp] " . (is_array($message) ? json_encode($message) : $message) . PHP_EOL;
-        file_put_contents(rtrim(config('dir.logs'), '/') . '/' . $filename, $logMessage, FILE_APPEND);
+        file_put_contents(base_path('logs' . DIRECTORY_SEPARATOR . "$filename.log"), $logMessage, FILE_APPEND);
     }
 }
 
@@ -181,4 +181,8 @@ if (!function_exists('errors')) {
     {
         return session()->getFlash('errors')[$key] ?? '';
     }
+}
+
+function base_path($path = ''): string{
+    return dirname(__DIR__) . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 }
