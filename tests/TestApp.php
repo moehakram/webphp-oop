@@ -77,6 +77,17 @@ function testArr(...$arguments){
     : [$arguments[0] => $arguments[1] ?? null];
 }
 
-var_dump(testArr(['title' => 'Dashboard']));
-var_dump(testArr('title'));
-var_dump(testArr('title', 'dashboard'));
+// var_dump(testArr(['title' => 'Dashboard']));
+// var_dump(testArr('title'));
+// var_dump(testArr('title', 'dashboard'));
+
+function validateControllerAction(array $callback): array
+{
+    if (count($callback) !== 2) {
+        throw new \InvalidArgumentException('Invalid controller action format ' . json_encode($callback));
+    }
+
+    return $callback;
+}
+
+var_dump(validateControllerAction(['home#hdsji', 'salksoa', 'skajsa']));

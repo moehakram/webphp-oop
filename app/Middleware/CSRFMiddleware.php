@@ -3,7 +3,7 @@
 namespace App\Middleware;
 
 use MA\PHPQUICK\Interfaces\Middleware;
-use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Http\RequestInterface as Request;
 
 class CSRFMiddleware implements Middleware
 {

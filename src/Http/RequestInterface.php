@@ -1,12 +1,13 @@
 <?php
-namespace MA\PHPQUICK\Interfaces;
+namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Http\Requests\Files;
 use MA\PHPQUICK\Http\Requests\RequestHeaders;
+use MA\PHPQUICK\Interfaces\Authenticable;
 use MA\PHPQUICK\Session\Session;
 
-interface Request
+interface RequestInterface
 {
     
     public static function setTrustedHeaderName(string $name, $value);

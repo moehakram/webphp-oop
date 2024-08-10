@@ -1,10 +1,10 @@
 <?php
-namespace MA\PHPQUICK\Interfaces;
+namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Http\Responses\RedirectResponse;
 use MA\PHPQUICK\Http\Responses\ResponseHeaders;
 
-interface Response
+interface ResponseInterface
 {
     public function setNoCache() : self;
 

@@ -2,9 +2,8 @@
 
 namespace App\Middleware;
 
-use App\Service\ServiceTrait;
 use MA\PHPQUICK\Interfaces\Middleware;
-use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Http\RequestInterface as Request;
 
 class GuestMiddleware implements Middleware
 {

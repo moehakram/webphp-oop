@@ -35,7 +35,7 @@ final class Route
     private function validateControllerAction(array $callback): array
     {
         if (count($callback) !== 2) {
-            throw new \InvalidArgumentException('Invalid controller action format');
+            throw new \InvalidArgumentException('Invalid controller action format ' . json_encode($callback));
         }
 
         return $callback;

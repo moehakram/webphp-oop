@@ -3,11 +3,9 @@
 namespace App\Controllers;
 
 use MA\PHPQUICK\MVC\Controller;
-use MA\PHPQUICK\Interfaces\Request;
-use App\Models\User\UserLoginRequest;
-use App\Models\User\UserRegisterRequest;
-use App\Service\SessionService;
-use App\Service\UserService;
+use MA\PHPQUICK\Http\RequestInterface as Request;
+use App\Models\User\{UserLoginRequest, UserRegisterRequest};
+use App\Service\{SessionService, UserService};
 use MA\PHPQUICK\Exception\ValidationException;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validator;
@@ -37,6 +35,7 @@ class AuthController extends Controller
             write_log("login : $user->username, session_id : $session->id ");
             return response()->redirect('/');
         } catch (ValidationException $ex) {
+            write_log(sprintf('login username : "%s"; password : "%s"; error : "%s"', $req->username, $req->username, $ex->getMessage()));
             return response()->back()->withMessage($ex->getMessage(), 'error');
         }
     }

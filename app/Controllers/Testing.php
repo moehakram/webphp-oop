@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 use MA\PHPQUICK\Http\Responses\JsonResponse;
-use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Http\RequestInterface as Request;
 
 class Testing{
 

@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use MA\PHPQUICK\MVC\Controller;
-use MA\PHPQUICK\Exception\ValidationException;
-use App\Models\User\UserProfileUpdateRequest;
-use App\Models\User\UserPasswordUpdateRequest;
-use App\Service\SessionService;
 use App\Service\UserService;
-use MA\PHPQUICK\Interfaces\Request;
+use App\Service\SessionService;
+use MA\PHPQUICK\MVC\Controller;
+use App\Models\User\UserProfileUpdateRequest;
+use MA\PHPQUICK\Http\RequestInterface as Request;
+use App\Models\User\UserPasswordUpdateRequest;
+use MA\PHPQUICK\Exception\ValidationException;
 
 class ProfileController extends Controller
 {

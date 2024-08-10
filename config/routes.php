@@ -1,7 +1,7 @@
 <?php
 
-use App\Controllers\AuthController;
 use App\Controllers\Testing;
+use App\Controllers\AuthController;
 use App\Controllers\ProfileController;
 use App\Middleware\{AuthMiddleware, CSRFMiddleware, GuestMiddleware, OnlyAdminMiddleware};
 

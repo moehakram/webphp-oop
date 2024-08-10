@@ -3,8 +3,8 @@
 namespace MA\PHPQUICK\Router;
 
 use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Interfaces\Request;
-use MA\PHPQUICK\Interfaces\Response;
+use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Http\ResponseInterface as Response;
 use MA\PHPQUICK\Interfaces\Middleware;
 
 class MiddlewarePipeline

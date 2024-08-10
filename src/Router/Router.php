@@ -2,6 +2,7 @@
 
 namespace MA\PHPQUICK\Router;
 
+use MA\PHPQUICK\Exception\Http\RouteNotFoundException;
 use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Router\Route;
 
@@ -38,7 +39,6 @@ class Router
                 return new Route($route['callback'], $route['middlewares'], $variabels);
             }
         }
-        $view = view('error.404')->with('message', "Route Not Found { {$path } }");
-        throw new \MA\PHPQUICK\Exception\HttpException(404, $view);
+        throw new RouteNotFoundException($path);
     }
 }

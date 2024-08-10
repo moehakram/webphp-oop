@@ -65,7 +65,11 @@ class Container implements ContainerInterface
         // Jika layanan terdaftar sebagai binding, buat instance baru
         if (isset($this->bindings[$id])) {
             try {
-                $instance = $this->bindings[$id]($this);
+                $instance = $this->bindings[$id];
+
+                if ($instance instanceof \Closure) {
+                    $instance = $instance($this);
+                }
 
                 // Jika ini adalah singleton, simpan instance-nya
                 if (array_key_exists($id, $this->instances)) {

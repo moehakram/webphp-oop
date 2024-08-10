@@ -1,10 +1,9 @@
 <?php
-
 namespace MA\PHPQUICK\Interfaces;
 
-use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Http\RequestInterface;
 
 interface Middleware
 {
-    public function execute(Request $request, \Closure $next);
+    public function execute(RequestInterface $request, \Closure $next);
 }

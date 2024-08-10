@@ -2,10 +2,10 @@
 
 namespace App\Service;
 
-use App\Domain\Session;
 use App\Domain\User;
-use MA\PHPQUICK\Session\CookieSession;
+use App\Domain\Session;
 use App\Repository\SessionRepository;
+use MA\PHPQUICK\Session\CookieSession;
 
 class SessionService
 {

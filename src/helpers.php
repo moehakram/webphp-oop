@@ -2,9 +2,11 @@
 
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
-use MA\PHPQUICK\Interfaces\Request;
+use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Http\RequestInterface as Request;
 use MA\PHPQUICK\Http\Responses\ResponseHeaders;
+use MA\PHPQUICK\Http\Requests\Request as RequestsRequest;
 
 if (!function_exists('log_exception')) {
     function log_exception(\Throwable $ex): void
@@ -30,11 +32,15 @@ if (!function_exists('app')) {
 
     function app($key = null)
     {
-        if (is_null($key)) {
-            return Application::app();
+        $app = Application::$instance;
+
+        // Jika ada key, resolve key tersebut dari container
+        if ($key) {
+            return $app->get($key);
         }
 
-        return Application::$key();
+        // Jika tidak ada key, kembalikan instance app
+        return $app;
     }
 }
 
@@ -42,14 +48,14 @@ if (!function_exists('session')) {
 
     function session($key = null, $default = null)
     {
-        return Application::session()->getOrSet($key, $default);
+        return app(Session::class)->getOrSet($key, $default);
     }
 }
 
 if (!function_exists('response')) {
     function response($content = null, $statusCode = 200): Response
     {
-        $res = Application::response();
+        $res = app(Response::class);
         if ($content !== null) {
             $res->setContent($content)->setStatusCode($statusCode);
         }
@@ -60,7 +66,7 @@ if (!function_exists('response')) {
 if (!function_exists('request')) {
     function request(): Request
     {
-        return Application::request();
+        return app(RequestsRequest::class);
     }
 }
 
@@ -133,7 +139,7 @@ if (!function_exists('view')) {
 if (!function_exists('config')) {
     function config($key = null, $default = null)
     {
-        return Application::config()->getOrSet($key, $default);
+        return app('config')->getOrSet($key, $default);
     }
 }
 if (!function_exists('clean')) {

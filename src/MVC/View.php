@@ -75,8 +75,8 @@ class View
         try {
             $content = $this->loadView($view, $data);
             return $extend ? $this->renderExtend($content, $data, $extend) : $content;
-        } catch (InvalidArgumentException $e) {
-            return $e->getMessage();
+        } catch (InvalidArgumentException $ex) {
+            throw $ex;
         }
     }
 

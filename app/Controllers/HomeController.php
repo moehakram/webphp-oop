@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use MA\PHPQUICK\Interfaces\Request;
-use MA\PHPQUICK\MVC\Controller;
 use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\MVC\Controller;
+use MA\PHPQUICK\Http\RequestInterface as Request;
 
 class HomeController extends Controller
 {

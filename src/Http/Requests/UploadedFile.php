@@ -1,7 +1,7 @@
 <?php
 namespace MA\PHPQUICK\Http\Requests;
 
-use MA\PHPQUICK\Exception\HttpException;
+use MA\PHPQUICK\Exception\HttpExceptionInterface as HttpException;
 
 class UploadedFile extends \SplFileInfo
 {

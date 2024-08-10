@@ -1,55 +1,48 @@
 <?php
+
+declare(strict_types=1);
+
 namespace MA\PHPQUICK;
 
+use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Router\Route;
 use MA\PHPQUICK\Router\Router;
-use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Http\Requests\Request;
-use MA\PHPQUICK\Exception\HttpException;
 use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Router\MiddlewarePipeline;
+use MA\PHPQUICK\Exception\HttpExceptionInterface;
 
-class Application
+class Application extends Container
 {
-    protected static Container $app;
-    
+    public static ?Container $instance = null;
+        
     public function __construct(
-        protected Container $container,
-        protected Request $request,
-        protected Router $router
-    ){
-        $this->bindInstances();
-        self::$app = $container;
-    }
-
-    protected function bindInstances(): void
-    {
-        $this->container->instance(Container::class, $this->container);
-        $this->container->instance('router', $this->router);
-        $this->container->instance('request', $this->request);
-        $this->container->instance('response', new Response());
-        $this->container->instance('session', new Session);
-    }
-
-    public static function __callStatic($name, $arguments): mixed
-    {
-        return self::$app->get($name);
+        private readonly Request $request,
+        private readonly Router $router
+    ) {
+        $this->instance(Request::class, $request);
+        self::$instance = $this;
     }
 
     public function run()
     {
         try {
             $route = $this->router->dispatch($this->request->getMethod(), $this->request->getPath());
-            return $this->createMiddlewarePipeline($route)->handle($this->request)->send();
-        } catch (HttpException $http) {
-            return (new Response($http->getMessage(), $http->getCode(), $http->getHeaders()))->send();
+            $middlewarePipeline = $this->createMiddlewarePipeline($route);
+            return $middlewarePipeline->handle($this->request)->send();
+        } catch (HttpExceptionInterface $httpException) {
+            if($HttpExceptionHandler = $this->get('HttpExceptionHandler')){
+                $result = ($HttpExceptionHandler)($httpException);
+                return $result instanceof Response ? $result->send() : $this->defaultHttpExceptionHandler($httpException)->send();
+            }
+            return $this->defaultHttpExceptionHandler($httpException)->send();
         }
     }
 
     private function createMiddlewarePipeline(Route $route): MiddlewarePipeline
     {
         $middlewares = array_merge(
-            $this->container->get('middlewareGlobal'),
+            [AuthMiddleware::class],
             $route->getMiddlewares(),
             [fn() => $this->handleRouteCallback($route)]
         );
@@ -60,12 +53,20 @@ class Application
     {
         $action = $route->getAction();
         $arguments = $route->getArguments();
-        array_push($arguments, $this->request);
+        $arguments[] = $this->request;
 
         if ($controller = $route->getController()) {
-            return $this->container->get($controller)->$action(...$arguments);
+            return $this->get($controller)->$action(...$arguments);
         }
 
         return call_user_func_array($action, $arguments);
+    }
+
+    private function defaultHttpExceptionHandler(HttpExceptionInterface $httpException): Response
+    {
+        $content = $this->get((string)$httpException->getCode()) ?: $httpException->getMessage();
+        $view = $content instanceof View ? $content->with(['message' => $httpException->getMessage()]) : $content;
+
+        return (new Response($view, $httpException->getCode(), $httpException->getHeaders()));
     }
 }
