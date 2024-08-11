@@ -1,13 +1,6 @@
 <?php
 
-use App\Domain\Session;
-use App\Domain\User;
-use App\Repository\UserRepository;
-use App\Service\UserService;
 use MA\PHPQUICK\Container;
-use MA\PHPQUICK\Database\Database;
-use MA\PHPQUICK\Http\Requests\Request;
-use PSpell\Config;
 
 require __DIR__ . '/../vendor/autoload.php';
 

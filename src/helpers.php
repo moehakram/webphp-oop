@@ -49,7 +49,7 @@ if (!function_exists('session')) {
 
     function session($key = null, $default = null)
     {
-        return app(Session::class)->getOrSet($key, $default);
+        return app('session')->getOrSet($key, $default);
     }
 }
 

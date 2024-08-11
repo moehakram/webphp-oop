@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
+use MA\PHPQUICK\Config;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Bootstrap;
 use App\Service\UserService;
 use App\Service\SessionService;
-use MA\PHPQUICK\Session\Session;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CSRFMiddleware;
 use App\Repository\UserRepository;
@@ -22,20 +22,6 @@ set_exception_handler(function (\Throwable $ex) {
 });
 
 return (new Bootstrap(
-    // initializeErrorViews: function (App $app): void {
-    //     // Custom error view logic
-    //     $app->bind('404', fn() => View::make('error.404'));
-    //     $app->bind('403', fn() => View::make('error.403'));
-    //     $app->bind('500', fn() => View::make('error.500'));
-    // },
-    initializeErrorViews: function (App $app): array {
-        // Custom error view logic
-        return [
-            '404' => fn() => View::make('error.404'),
-            '403' => fn() => View::make('error.403'),
-            '500' => fn() => View::make('error.500')
-        ];
-    },
     middlewareAliases: function(): array {
         return [
             'auth' => AuthMiddleware::class,
@@ -43,9 +29,6 @@ return (new Bootstrap(
             'guest' => GuestMiddleware::class,
             'csrf' => CSRFMiddleware::class
         ];
-    },
-    initializeSession:function(App $app){
-        $app->instance(Session::class, new Session());
     },
     // initializeConfig: function (Config $config): void {
     //     $config->set('author', 'akram');

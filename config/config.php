@@ -9,5 +9,10 @@ return [
         'name' => 'php_mvc',
         'username' => 'root',
         'password' => ''
+    ],
+    'httpErrorPage' => [
+        '403' => 'error.403', // status code => page view
+        '404' => 'error.404',
+        '500' => 'error.405'
     ]
 ];

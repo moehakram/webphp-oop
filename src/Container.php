@@ -6,6 +6,7 @@ use Closure;
 use MA\PHPQUICK\Contracts\ExtendedContainerInterface;
 use MA\PHPQUICK\Exception\Container\NotFoundException;
 use MA\PHPQUICK\Exception\Container\ContainerException;
+use ReflectionParameter;
 
 class Container implements ExtendedContainerInterface
 {
@@ -47,22 +48,7 @@ class Container implements ExtendedContainerInterface
 
         // Jika layanan terdaftar sebagai binding, buat instance baru
         if (isset($this->bindings[$id])) {
-            try {
-                $instance = $this->bindings[$id];
-
-                if ($instance instanceof \Closure) {
-                    $instance = $instance($this);
-                }
-
-                // Jika ini adalah singleton, simpan instance-nya
-                if (array_key_exists($id, $this->instances)) {
-                    $this->instances[$id] = $instance;
-                }
-
-                return $instance;
-            } catch (\Throwable $e) {
-                throw new ContainerException(sprintf('Error resolving service "%s":  %s', $id, $e->getMessage()), 0, $e);
-            }
+           return $this->resolveBinding($id);
         }
 
         // Jika layanan tidak ditemukan, coba resolve class
@@ -71,6 +57,22 @@ class Container implements ExtendedContainerInterface
         }
 
         throw new NotFoundException(sprintf('Service "%s" not found in container.', $id));
+    }
+
+    private function resolveBinding(string $id)
+    {
+        try {
+            $instance = $this->bindings[$id]($this);
+
+            // Jika ini adalah singleton, simpan instance-nya
+            if (array_key_exists($id, $this->instances)) {
+                $this->instances[$id] = $instance;
+            }
+
+            return $instance;
+        } catch (\Throwable $e) {
+            throw new ContainerException(sprintf('Error resolving service "%s": %s', $id, $e->getMessage()), 0, $e);
+        }
     }
 
     public function has(string $id): bool
@@ -136,17 +138,12 @@ class Container implements ExtendedContainerInterface
             $instance = is_object($callable[0]) ? $callable[0] : $this->get($callable[0]);
             $dependencies = $this->resolveParameters($reflection, $parameters);
             return $reflection->invokeArgs($instance, $dependencies);
-        } elseif ($callable instanceof \Closure) {
+        } elseif ($callable instanceof \Closure || is_string($callable)) {
             // Jika callable adalah Closure, buat ReflectionFunction
             $reflection = new \ReflectionFunction($callable);
             $dependencies = $this->resolveParameters($reflection, $parameters);
             return $reflection->invokeArgs($dependencies); // Tidak butuh instance
-        } elseif (is_string($callable)) {
-            // Jika callable adalah string, itu mungkin nama function
-            $reflection = new \ReflectionFunction($callable);
-            $dependencies = $this->resolveParameters($reflection, $parameters);
-            return $reflection->invokeArgs($dependencies); // Tidak butuh instance
-        } else {
+        }else {
             throw new \InvalidArgumentException('Unsupported callable type');
         }
     }
@@ -156,13 +153,13 @@ class Container implements ExtendedContainerInterface
         $dependencies = [];
         foreach ($reflection->getParameters() as $parameter) {
             $name = $parameter->getName();
-            $type = $parameter->getType();
-    
+            $typeName = $this->getTypeName($parameter);
+
             if (isset($parameters[$name])) {
                 $dependencies[] = $parameters[$name];
-            } elseif ($type && !$type->isBuiltin()) {
-                $dependencies[] = $this->get($type->getName());
-            } elseif ($parameter->isDefaultValueAvailable()) {
+            } elseif ($typeName && class_exists($typeName)) {
+                $dependencies[] = $this->get($typeName);
+            }elseif ($parameter->isDefaultValueAvailable()) {
                 $dependencies[] = $parameter->getDefaultValue();
             } else {
                 throw new ContainerException("Unable to resolve dependency {$name}");
@@ -170,5 +167,16 @@ class Container implements ExtendedContainerInterface
         }
     
         return $dependencies;
+    }
+
+    private function getTypeName(ReflectionParameter $parameter): ?string
+    {
+        $type = $parameter->getType();
+
+        if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+            return $type->getName();
+        }
+
+        return null;
     }
 }

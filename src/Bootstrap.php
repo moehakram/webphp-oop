@@ -7,25 +7,19 @@ use Closure;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
+use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\Session\Session;
 
-/**
- * Class Bootstrap
- * 
- * This class is responsible for bootstrapping the application by initializing
- * configurations, database connections, services, repositories, error views,
- * and setting up the HTTP exception handler.
- */
 class Bootstrap
 {
     public function __construct(
-        private Closure $initializeErrorViews,
         private Closure $initializeServices,
         private Closure $initializeRepositories,
-        private Closure $initializeSession,
         private Closure $middlewareAliases,
+        private ?Closure $initializeDomain = null,
         private ?Closure $initializeDatabase = null,
         private ?Closure $initializeConfig = null,
-        private ?Closure $setHttpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
+        private ?Closure $customHttpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
         private ?Closure $customBoot = null
     ) {}
 
@@ -40,6 +34,7 @@ class Bootstrap
         $this->registerCoreInstances($app);
         $this->initializeConfig($app);
         $this->initializeDatabase($app);
+        $this->initializeDomain($app);
         $this->initializeRepositories($app);
         $this->initializeServices($app);
         $this->initializeErrorViews($app);
@@ -80,6 +75,13 @@ class Bootstrap
         $app->instance(\PDO::class, $dbConnection);
     }
 
+    private function initializeDomain(App $app): void
+    {
+        if($this->initializeDomain){
+            ($this->initializeDomain)($app);
+        }
+    }
+
     /**
      * Initializes the repositories by invoking the provided closure.
      *
@@ -110,7 +112,10 @@ class Bootstrap
      */
     private function initializeErrorViews(App $app): void
     {
-       $app->bindMany(($this->initializeErrorViews)($app));
+        $bindings = $app->get('config')->get('httpErrorPage', []);
+        foreach ($bindings as $id => $resolver) {
+            $app->bind((string)$id, fn() => View::make($resolver));
+        }
     }
 
     /**
@@ -121,7 +126,7 @@ class Bootstrap
      */
     private function setHttpExceptionHandler(App $app): void
     {
-        $app->instance('http.exception.handler', $this->setHttpExceptionHandler ?? '');
+        $app->instance('http.exception.handler', $this->customHttpExceptionHandler ?? '');
     }
 
     /**
@@ -139,9 +144,7 @@ class Bootstrap
 
     private function initializeSession(App $app): void
     {
-        if ($this->initializeSession) {
-            ($this->initializeSession)($app);
-        }
+        $app->instance('session', new Session());
     }
 
     private function customBootMethods(App $app): void
