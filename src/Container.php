@@ -157,7 +157,7 @@ class Container implements ExtendedContainerInterface
 
             if (isset($parameters[$name])) {
                 $dependencies[] = $parameters[$name];
-            } elseif ($typeName && class_exists($typeName)) {
+            } elseif ($typeName && (class_exists($typeName) || interface_exists($typeName))) {
                 $dependencies[] = $this->get($typeName);
             }elseif ($parameter->isDefaultValueAvailable()) {
                 $dependencies[] = $parameter->getDefaultValue();

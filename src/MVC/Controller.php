@@ -2,18 +2,14 @@
 
 namespace MA\PHPQUICK\MVC;
 
-use MA\PHPQUICK\Container;
+use MA\PHPQUICK\Application;
 
 abstract class Controller
 {
     protected $layout = null;
-
-    public function __construct(
-        private Container $container
-    ){}
-
+ 
     protected function make(string $key){
-        return $this->container->get($key);
+        return Application::$instance->get($key);
     }
 
     protected function view(string $view, array $data = [], ?string $layout = null): View

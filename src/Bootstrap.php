@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace MA\PHPQUICK;
 
 use Closure;
+use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
-use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Session\Session;
 
 class Bootstrap
 {
@@ -16,6 +16,7 @@ class Bootstrap
         private Closure $initializeServices,
         private Closure $initializeRepositories,
         private Closure $middlewareAliases,
+        private Closure $middlewareGlobal,
         private ?Closure $initializeDomain = null,
         private ?Closure $initializeDatabase = null,
         private ?Closure $initializeConfig = null,
@@ -40,7 +41,7 @@ class Bootstrap
         $this->initializeErrorViews($app);
         $this->setHttpExceptionHandler($app);
         $this->initializeSession($app);
-        $this->middlewareAliases($app);
+        $this->initializeMiddleware($app);
         $this->customBootMethods($app);
         return $app;
     }
@@ -54,10 +55,11 @@ class Bootstrap
     private function initializeConfig(App $app): void
     {
         $config = new Config(require base_path('config/config.php'));
+        $app->instance('config', $config);
+        $app->instance(Config::class, $config);
         if($this->initializeConfig) {
             ($this->initializeConfig)($config);
         }
-        $app->instance('config', $config);
     }
 
     /**
@@ -113,8 +115,8 @@ class Bootstrap
     private function initializeErrorViews(App $app): void
     {
         $bindings = $app->get('config')->get('httpErrorPage', []);
-        foreach ($bindings as $id => $resolver) {
-            $app->bind((string)$id, fn() => View::make($resolver));
+        foreach ($bindings as $id => $view) {
+            $app->bind((string)$id, fn() => View::make($view));
         }
     }
 
@@ -126,7 +128,7 @@ class Bootstrap
      */
     private function setHttpExceptionHandler(App $app): void
     {
-        $app->instance('http.exception.handler', $this->customHttpExceptionHandler ?? '');
+        $app->instance('http.exception.handler', $this->customHttpExceptionHandler);
     }
 
     /**
@@ -138,7 +140,7 @@ class Bootstrap
     private function registerCoreInstances(App $app): void
     {
         $app->instance(Container::class, $app);
-        // $app->instance(Application::class, $app);
+        $app->instance(Application::class, $app);
         $app->instance(Response::class, new Response());
     }
 
@@ -154,7 +156,11 @@ class Bootstrap
         }
     }
 
-    private function middlewareAliases(App $app){
+    private function initializeMiddleware(App $app){
+        // Set global middleware
+        $app->instance('middleware.global', ($this->middlewareGlobal)());
+        
+        // Set middleware aliases
         $app->instance('middleware.aliases', ($this->middlewareAliases)());
     }
 }

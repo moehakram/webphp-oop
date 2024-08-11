@@ -7,6 +7,7 @@ namespace MA\PHPQUICK;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Router\Route;
 use MA\PHPQUICK\Router\Router;
+use MA\PHPQUICK\Http\RequestInterface;
 use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Http\ResponseInterface;
 use MA\PHPQUICK\Http\Responses\Response;
@@ -14,13 +15,14 @@ use MA\PHPQUICK\Router\MiddlewarePipeline;
 use MA\PHPQUICK\Exception\HttpExceptionInterface;
 
 class Application extends Container
-{        
+{
     public function __construct(
         private readonly Request $request,
         private readonly Router $router
     ) {
         self::$instance = $this;
         $this->instance(Request::class, $request);
+        $this->instance(RequestInterface::class, $request);
     }
 
     public function run()
@@ -36,9 +38,12 @@ class Application extends Container
 
     private function createMiddlewarePipeline(Route $route): MiddlewarePipeline
     {
+        $globalMiddlewares = $this->has('middleware.global') ? $this->get('middleware.global') : [];
+        $routeMiddlewares = $route->getMiddlewares();
+
         $middlewares = array_merge(
-            [AuthMiddleware::class],
-            $route->getMiddlewares(),
+            $globalMiddlewares,
+            $routeMiddlewares,
             [fn() => $this->executeRouteAction($route)]
         );
         return new MiddlewarePipeline($middlewares, $this->get('middleware.aliases'));
@@ -48,25 +53,34 @@ class Application extends Container
     {
         $action = $route->getAction();
         $arguments = $route->getArguments();
-        $arguments[] = $this->request;
 
         if ($controller = $route->getController()) {
-            return $this->get($controller)->$action(...$arguments);
+            $controllerInstance = $this->get($controller);
+
+            if (!method_exists($controllerInstance, $action)) {
+                throw new \BadMethodCallException("Method {$action} not found in controller {$controller}");
+            }
+
+            return $this->call([$controllerInstance, $action], $arguments); // Menggunakan metode call dari container
         }
 
-        return call_user_func_array($action, $arguments);
+        return $this->call($action, $arguments); // Menggunakan metode call dari container untuk fungsi callback biasa
     }
 
     private function handleHttpException(HttpExceptionInterface $httpException): Response
     {
-        $exceptionHandler = $this->get('http.exception.handler');
-        $content = $exceptionHandler ? $exceptionHandler($httpException) : $this->defaultExceptionContent($httpException);
-                
-        if($content instanceof View){
+        $handler = $this->has('http.exception.handler') 
+        ? $this->get('http.exception.handler') 
+        : null;
+
+        $content = $handler ? $handler($httpException) : $this->defaultExceptionContent($httpException);
+
+        // Determine the content type and prepare the response
+        if ($content instanceof View) {
             $view = $content->with(['message' => $httpException->getMessage()]);
-        }elseif($content instanceof ResponseInterface){
+        } elseif ($content instanceof ResponseInterface) {
             $view = $content->getContent();
-        }else{
+        } else {
             $view = $content ?: $this->defaultExceptionContent($httpException);
         }
         return new Response((string)$view, $httpException->getCode(), $httpException->getHeaders());

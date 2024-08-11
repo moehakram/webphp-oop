@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use MA\PHPQUICK\Config;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Bootstrap;
 use App\Service\UserService;
@@ -12,6 +11,7 @@ use App\Repository\UserRepository;
 use App\Middleware\GuestMiddleware;
 use App\Repository\SessionRepository;
 use App\Middleware\OnlyAdminMiddleware;
+use App\Middleware\CurrentUserMiddleware;
 use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
 
 // Set exception handler
@@ -27,7 +27,12 @@ return (new Bootstrap(
             'auth' => AuthMiddleware::class,
             'admin' => OnlyAdminMiddleware::class,
             'guest' => GuestMiddleware::class,
-            'csrf' => CSRFMiddleware::class
+            'csrf' => CSRFMiddleware::class,
+        ];
+    },
+    middlewareGlobal: function (): array {
+        return [
+            CurrentUserMiddleware::class
         ];
     },
     // initializeConfig: function (Config $config): void {

@@ -18,6 +18,10 @@ class User implements Authenticable
 
     // private $rememberToken;
 
+    public static function get($id){ // kebutuhan testing
+        return $id;
+    }
+
     public function getAuthIdentifier()
     {
         return $this->username;
