@@ -2,10 +2,10 @@
 namespace MA\PHPQUICK\Http;
 
 use MA\PHPQUICK\Collection;
-use MA\PHPQUICK\Http\Requests\Files;
-use MA\PHPQUICK\Http\Requests\RequestHeaders;
-use MA\PHPQUICK\Interfaces\Authenticable;
 use MA\PHPQUICK\Session\Session;
+use MA\PHPQUICK\Http\Requests\Files;
+use MA\PHPQUICK\Contracts\Authenticable;
+use MA\PHPQUICK\Http\Requests\RequestHeaders;
 
 interface RequestInterface
 {

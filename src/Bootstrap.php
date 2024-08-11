@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace MA\PHPQUICK;
 
 use Closure;
-use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Http\Responses\Response;
+use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
 
 /**
  * Class Bootstrap
@@ -21,6 +21,8 @@ class Bootstrap
         private Closure $initializeErrorViews,
         private Closure $initializeServices,
         private Closure $initializeRepositories,
+        private Closure $initializeSession,
+        private Closure $middlewareAliases,
         private ?Closure $initializeDatabase = null,
         private ?Closure $initializeConfig = null,
         private ?Closure $setHttpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
@@ -33,19 +35,19 @@ class Bootstrap
      * @param Container $container
      * @return Container
      */
-    public function boot(Container $container): Container
+    public function boot(App $app): Container
     {
-        $this->initializeConfig($container);
-        $this->initializeDatabase($container);
-        $this->initializeRepositories($container);
-        $this->initializeServices($container);
-        $this->initializeErrorViews($container);
-        $this->registerCoreInstances($container);
-        $this->setHttpExceptionHandler($container);
-        $this->initializeSession($container);
-
-        $this->customBootMethods($container);
-        return $container;
+        $this->registerCoreInstances($app);
+        $this->initializeConfig($app);
+        $this->initializeDatabase($app);
+        $this->initializeRepositories($app);
+        $this->initializeServices($app);
+        $this->initializeErrorViews($app);
+        $this->setHttpExceptionHandler($app);
+        $this->initializeSession($app);
+        $this->middlewareAliases($app);
+        $this->customBootMethods($app);
+        return $app;
     }
 
     /**
@@ -54,13 +56,13 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function initializeConfig(Container $container): void
+    private function initializeConfig(App $app): void
     {
         $config = new Config(require base_path('config/config.php'));
         if($this->initializeConfig) {
             ($this->initializeConfig)($config);
         }
-        $container->instance('config', $config);
+        $app->instance('config', $config);
     }
 
     /**
@@ -69,13 +71,13 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function initializeDatabase(Container $container): void
+    private function initializeDatabase(App $app): void
     {
         $dbConnection = Database::getConnection();
         if($this->initializeDatabase){
             ($this->initializeDatabase)($dbConnection);
         }
-        $container->instance(\PDO::class, $dbConnection);
+        $app->instance(\PDO::class, $dbConnection);
     }
 
     /**
@@ -84,9 +86,9 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function initializeRepositories(Container $container): void
+    private function initializeRepositories(App $app): void
     {
-        ($this->initializeRepositories)($container);
+        ($this->initializeRepositories)($app);
     }
 
     /**
@@ -95,9 +97,9 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function initializeServices(Container $container): void
+    private function initializeServices(App $app): void
     {
-        ($this->initializeServices)($container);
+        ($this->initializeServices)($app);
     }
 
     /**
@@ -106,9 +108,9 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function initializeErrorViews(Container $container): void
+    private function initializeErrorViews(App $app): void
     {
-        ($this->initializeErrorViews)($container);
+       $app->bindMany(($this->initializeErrorViews)($app));
     }
 
     /**
@@ -117,38 +119,39 @@ class Bootstrap
      * @param Container $container
      * @return void
      */
-    private function setHttpExceptionHandler(Container $container): void
+    private function setHttpExceptionHandler(App $app): void
     {
-        if ($this->setHttpExceptionHandler) {
-            $container->instance('HttpExceptionHandler', $this->setHttpExceptionHandler);
-        }
+        $app->instance('http.exception.handler', $this->setHttpExceptionHandler ?? '');
     }
 
     /**
-     * Registers core instances such as Container, Response, and Application in the container.
+     * Registers core instances such as Container, Application, and Response in the container.
      *
      * @param Container $container
      * @return void
      */
-    private function registerCoreInstances(Container $container): void
+    private function registerCoreInstances(App $app): void
     {
-        $container->instance(Container::class, $container);
-        $container->instance(Application::class, $container);
-        $container->instance(Response::class, new Response());
+        $app->instance(Container::class, $app);
+        // $app->instance(Application::class, $app);
+        $app->instance(Response::class, new Response());
     }
 
-    private function initializeSession(Container $container): void
+    private function initializeSession(App $app): void
     {
-        $session = new Session();
-        $container->instance(Session::class, $session);
-    }
-
-
-    private function customBootMethods(Container $container): void
-    {
-        if ($this->customBoot) {
-            ($this->customBoot)($container);
+        if ($this->initializeSession) {
+            ($this->initializeSession)($app);
         }
     }
 
+    private function customBootMethods(App $app): void
+    {
+        if ($this->customBoot) {
+            ($this->customBoot)($app);
+        }
+    }
+
+    private function middlewareAliases(App $app){
+        $app->instance('middleware.aliases', ($this->middlewareAliases)());
+    }
 }

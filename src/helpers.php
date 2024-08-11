@@ -2,6 +2,7 @@
 
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Application;
+use MA\PHPQUICK\Container;
 use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Http\Responses\Response;
 use MA\PHPQUICK\Http\RequestInterface as Request;
@@ -32,7 +33,7 @@ if (!function_exists('app')) {
 
     function app($key = null)
     {
-        $app = Application::$instance;
+        $app = Container::$instance;
 
         // Jika ada key, resolve key tersebut dari container
         if ($key) {

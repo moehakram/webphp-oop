@@ -1,6 +1,6 @@
 <?php
 
-namespace MA\PHPQUICK\Interfaces;
+namespace MA\PHPQUICK\Contracts;
 
 interface Authenticable
 {

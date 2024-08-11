@@ -2,59 +2,42 @@
 
 namespace MA\PHPQUICK;
 
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Container\ContainerExceptionInterface;
+use Closure;
+use MA\PHPQUICK\Contracts\ExtendedContainerInterface;
 use MA\PHPQUICK\Exception\Container\NotFoundException;
 use MA\PHPQUICK\Exception\Container\ContainerException;
 
-class Container implements ContainerInterface
+class Container implements ExtendedContainerInterface
 {
+    public static ?Container $instance = null;
+
     private array $bindings = [];
     private array $instances = [];
 
-    /**
-     * Mendaftarkan layanan dengan closure atau factory.
-     *
-     * @param string $id
-     * @param callable $resolver
-     */
-    public function bind(string $id, callable $resolver): void
+    public function bind(string $id, Closure $resolver): void
     {
         $this->bindings[$id] = $resolver;
     }
 
-    /**
-     * Mendaftarkan layanan sebagai singleton.
-     *
-     * @param string $id
-     * @param callable $resolver
-     */
-    public function singleton(string $id, callable $resolver): void
+    public function bindMany(array $bindings): void
+    {
+        foreach ($bindings as $id => $resolver) {
+            $this->bind($id, $resolver);
+        }
+    }
+
+    public function singleton(string $id, Closure $resolver): void
     {
         $this->bindings[$id] = $resolver;
         $this->instances[$id] = null; // Menandakan bahwa ini singleton
     }
 
-    /**
-     * Mendaftarkan instance yang sudah ada.
-     *
-     * @param string $id
-     * @param mixed $instance
-     */
-    public function instance(string $id, $instance): void
+
+    public function instance(string $id, mixed $instance): void
     {
         $this->instances[$id] = $instance;
     }
 
-    /**
-     * Mengambil layanan dari container.
-     *
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     */
     public function get(string $id)
     {
         // Jika layanan sudah ada sebagai instance, kembalikan instance tersebut
@@ -90,24 +73,12 @@ class Container implements ContainerInterface
         throw new NotFoundException(sprintf('Service "%s" not found in container.', $id));
     }
 
-    /**
-     * Memeriksa apakah layanan ada di container.
-     *
-     * @param string $id
-     * @return bool
-     */
     public function has(string $id): bool
     {
         return isset($this->bindings[$id]) || isset($this->instances[$id]);
     }
 
-    /**
-     * Memodifikasi layanan yang sudah ada dalam container.
-     *
-     * @param string $id
-     * @param callable $callback
-     */
-    public function extend(string $id, callable $callback): void
+    public function extend(string $id, Closure $callback): void
     {
         if (array_key_exists($id, $this->instances)) {
             $this->instances[$id] = $callback($this->instances[$id]);
@@ -119,13 +90,6 @@ class Container implements ContainerInterface
         }
     }
 
-    /**
-     * Resolve dependencies and create an instance of a class.
-     *
-     * @param string $class
-     * @return object
-     * @throws ContainerExceptionInterface
-     */
     protected function resolveClass(string $class)
     {
         try {
@@ -136,7 +100,6 @@ class Container implements ContainerInterface
                 return new $class;
             }
 
-            $parameters = $constructor->getParameters();
             $dependencies = array_map(
                 function (\ReflectionParameter $parameter) use($class) {
                     $name = $parameter->getName();
@@ -156,12 +119,56 @@ class Container implements ContainerInterface
 
                     throw new ContainerException(sprintf('Failed to resolve class "%s" because invalid param "%s"', $class, $name));
                 }, 
-                $parameters
+                $constructor->getParameters()
             );
 
             return $reflector->newInstanceArgs($dependencies);
         } catch (\ReflectionException $e) {
             throw new ContainerException(sprintf('Error resolving class "%s": %s', $class, $e->getMessage()), 0, $e);
         }
+    }
+
+    public function call($callable, array $parameters = []): mixed
+    {
+        if (is_array($callable)) {
+            // Jika callable adalah array, berarti ini adalah method dari class/instance
+            $reflection = new \ReflectionMethod($callable[0], $callable[1]);
+            $instance = is_object($callable[0]) ? $callable[0] : $this->get($callable[0]);
+            $dependencies = $this->resolveParameters($reflection, $parameters);
+            return $reflection->invokeArgs($instance, $dependencies);
+        } elseif ($callable instanceof \Closure) {
+            // Jika callable adalah Closure, buat ReflectionFunction
+            $reflection = new \ReflectionFunction($callable);
+            $dependencies = $this->resolveParameters($reflection, $parameters);
+            return $reflection->invokeArgs($dependencies); // Tidak butuh instance
+        } elseif (is_string($callable)) {
+            // Jika callable adalah string, itu mungkin nama function
+            $reflection = new \ReflectionFunction($callable);
+            $dependencies = $this->resolveParameters($reflection, $parameters);
+            return $reflection->invokeArgs($dependencies); // Tidak butuh instance
+        } else {
+            throw new \InvalidArgumentException('Unsupported callable type');
+        }
+    }
+    
+    private function resolveParameters(\ReflectionFunctionAbstract $reflection, array $parameters = [])
+    {
+        $dependencies = [];
+        foreach ($reflection->getParameters() as $parameter) {
+            $name = $parameter->getName();
+            $type = $parameter->getType();
+    
+            if (isset($parameters[$name])) {
+                $dependencies[] = $parameters[$name];
+            } elseif ($type && !$type->isBuiltin()) {
+                $dependencies[] = $this->get($type->getName());
+            } elseif ($parameter->isDefaultValueAvailable()) {
+                $dependencies[] = $parameter->getDefaultValue();
+            } else {
+                throw new ContainerException("Unable to resolve dependency {$name}");
+            }
+        }
+    
+        return $dependencies;
     }
 }

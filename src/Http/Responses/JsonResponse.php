@@ -16,11 +16,7 @@ class JsonResponse extends Response
             $content = $content->getArrayCopy();
         }
 
-        $json = json_encode($content);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException('Failed to JSON encode content: ' . json_last_error_msg());
-        }
+        $json = json_encode($content, JSON_THROW_ON_ERROR);
 
         parent::setContent($json);
 

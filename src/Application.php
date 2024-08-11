@@ -13,15 +13,13 @@ use MA\PHPQUICK\Router\MiddlewarePipeline;
 use MA\PHPQUICK\Exception\HttpExceptionInterface;
 
 class Application extends Container
-{
-    public static ?Container $instance = null;
-        
+{        
     public function __construct(
         private readonly Request $request,
         private readonly Router $router
     ) {
-        $this->instance(Request::class, $request);
         self::$instance = $this;
+        $this->instance(Request::class, $request);
     }
 
     public function run()
@@ -31,7 +29,7 @@ class Application extends Container
             $middlewarePipeline = $this->createMiddlewarePipeline($route);
             return $middlewarePipeline->handle($this->request)->send();
         } catch (HttpExceptionInterface $httpException) {
-            if($HttpExceptionHandler = $this->get('HttpExceptionHandler')){
+            if($HttpExceptionHandler = $this->get('http.exception.handler')){
                 $result = ($HttpExceptionHandler)($httpException);
                 return $result instanceof Response ? $result->send() : $this->defaultHttpExceptionHandler($httpException)->send();
             }
@@ -46,7 +44,7 @@ class Application extends Container
             $route->getMiddlewares(),
             [fn() => $this->handleRouteCallback($route)]
         );
-        return new MiddlewarePipeline($middlewares);
+        return new MiddlewarePipeline($middlewares, $this->get('middleware.aliases'));
     }
 
     private function handleRouteCallback(Route $route): mixed

@@ -2,8 +2,8 @@
 
 namespace App\Middleware;
 
+use MA\PHPQUICK\Contracts\Middleware;
 use MA\PHPQUICK\Http\RequestInterface as Request;
-use MA\PHPQUICK\Interfaces\Middleware;
 
 class AuthMiddleware implements Middleware{
 

@@ -2,29 +2,33 @@
 
 namespace MA\PHPQUICK\Router;
 
+use MA\PHPQUICK\Contracts\Middleware;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Http\RequestInterface as Request;
 use MA\PHPQUICK\Http\ResponseInterface as Response;
-use MA\PHPQUICK\Interfaces\Middleware;
 
 class MiddlewarePipeline
 {
     private int $index = 0;
     private array $middlewares = [];
 
-    public function __construct(array $middlewares)
+    public function __construct(array $middlewares, array $mapping = [])
     {
         foreach($middlewares as $middleware){
-            $this->middlewares[] = $this->resolveMiddleware($middleware);
+            $this->middlewares[] = $this->resolveMiddleware($middleware, $mapping);
         }
     }
 
-    private function resolveMiddleware($middleware)
+    private function resolveMiddleware($middleware, array $mapping)
     {
-        if (is_string($middleware) && class_exists($middleware)) {
+        if (is_string($middleware) && isset($mapping[$middleware])) {
+            $middleware = $mapping[$middleware];
+        } 
+        
+        if(is_string($middleware) && class_exists($middleware)) {
             $middleware = new $middleware;
         }
-    
+
         if ($middleware instanceof Middleware || is_callable($middleware)) {
             return $middleware;
         }

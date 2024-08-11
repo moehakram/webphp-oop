@@ -2,7 +2,8 @@
 
 namespace App\Domain;
 
-use MA\PHPQUICK\Interfaces\Authenticable;
+use MA\PHPQUICK\Contracts\Authenticable;
+
 
 class User implements Authenticable
 {

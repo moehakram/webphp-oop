@@ -1,5 +1,5 @@
 <?php
-namespace MA\PHPQUICK\Interfaces;
+namespace MA\PHPQUICK\Contracts;
 
 use MA\PHPQUICK\Collection;
 
