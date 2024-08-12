@@ -1,4 +1,4 @@
-<?php if ($errors) : ?>
+<?php if ($errors ?? false) : ?>
     <?= displayAlert($errors); ?> 
 <?php endif; ?>
 

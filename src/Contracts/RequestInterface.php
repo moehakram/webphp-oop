@@ -1,5 +1,5 @@
 <?php
-namespace MA\PHPQUICK\Http;
+namespace MA\PHPQUICK\Contracts;
 
 use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Session\Session;

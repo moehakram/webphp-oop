@@ -3,12 +3,12 @@
 namespace MA\PHPQUICK\Contracts;
 
 use Closure;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainer;
 
 /**
  * Interface tambahan untuk container dengan fitur khusus.
  */
-interface ExtendedContainerInterface extends ContainerInterface
+interface ContainerInterface extends PsrContainer
 {
     /**
      * Mendaftarkan layanan dengan closure atau factory.

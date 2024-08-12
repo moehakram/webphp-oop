@@ -6,9 +6,9 @@ use App\Service\UserService;
 use App\Service\SessionService;
 use MA\PHPQUICK\MVC\Controller;
 use App\Models\User\UserProfileUpdateRequest;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 use App\Models\User\UserPasswordUpdateRequest;
-use MA\PHPQUICK\Exception\ValidationException;
+use MA\PHPQUICK\Exceptions\ValidationException;
 
 class ProfileController extends Controller
 {

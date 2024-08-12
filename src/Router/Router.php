@@ -2,31 +2,33 @@
 
 namespace MA\PHPQUICK\Router;
 
-use MA\PHPQUICK\Exception\Http\RouteNotFoundException;
-use MA\PHPQUICK\Http\Requests\Request;
 use MA\PHPQUICK\Router\Route;
+use MA\PHPQUICK\Http\Requests\Request;
+use MA\PHPQUICK\Exceptions\HttpNotFoundException;
 
 class Router
 {
     private array $routes = [];
 
-    public function get(string $path, $callback, ...$middlewares): void
+    public function get(string $path, $callback, ...$middlewares): self
     {
-        $this->register(Request::GET, $path, $callback, $middlewares);
+       return $this->register(Request::GET, $path, $callback, $middlewares);
     }
 
-    public function post(string $path, $callback, ...$middlewares): void
+    public function post(string $path, $callback, ...$middlewares): self
     {
-        $this->register(Request::POST, $path, $callback, $middlewares);
+       return $this->register(Request::POST, $path, $callback, $middlewares);
     }
 
-    public function register(string $method, string $path, $callback, array $middlewares): void
+    public function register(string $method, string $path, $callback, array $middlewares): self
     {
         $this->routes[$method][] = [
             'path' => $path,
             'callback' => $callback,
             'middlewares' => $middlewares
         ];
+
+        return $this;
     }
 
     public function dispatch(string $method, string $path): Route
@@ -41,6 +43,6 @@ class Router
                 return new Route($route['callback'], $route['middlewares'], $variabels);
             }
         }
-        throw new RouteNotFoundException($path);
+        throw new HttpNotFoundException(sprintf('Route Not Found "{ %s }"', $path));
     }
 }

@@ -1,18 +1,37 @@
 <?php
+declare(strict_types=1);
 
 return [
-    'app.url' => 'http://www.localhost:8080/',
-    'database' => [
-        'driver' => 'mysql',
-        'host' => '127.0.0.1',
-        'port' => '3306',
-        'name' => 'php_mvc',
-        'username' => 'root',
-        'password' => ''
+    // Konfigurasi umum aplikasi
+    'app' => [
+        'name' => 'PHPQuick',
+        'url'  => 'http://www.localhost:8080/',
     ],
-    'httpErrorPage' => [
-        '403' => 'error.403', // status code => page view
-        '404' => 'error.404',
-        '500' => 'error.405'
-    ]
+
+    // Konfigurasi database
+    'database' => [
+        'driver'   => 'mysql',
+        'host'     => '127.0.0.1',
+        'port'     => '3306',
+        'name'     => 'php_mvc',
+        'username' => 'root',
+        'password' => '',
+    ],
+
+    // Konfigurasi error page custom
+    'error_pages' => [
+        '403' => 'error.403', // Halaman untuk error 403 Forbidden
+        '404' => 'error.404', // Halaman untuk error 404 Not Found
+        '500' => 'error.500', // Halaman untuk error 500 Internal Server Error
+    ],
+
+    // Konfigurasi logging
+    'logging' => [
+        'error_log' => [
+            'path' => base_path('logs/error.log'),
+        ],
+        'info_log' => [
+            'path' => base_path('logs/app.log'),
+        ],
+    ],
 ];

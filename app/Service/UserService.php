@@ -7,7 +7,7 @@ use App\Domain\User;
 use MA\PHPQUICK\Collection;
 use App\Repository\UserRepository;
 use MA\PHPQUICK\Database\Database;
-use MA\PHPQUICK\Exception\ValidationException;
+use MA\PHPQUICK\Exceptions\ValidationException;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
 use MA\PHPQUICK\Token;
 
@@ -28,10 +28,7 @@ class UserService
 
     public function register(UserRegisterRequest $request): User
     {
-        if ($request->validate()) {
-            throw new ValidationException('errors', $request->getErrors());
-        }
-
+            $request->validate();
         try {
             Database::beginTransaction();
             $user = new User();

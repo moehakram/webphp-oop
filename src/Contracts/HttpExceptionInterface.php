@@ -1,8 +1,8 @@
 <?php
-namespace MA\PHPQUICK\Exception;
+namespace MA\PHPQUICK\Contracts;
 
 use Throwable;
 
 Interface HttpExceptionInterface extends Throwable{
-    public function getHeaders(): array;
+    
 }

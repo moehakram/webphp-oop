@@ -3,7 +3,7 @@
 namespace App\Middleware;
 
 use MA\PHPQUICK\Contracts\Middleware;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 
 class GuestMiddleware implements Middleware
 {

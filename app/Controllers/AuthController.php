@@ -3,10 +3,10 @@
 namespace App\Controllers;
 
 use MA\PHPQUICK\MVC\Controller;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 use App\Models\User\{UserLoginRequest, UserRegisterRequest};
 use App\Service\{SessionService, UserService};
-use MA\PHPQUICK\Exception\ValidationException;
+use MA\PHPQUICK\Exceptions\ValidationException;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validator;
 

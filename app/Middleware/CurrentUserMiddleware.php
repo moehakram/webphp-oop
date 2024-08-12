@@ -4,7 +4,7 @@ namespace App\Middleware;
 
 use App\Service\SessionService;
 use MA\PHPQUICK\Contracts\Middleware;
-use MA\PHPQUICK\Http\RequestInterface;
+use MA\PHPQUICK\Contracts\RequestInterface;
 
 class CurrentUserMiddleware implements Middleware{
 

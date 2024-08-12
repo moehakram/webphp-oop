@@ -3,7 +3,7 @@
 namespace App\Middleware;
 
 use MA\PHPQUICK\Contracts\Middleware;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 
 class CSRFMiddleware implements Middleware
 {
@@ -17,6 +17,6 @@ class CSRFMiddleware implements Middleware
             }
         }
 
-        return response()->setNotFound('CSRF_TOKEN tidak valid !');
+        return response()->back();
     }
 }

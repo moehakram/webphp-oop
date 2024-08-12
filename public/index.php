@@ -22,4 +22,5 @@ $bootstrap->boot(
         request: new Request(),
         router: $router
     )
-)->run();
+)->run()
+->send();

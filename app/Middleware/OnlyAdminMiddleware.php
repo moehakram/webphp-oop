@@ -4,7 +4,7 @@ namespace App\Middleware;
 
 use App\Domain\User;
 use MA\PHPQUICK\Contracts\Middleware;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 
 class OnlyAdminMiddleware implements Middleware
 {
