@@ -21,7 +21,7 @@ class Bootstrap
         private ?Closure $initializeDomain = null,
         private ?Closure $initializeDatabase = null,
         private ?Closure $initializeConfig = null,
-        private ?Closure $httpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
+        private ?Closure $httpExceptionHandler = null,
         private ?Closure $customBoot = null
     ) {}
 
