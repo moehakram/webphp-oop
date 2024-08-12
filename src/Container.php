@@ -3,12 +3,18 @@
 namespace MA\PHPQUICK;
 
 use Closure;
-use MA\PHPQUICK\Contracts\ExtendedContainerInterface;
-use MA\PHPQUICK\Exception\Container\NotFoundException;
-use MA\PHPQUICK\Exception\Container\ContainerException;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionException;
+use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionUnionType;
+use ReflectionFunctionAbstract;
+use MA\PHPQUICK\Contracts\ContainerInterface;
+use MA\PHPQUICK\Exceptions\Container\NotFoundException;
+use MA\PHPQUICK\Exceptions\Container\ContainerException;
 
-class Container implements ExtendedContainerInterface
+class Container implements ContainerInterface
 {
     public static ?Container $instance = null;
 
@@ -89,13 +95,15 @@ class Container implements ExtendedContainerInterface
             $this->bindings[$id] = function() use ($existing, $callback) {
                 return $callback($existing($this));
             };
+        } else {
+            throw new NotFoundException(sprintf('Service "%s" not found for extension.', $id));
         }
     }
 
     protected function resolveClass(string $class)
     {
         try {
-            $reflector = new \ReflectionClass($class);
+            $reflector = new ReflectionClass($class);
             $constructor = $reflector->getConstructor();
 
             if (! $constructor) {
@@ -103,7 +111,7 @@ class Container implements ExtendedContainerInterface
             }
 
             $dependencies = array_map(
-                function (\ReflectionParameter $parameter) use($class) {
+                function (ReflectionParameter $parameter) use($class) {
                     $name = $parameter->getName();
                     $type = $parameter->getType();
 
@@ -111,11 +119,11 @@ class Container implements ExtendedContainerInterface
                         throw new ContainerException(sprintf('Failed to resolve class "%s" because param "%s" is missing a type hint', $class, $name));
                     }
 
-                    if ($type instanceof \ReflectionUnionType) {
+                    if ($type instanceof ReflectionUnionType) {
                         throw new ContainerException(sprintf('Failed to resolve class "%s" because of union type for param "%s"', $class, $name));
                     }
 
-                    if ($type instanceof \ReflectionNamedType && ! $type->isBuiltin()) {
+                    if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
                         return $this->get($type->getName());
                     }
 
@@ -125,30 +133,34 @@ class Container implements ExtendedContainerInterface
             );
 
             return $reflector->newInstanceArgs($dependencies);
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             throw new ContainerException(sprintf('Error resolving class "%s": %s', $class, $e->getMessage()), 0, $e);
         }
     }
 
     public function call($callable, array $parameters = []): mixed
     {
-        if (is_array($callable)) {
-            // Jika callable adalah array, berarti ini adalah method dari class/instance
-            $reflection = new \ReflectionMethod($callable[0], $callable[1]);
-            $instance = is_object($callable[0]) ? $callable[0] : $this->get($callable[0]);
-            $dependencies = $this->resolveParameters($reflection, $parameters);
-            return $reflection->invokeArgs($instance, $dependencies);
-        } elseif ($callable instanceof \Closure || is_string($callable)) {
-            // Jika callable adalah Closure, buat ReflectionFunction
-            $reflection = new \ReflectionFunction($callable);
-            $dependencies = $this->resolveParameters($reflection, $parameters);
-            return $reflection->invokeArgs($dependencies); // Tidak butuh instance
-        }else {
-            throw new \InvalidArgumentException('Unsupported callable type');
+        try {
+            if (is_array($callable) && count($callable) === 2) {
+                // Jika callable adalah array, berarti ini adalah method dari class/instance
+                $reflection = new ReflectionMethod($callable[0], $callable[1]);
+                $instance = is_object($callable[0]) ? $callable[0] : $this->get($callable[0]);
+                $dependencies = $this->resolveParameters($reflection, $parameters);
+                return $reflection->invokeArgs($instance, $dependencies);
+            } elseif ($callable instanceof \Closure || is_string($callable)) {
+                // Jika callable adalah Closure, buat ReflectionFunction
+                $reflection = new \ReflectionFunction($callable);
+                $dependencies = $this->resolveParameters($reflection, $parameters);
+                return $reflection->invokeArgs($dependencies); // Tidak butuh instance
+            } else {
+                throw new ContainerException('Unsupported callable type');
+            }
+        } catch (ReflectionException $e) {
+            throw new ContainerException('Error invoking callable: ' . $e->getMessage(), 0, $e);
         }
     }
     
-    private function resolveParameters(\ReflectionFunctionAbstract $reflection, array $parameters = [])
+    private function resolveParameters(ReflectionFunctionAbstract $reflection, array $parameters = [])
     {
         $dependencies = [];
         foreach ($reflection->getParameters() as $parameter) {
@@ -173,7 +185,7 @@ class Container implements ExtendedContainerInterface
     {
         $type = $parameter->getType();
 
-        if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+        if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
             return $type->getName();
         }
 

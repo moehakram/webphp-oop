@@ -2,10 +2,10 @@
 
 namespace MA\PHPQUICK\Router;
 
-use MA\PHPQUICK\Contracts\Middleware;
 use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Http\RequestInterface as Request;
-use MA\PHPQUICK\Http\ResponseInterface as Response;
+use MA\PHPQUICK\Contracts\Middleware;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\ResponseInterface as Response;
 
 class MiddlewarePipeline
 {

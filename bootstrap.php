@@ -12,16 +12,14 @@ use App\Middleware\GuestMiddleware;
 use App\Repository\SessionRepository;
 use App\Middleware\OnlyAdminMiddleware;
 use App\Middleware\CurrentUserMiddleware;
-use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
-
-// Set exception handler
-set_exception_handler(function (\Throwable $ex) {
-    log_exception($ex);
-    http_response_code(500);
-    echo View::error_500('errors', 'Whoops, looks like something went wrong!');
-});
+use MA\PHPQUICK\Contracts\ContainerInterface as App;
 
 return (new Bootstrap(
+    exceptionHandler: function(\Throwable $ex){
+        log_exception($ex);
+        http_response_code(500);
+        echo View::error_500('errors', 'Whoops, looks like something went wrong!');
+    },
     middlewareAliases: function(): array {
         return [
             'auth' => AuthMiddleware::class,
@@ -36,7 +34,7 @@ return (new Bootstrap(
         ];
     },
     // initializeConfig: function (Config $config): void {
-    //     $config->set('author', 'akram');
+    //     $config->set('app.author', 'akram');
     // },
     // initializeDatabase: function (\PDO $pdo): void {
     //     // Uncomment if you want to set PDO attributes
@@ -58,5 +56,5 @@ return (new Bootstrap(
         $app->singleton(UserRepository::class, function (App $app) {
             return new UserRepository($app->get(\PDO::class));
         });
-    },
+    }
 ));

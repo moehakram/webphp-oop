@@ -1,13 +1,10 @@
 <?php
 
 use MA\PHPQUICK\MVC\View;
-use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Container;
-use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Http\Responses\Response;
-use MA\PHPQUICK\Http\RequestInterface as Request;
 use MA\PHPQUICK\Http\Responses\ResponseHeaders;
-use MA\PHPQUICK\Http\Requests\Request as RequestsRequest;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 
 if (!function_exists('log_exception')) {
     function log_exception(\Throwable $ex): void
@@ -16,16 +13,17 @@ if (!function_exists('log_exception')) {
         $message = "[{$time}] Uncaught exception: " . $ex->getMessage() . "\n";
         $message .= "In file: " . $ex->getFile() . " on line " . $ex->getLine() . "\n";
         $message .= "Stack trace:\n" . $ex->getTraceAsString() . "\n";
-        error_log($message, 3, base_path('logs/error.log'));
+        // error_log($message, 3, base_path('logs/error.log'));
+        error_log($message, 3, config('logging.error_log.path'));
     }
 }
 
 if (!function_exists('write_log')) {
-    function write_log($message, $filename = 'app')
+    function write_log($message)
     {
         $timestamp = date('Y-m-d H:i:s');
         $logMessage = "[$timestamp] " . (is_array($message) ? json_encode($message) : $message) . PHP_EOL;
-        file_put_contents(base_path('logs' . DIRECTORY_SEPARATOR . "$filename.log"), $logMessage, FILE_APPEND);
+        file_put_contents(config('logging.info_log.path'), $logMessage, FILE_APPEND);
     }
 }
 
@@ -67,7 +65,7 @@ if (!function_exists('response')) {
 if (!function_exists('request')) {
     function request(): Request
     {
-        return app(RequestsRequest::class);
+        return app(Request::class);
     }
 }
 
@@ -99,16 +97,6 @@ if (!function_exists('strRandom')) {
     }
 }
 
-// if(!function_exists('set_CSRF')){
-//     function set_CSRF(string $path): string
-//     {
-//         $token = strRandom(17);
-//         // response()->setCookie('csrf_token', $token, time() + 60 * 60 * 30, $path);
-//         response()->headers()->setCookie(new Cookie('csrf_token', $token, time()+3600));
-//         return $token;
-//     }
-// }
-
 if (!function_exists('csrf')) {
     function csrf(): string
     {
@@ -123,19 +111,6 @@ if (!function_exists('view')) {
         return View::make($view, $data, $extend);
     }
 }
-
-// if (!function_exists('PHPQuick')) {
-//     function PHPQuick(array $config)
-//     {
-//         static $app = null;
-
-//         if (is_null($app)) {
-//             $app = new Application($config);
-//         }
-
-//         return $app;
-//     }
-// }
 
 if (!function_exists('config')) {
     function config($key = null, $default = null)

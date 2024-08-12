@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\MVC\Controller;
-use MA\PHPQUICK\Http\RequestInterface as Request;
+use MA\PHPQUICK\Contracts\RequestInterface as Request;
 
 class HomeController extends Controller
 {

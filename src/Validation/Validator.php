@@ -1,7 +1,8 @@
 <?php
 namespace MA\PHPQUICK\Validation;
 
-use MA\PHPQUICK\Exception\ValidationException;
+use MA\PHPQUICK\Collection;
+use MA\PHPQUICK\Exceptions\ValidationException;
 
 class Validator{
     use MethodsValidation;
@@ -25,7 +26,7 @@ class Validator{
     protected $messages = [];
     protected $errors = [];
 
-    function __construct(array $inputs, array $fields, array $messages = [])
+    public function __construct(array $inputs, array $fields, array $messages = [])
     {
         $this->loadData($inputs);
         $this->messages = $messages;
@@ -57,9 +58,6 @@ class Validator{
         return $this->validationRules;
     }
 
-    /**
-     * @return data
-     */
     public function sanitize() : array
     {
         $inputs = [];
@@ -113,30 +111,17 @@ class Validator{
             }
         }
 
-        return $this->errors;
+        return $this->errors 
+        ? throw new ValidationException('errors', new Collection($this->errors)) 
+        : $this->data;
     }
 
     public function filter() : array 
     {
         $this->sanitize();
-        if($this->validate()){
-            throw new ValidationException(reset($this->errors), $this->getErrors());
-        }
-
+        $this->validate();
         return $this->data;
     }
-
-    public function getInputs() : array
-    {
-        return $this->data;
-    }
-
-
-    public function getErrors() : Collection
-    {
-        return new Collection($this->errors);
-    }
-
 
     public function has(string $key): bool
     {

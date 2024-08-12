@@ -68,17 +68,17 @@ php -S localhost:8080
 ### Routing Patterns
 ```php
 // `http://localhost:8080/users/123`
-$app->get('/users/(\d+)', function($id, Request $req) {
+$app->get('/users/:id', function($id, Request $req) {
     return "User ID: " . $id;  // User ID: 123
 });
 
 // `http://localhost:8080/users/asd123`
-$app->get('/users/(\w+)', function($id, Request $req) {
+$app->get('/users/:id', function($id, Request $req) {
     return "User ID: " . $id; // User ID: asd123
 });
 
 // `http://localhost:8080/search/name_group/123`
-$app->get('/search/(\w+)/(\d+)', function($group, $id, Request $req) {
+$app->get('/search/:group/:id', function($group, $id, Request $req) {
     return "Group / ID: " . $group . '/' . $id;  // Group / ID: name_group/123
 });
 ```

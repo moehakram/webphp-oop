@@ -8,7 +8,7 @@ use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Session\Session;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Http\Responses\Response;
-use MA\PHPQUICK\Contracts\ExtendedContainerInterface as App;
+use MA\PHPQUICK\Contracts\ContainerInterface as App;
 
 class Bootstrap
 {
@@ -17,10 +17,11 @@ class Bootstrap
         private Closure $initializeRepositories,
         private Closure $middlewareAliases,
         private Closure $middlewareGlobal,
+        private ?Closure $exceptionHandler = null,
         private ?Closure $initializeDomain = null,
         private ?Closure $initializeDatabase = null,
         private ?Closure $initializeConfig = null,
-        private ?Closure $customHttpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
+        private ?Closure $httpExceptionHandler = null, // function (HttpExceptionInterface $httpException) : ?Response
         private ?Closure $customBoot = null
     ) {}
 
@@ -32,6 +33,7 @@ class Bootstrap
      */
     public function boot(App $app): Container
     {
+        $this->setExceptionHandler($app);
         $this->registerCoreInstances($app);
         $this->initializeConfig($app);
         $this->initializeDatabase($app);
@@ -70,11 +72,10 @@ class Bootstrap
      */
     private function initializeDatabase(App $app): void
     {
-        $dbConnection = Database::getConnection();
+        $app->singleton(\PDO::class, fn() => Database::getConnection());
         if($this->initializeDatabase){
-            ($this->initializeDatabase)($dbConnection);
+            ($this->initializeDatabase)($app->get(\PDO::class));
         }
-        $app->instance(\PDO::class, $dbConnection);
     }
 
     private function initializeDomain(App $app): void
@@ -114,9 +115,9 @@ class Bootstrap
      */
     private function initializeErrorViews(App $app): void
     {
-        $bindings = $app->get('config')->get('httpErrorPage', []);
+        $bindings = $app->get('config')->get('error_pages', []);
         foreach ($bindings as $id => $view) {
-            $app->bind((string)$id, fn() => View::make($view));
+            if($view) $app->bind((string)$id, fn() => View::make($view));
         }
     }
 
@@ -128,7 +129,7 @@ class Bootstrap
      */
     private function setHttpExceptionHandler(App $app): void
     {
-        $app->instance('http.exception.handler', $this->customHttpExceptionHandler);
+        $app->instance('http.exception.handler', $this->httpExceptionHandler);
     }
 
     /**
@@ -155,12 +156,17 @@ class Bootstrap
             ($this->customBoot)($app);
         }
     }
-
+    
     private function initializeMiddleware(App $app){
         // Set global middleware
         $app->instance('middleware.global', ($this->middlewareGlobal)());
         
         // Set middleware aliases
         $app->instance('middleware.aliases', ($this->middlewareAliases)());
+    }
+
+    private function setExceptionHandler(App $app): void
+    {
+        set_exception_handler($this->exceptionHandler);
     }
 }

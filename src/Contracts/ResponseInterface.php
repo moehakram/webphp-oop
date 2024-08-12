@@ -1,5 +1,5 @@
 <?php
-namespace MA\PHPQUICK\Http;
+namespace MA\PHPQUICK\Contracts;
 
 use MA\PHPQUICK\Http\Responses\RedirectResponse;
 use MA\PHPQUICK\Http\Responses\ResponseHeaders;
@@ -8,7 +8,7 @@ interface ResponseInterface
 {
     public function setNoCache() : self;
 
-    public function setNotFound($message = null);
+    public function setNotFound();
     
     public function setForbidden();
 

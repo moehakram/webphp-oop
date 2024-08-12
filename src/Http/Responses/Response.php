@@ -2,8 +2,9 @@
 namespace MA\PHPQUICK\Http\Responses;
 
 use DateTime;
-use MA\PHPQUICK\Exception\Http\HttpException;
-use MA\PHPQUICK\Http\ResponseInterface as IResponse;
+use MA\PHPQUICK\Exceptions\HttpNotFoundException;
+use MA\PHPQUICK\Exceptions\HttpForbiddenException;
+use MA\PHPQUICK\Contracts\ResponseInterface as IResponse;
 
 class Response implements IResponse
 {
@@ -28,14 +29,14 @@ class Response implements IResponse
         return $this;
     }
 
-    public function setNotFound($message = null)
+    public function setNotFound()
     {
-        throw new HttpException(404);
+        throw new HttpNotFoundException();
     }
-
+    
     public function setForbidden()
     {
-        throw new HttpException(403);
+        throw new HttpForbiddenException();
     }
 
     public function back(){

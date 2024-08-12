@@ -1,26 +1,31 @@
 <?php
+declare(strict_types=1);
 
 use App\Controllers\Testing;
 use App\Controllers\AuthController;
 use App\Controllers\ProfileController;
+use MA\PHPQUICK\Exceptions\HttpException;
+use MA\PHPQUICK\Exceptions\HttpResponseException;
+use MA\PHPQUICK\Http\Responses\JsonResponse;
 
-$router->get('/', 'HomeController@index');
+$router
+    ->get('/', 'HomeController@index')
 
-$router->get("/users/register", [AuthController::class, 'showRegistration'], 'guest');
-$router->post("/users/register", [AuthController::class, 'register'], 'guest', 'csrf');
-$router->get("/users/login", [AuthController::class, 'showLogin'], 'guest');
-$router->post("/users/login", [AuthController::class, 'login'], 'guest', 'csrf');
-$router->get("/users/logout", [AuthController::class, 'logout'], 'auth');
-$router->get("/users/activate", [AuthController::class, 'activate'], 'guest');
+    ->get("/users/register", [AuthController::class, 'showRegistration'], 'guest')
+    ->post("/users/register", [AuthController::class, 'register'], 'guest', 'csrf')
+    ->get("/users/login", [AuthController::class, 'showLogin'], 'guest')
+    ->post("/users/login", [AuthController::class, 'login'], 'guest', 'csrf')
+    ->get("/users/logout", [AuthController::class, 'logout'], 'auth')
+    ->get("/users/activate", [AuthController::class, 'activate'], 'guest')
 
-$router->get("/users/profile", [ProfileController::class, 'edit'], 'admin');
-$router->post("/users/profile", [ProfileController::class, 'update'], 'auth', 'csrf');
-$router->get("/users/password", [ProfileController::class, 'changePassword'], 'auth');
-$router->post("/users/password", [ProfileController::class, 'updatePassword'], 'auth', 'csrf');
+    ->get("/users/profile", [ProfileController::class, 'edit'], 'admin')
+    ->post("/users/profile", [ProfileController::class, 'update'], 'auth', 'csrf')
+    ->get("/users/password", [ProfileController::class, 'changePassword'], 'auth')
+    ->post("/users/password", [ProfileController::class, 'updatePassword'], 'auth', 'csrf')
 
-/**
- * Documentation
- */
-$router->get("/tes2", [Testing::class, 'implemtationSessionFlass_tes2']);
-$router->get("/tes3", [Testing::class, 'implemtationSessionFlass_tes3']);
-$router->get("/tes4", [Testing::class, 'implemtationSessionFlass_tes4']);
+    /**
+     * Documentation
+     */
+    ->get("/tes2", [Testing::class, 'implemtationSessionFlass_tes2'])
+    ->get("/tes3", [Testing::class, 'implemtationSessionFlass_tes3'])
+    ->get("/tes4", [Testing::class, 'implemtationSessionFlass_tes4']);
