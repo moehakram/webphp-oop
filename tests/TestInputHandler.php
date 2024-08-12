@@ -52,11 +52,6 @@ $messages = [
 ];
 
 
-function displayResultData(Validator $handler){
-    echo 'data' . PHP_EOL;
-    var_dump($handler->getInputs());
-}
-
 function displayRules(Validator $handler){
     echo 'Sanitization Rules: ' . PHP_EOL;
     print_r($handler->getSanitizationRule());

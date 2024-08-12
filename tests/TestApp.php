@@ -3,7 +3,6 @@
 use App\Domain\User;
 use App\Repository\UserRepository;
 use App\Service\UserService;
-use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Database\Database;
 
 require __DIR__ . '/../vendor/autoload.php';
