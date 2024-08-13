@@ -6,10 +6,10 @@ use MA\PHPQUICK\Application;
 use MA\PHPQUICK\Config;
 use MA\PHPQUICK\Router\Router;
 use MA\PHPQUICK\Http\Requests\Request;
-
 // Include the autoloader to load necessary classes
 require_once __DIR__ . '/../vendor/autoload.php';
 
+define('BASE_PATH', dirname(__DIR__));
 // Bootstrapping
 $bootstrap = require __DIR__ . '/../bootstrap.php';
 

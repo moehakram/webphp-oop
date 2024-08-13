@@ -1,27 +1,22 @@
 {
     "name": "moehakram/webphp-oop",
     "description": "An elegant PHP framework leveraging OOP principles to simplify.",
-    "version": "1.0.0",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
-            "name": "muhammad akram",
-            "email": "moeh.akram@gmail.com",
-            "role": "Developer"
+            "name": "Muhammad Akram",
+            "email": "moeh.akram@gmail.com"
         }
     ],
     "require": {
-        "php": ">=8.1",
-        "moehakram/phpquick": "dev-main"
+        "php": "^8.1",
+        "moehakram/phpquick": "^v1.0.1"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }, 
-        "files": [
-            "config/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -35,10 +30,6 @@
         "test": "phpunit",
         "start": "php -S localhost:8080 -t public",
         "build": "echo 'Building the project...'"
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "sort-packages": true
     },
     "keywords": [
         "php",
