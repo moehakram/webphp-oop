@@ -111,9 +111,11 @@ class Validator{
             }
         }
 
-        return $this->errors 
-        ? throw new ValidationException('errors', new Collection($this->errors)) 
-        : $this->data;
+        if($this->errors){
+            throw new ValidationException('errors', new Collection($this->errors));
+        }
+
+        return $this->data;
     }
 
     public function filter() : array 
