@@ -16,7 +16,14 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        }, 
+        "files": [
+            "helpers/logging_helpers.php",
+            "helpers/app_helpers.php",
+            "helpers/string_helpers.php",
+            "helpers/view_helpers.php",
+            "helpers/base_helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
