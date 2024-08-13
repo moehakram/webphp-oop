@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da233d00597925375763244ce6656577",
+    "content-hash": "a179740eb78fd5e469575a9ae37844a9",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -68,6 +68,48 @@
                 "source": "https://github.com/firebase/php-jwt/tree/v6.10.1"
             },
             "time": "2024-05-18T18:05:11+00:00"
+        },
+        {
+            "name": "moehakram/phpquick",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moehakram/webphp-oop-engine.git",
+                "reference": "ae3846bfe861368dc7ba4ade1a06150962d066d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/ae3846bfe861368dc7ba4ade1a06150962d066d0",
+                "reference": "ae3846bfe861368dc7ba4ade1a06150962d066d0",
+                "shasum": ""
+            },
+            "require": {
+                "firebase/php-jwt": "^6.10",
+                "psr/container": "^2.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MA\\PHPQUICK\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "moehakram",
+                    "email": "moeh.akram@gmail.com"
+                }
+            ],
+            "description": "Library PHP untuk framework webphp-oop",
+            "support": {
+                "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
+                "source": "https://github.com/moehakram/webphp-oop-engine/tree/main"
+            },
+            "time": "2024-08-13T08:58:14+00:00"
         },
         {
             "name": "psr/container",
@@ -683,16 +725,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.29",
+            "version": "10.5.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8e9e80872b4e8064401788ee8a32d40b4455318f"
+                "reference": "b15524febac0153876b4ba9aab3326c2ee94c897"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e9e80872b4e8064401788ee8a32d40b4455318f",
-                "reference": "8e9e80872b4e8064401788ee8a32d40b4455318f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b15524febac0153876b4ba9aab3326c2ee94c897",
+                "reference": "b15524febac0153876b4ba9aab3326c2ee94c897",
                 "shasum": ""
             },
             "require": {
@@ -713,7 +755,7 @@
                 "phpunit/php-timer": "^6.0.0",
                 "sebastian/cli-parser": "^2.0.1",
                 "sebastian/code-unit": "^2.0.0",
-                "sebastian/comparator": "^5.0.1",
+                "sebastian/comparator": "^5.0.2",
                 "sebastian/diff": "^5.1.1",
                 "sebastian/environment": "^6.1.0",
                 "sebastian/exporter": "^5.1.2",
@@ -764,7 +806,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.29"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.30"
             },
             "funding": [
                 {
@@ -780,7 +822,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-30T11:08:00+00:00"
+            "time": "2024-08-13T06:09:37+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1751,7 +1793,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "moehakram/phpquick": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

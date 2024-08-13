@@ -13,16 +13,14 @@
     ],
     "require": {
         "php": ">=8.1",
-        "firebase/php-jwt": "^6.10",
-        "psr/container": "^2.0"
+        "moehakram/phpquick": "dev-main"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "MA\\PHPQUICK\\": "src/"
-        },
+            "App\\": "app/"
+        }, 
         "files": [
-            "src/helpers.php"
+            "config/helpers.php"
         ]
     },
     "autoload-dev": {
@@ -42,7 +40,6 @@
         "optimize-autoloader": true,
         "sort-packages": true
     },
-    "minimum-stability": "stable",
     "keywords": [
         "php",
         "package",

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MA\PHPQUICK\Application;
+use MA\PHPQUICK\Config;
 use MA\PHPQUICK\Router\Router;
 use MA\PHPQUICK\Http\Requests\Request;
 
@@ -19,8 +20,9 @@ require __DIR__ . '/../config/routes.php';
 // Boot and run the application
 $bootstrap->boot(
     new Application(
+        config: new Config(require __DIR__ . '/../config/config.php'),
         request: new Request(),
-        router: $router
+        router: $router,
     )
 )->run()
 ->send();

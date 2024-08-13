@@ -14,7 +14,7 @@ use App\Repository\SessionRepository;
 use App\Middleware\OnlyAdminMiddleware;
 use App\Middleware\CurrentUserMiddleware;
 use MA\PHPQUICK\Contracts\ContainerInterface as App;
-
+require_once __DIR__ . "/config/helpers.php";
 return (new Bootstrap(
 
     // Handler untuk menangani pengecualian (exception)
