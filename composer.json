@@ -1,12 +1,12 @@
 {
-    "name": "moehakram/phpquick",
-    "description": "An elegant PHP framework leveraging OOP principles to simplify and enhance MVC architecture.",
+    "name": "moehakram/webphp-oop",
+    "description": "An elegant PHP framework leveraging OOP principles to simplify.",
     "version": "1.0.0",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
-            "name": "muh. akram",
+            "name": "muhammad akram",
             "email": "moeh.akram@gmail.com",
             "role": "Developer"
         }
@@ -53,7 +53,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/moehakram/web-dev-php-oop.git"
+            "url": "https://github.com/moehakram/webphp-oop.git"
         }
     ]
 }
