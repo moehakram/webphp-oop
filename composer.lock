@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a179740eb78fd5e469575a9ae37844a9",
+    "content-hash": "ac055406a224449c72b575fb1985539d",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -71,23 +71,23 @@
         },
         {
             "name": "moehakram/phpquick",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "ae3846bfe861368dc7ba4ade1a06150962d066d0"
+                "reference": "7e0ffac8f1288d672fcb8fbbe803333eb754081b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/ae3846bfe861368dc7ba4ade1a06150962d066d0",
-                "reference": "ae3846bfe861368dc7ba4ade1a06150962d066d0",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/7e0ffac8f1288d672fcb8fbbe803333eb754081b",
+                "reference": "7e0ffac8f1288d672fcb8fbbe803333eb754081b",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^6.10",
+                "php": ">=8.1",
                 "psr/container": "^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -100,16 +100,16 @@
             ],
             "authors": [
                 {
-                    "name": "moehakram",
+                    "name": "Muhammad Akram",
                     "email": "moeh.akram@gmail.com"
                 }
             ],
             "description": "Library PHP untuk framework webphp-oop",
             "support": {
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
-                "source": "https://github.com/moehakram/webphp-oop-engine/tree/main"
+                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v1.0.0"
             },
-            "time": "2024-08-13T08:58:14+00:00"
+            "time": "2024-08-13T17:50:42+00:00"
         },
         {
             "name": "psr/container",
@@ -1793,13 +1793,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "moehakram/phpquick": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1"
+        "php": "^8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

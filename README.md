@@ -37,17 +37,17 @@ Routing configuration is located in `/config/routes.php`.
 
 ```php
 // Example: `http://localhost:8080/users/123`
-$app->get('/users/:id', function($id, Request $req) {
+$router->get('/users/:id', function($id, Request $req) {
     return "User ID: " . $id;  // Output: User ID: 123
 });
 
 // Example: `http://localhost:8080/users/asd123`
-$app->get('/users/:id', function($id, Request $req) {
+$router->get('/users/:id', function($id, Request $req) {
     return "User ID: " . $id;  // Output: User ID: asd123
 });
 
 // Example: `http://localhost:8080/search/name_group/123`
-$app->get('/search/:group/:id', function($group, $id, Request $req) {
+$router->get('/search/:group/:id', function($group, $id, Request $req) {
     return "Group / ID: " . $group . '/' . $id;  // Output: Group / ID: name_group/123
 });
 ```
@@ -61,7 +61,7 @@ The framework accepts various callback formats:
     The callback should be an array with two elements: the controller class name and the method name.
 
     ```php
-    $app->get('/array', [HomeController::class, 'index']);
+    $router->get('/array', [HomeController::class, 'index']);
     ```
 
 2. **String Callback:**
@@ -69,7 +69,7 @@ The framework accepts various callback formats:
     The callback should be a string in the format `'Controller@method'`, where `Controller` is the controller class name and `method` is the method name.
 
     ```php
-    $app->get('/string', 'HomeController@index');
+    $router->get('/string', 'HomeController@index');
     ```
 
 3. **Callable Callback:**
@@ -77,11 +77,11 @@ The framework accepts various callback formats:
     The callback should be a callable, such as a closure, anonymous function, or any function defined as callable.
 
     ```php
-    $app->get('/anonymous-function', function() {
+    $router->get('/anonymous-function', function() {
         return "Hello World";
     });
     
-    $app->get('/arrow-function', fn() => "Hello World");
+    $router->get('/arrow-function', fn() => "Hello World");
     ```
 
 #### Summary
@@ -109,6 +109,6 @@ class AuthMiddleware implements Middleware {
 }
 
 // Applying middleware to a route
-//$app->get(string $path, $callback, ...$middlewares): void
-$app->get('/dashboard', 'DashboardController@index', AuthMiddleware::class);
+//$router->get(string $path, $callback, ...$middlewares): void
+$router->get('/dashboard', 'DashboardController@index', AuthMiddleware::class);
 ```
