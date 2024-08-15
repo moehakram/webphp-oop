@@ -71,16 +71,16 @@
         },
         {
             "name": "moehakram/phpquick",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "167d1a9b3cbbad4c4841df52b93c050850796be4"
+                "reference": "bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/167d1a9b3cbbad4c4841df52b93c050850796be4",
-                "reference": "167d1a9b3cbbad4c4841df52b93c050850796be4",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f",
+                "reference": "bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f",
                 "shasum": ""
             },
             "require": {
@@ -117,9 +117,9 @@
             "description": "Library PHP untuk framework webphp-oop",
             "support": {
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
-                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v2.1.0"
+                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v2.1.1"
             },
-            "time": "2024-08-15T14:54:00+00:00"
+            "time": "2024-08-15T15:26:22+00:00"
         },
         {
             "name": "psr/container",
