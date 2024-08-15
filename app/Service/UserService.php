@@ -9,7 +9,8 @@ use App\Repository\UserRepository;
 use MA\PHPQUICK\Database\Database;
 use MA\PHPQUICK\Exceptions\ValidationException;
 use App\Models\User\{UserRegisterRequest, UserLoginRequest, UserProfileUpdateRequest, UserPasswordUpdateRequest};
-use MA\PHPQUICK\Token;
+use MA\PHPQUICK\Traits\Token;
+use MA\PHPQUICK\Validation\Validation;
 
 class UserService
 {
@@ -76,9 +77,17 @@ class UserService
 
     }
 
-    public function activationAccount(string $activation_code): bool
+    public function activationAccount(Validation $validation): bool
     {
-        if (! $this->verifyToken($activation_code, $token = new Collection())) {
+        
+        try {
+            $data = $validation->validate();
+        } catch (ValidationException $ex) {
+            $ex->setMessage('Tautan aktivasi tidak valid');
+            throw $ex;
+        }
+
+        if (! $this->verifyToken($data['activation_code'], $token = new Collection())) {
             throw new ValidationException('Ativation code tidak valid');
         }
         
