@@ -28,7 +28,8 @@
     },
     "scripts": {
         "test": "phpunit",
-        "serve": "php -S localhost:8080 -t public"
+        "serve": "php -S localhost:8080 -t public",
+        "test-filter": "php tests/TestValidator.php"
     },
     "keywords": [
         "php",
