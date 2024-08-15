@@ -119,8 +119,10 @@ class UserService
 
     public function login(UserLoginRequest $request): User
     {
-        if ($request->validate()) {
-            throw new ValidationException("Id and Password can not blank");
+        try {
+            $request->validate();
+        } catch (ValidationException $ex) {
+            throw $ex->setMessage("Id and Password can not blank");
         }
 
         $user = $this->userRepository->findByUsername($request->username);
@@ -137,8 +139,9 @@ class UserService
 
     public function updateProfile(UserProfileUpdateRequest $request): User
     {
-        $this->validateUserProfileUpdateRequest($request);
-
+        // $this->validateUserProfileUpdateRequest($request);
+      
+        
         try {
             Database::beginTransaction();
 
@@ -170,7 +173,7 @@ class UserService
             $errors['name'] = "Name cannot be blank";
         }
 
-        if (!empty($errors)) {
+        if ($errors) {
             throw new ValidationException("Id, Name can not blank", new Collection($errors));
         }
     }

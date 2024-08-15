@@ -32,11 +32,11 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $req = new UserProfileUpdateRequest();
+        $req = new UserProfileUpdateRequest($request->post());
         $req->id = $user->id;
-        $req->name = $request->post('name');
 
         try {
+            $req->validate();
             $user = $this->make(UserService::class)->updateProfile($req);
             $this->make(SessionService::class)->create($user); //update cookie session setelah update profile
             return response()->redirect('/');

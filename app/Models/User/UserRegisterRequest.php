@@ -3,9 +3,12 @@
 namespace App\Models\User;
 
 use MA\PHPQUICK\MVC\Model;
+use MA\PHPQUICK\Traits\PropertyAccessor;
 
 class UserRegisterRequest extends Model
 {
+    use PropertyAccessor;
+    
     public $name = null;
     public $username = null;
     public $email = null;
@@ -16,7 +19,7 @@ class UserRegisterRequest extends Model
     public function rules(): array
     {
         return [
-            'name' => '@string|required',
+            'name' => 'required|alphanumeric',
             'username' => 'required|unique:users, username',
             'email' => '@email|required|email|unique:users,email',
             'password' => 'required|secure',

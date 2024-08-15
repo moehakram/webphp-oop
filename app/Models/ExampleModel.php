@@ -2,9 +2,12 @@
 namespace App\Models;
 
 use MA\PHPQUICK\MVC\Model;
+use MA\PHPQUICK\Traits\PropertyAccessor;
 
 class ExampleModel extends Model
 {
+    use PropertyAccessor;
+    
     public $firstname = null;
     public $lastname = null;
     public $username = null;

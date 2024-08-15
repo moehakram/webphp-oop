@@ -29,7 +29,7 @@ Database configuration is located in `/config/config.php`.
 To start a local server, use the following command:
 
 ```bash
-composer run-script start
+composer serve
 ```
 
 ### Routing Patterns

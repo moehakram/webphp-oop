@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "525a692f98f355139337ae51bf46598a",
+    "content-hash": "cc3291aaf57e2c72cc9c7b7f55393b28",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -71,22 +71,25 @@
         },
         {
             "name": "moehakram/phpquick",
-            "version": "v1.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "6cb1b0b28779e352cd9e12929159dd679618d046"
+                "reference": "167d1a9b3cbbad4c4841df52b93c050850796be4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/6cb1b0b28779e352cd9e12929159dd679618d046",
-                "reference": "6cb1b0b28779e352cd9e12929159dd679618d046",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/167d1a9b3cbbad4c4841df52b93c050850796be4",
+                "reference": "167d1a9b3cbbad4c4841df52b93c050850796be4",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^6.10",
-                "php": ">=8.1",
+                "php": "^8.1",
                 "psr/container": "^2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "autoload": {
@@ -114,9 +117,9 @@
             "description": "Library PHP untuk framework webphp-oop",
             "support": {
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
-                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v1.0.1"
+                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v2.1.0"
             },
-            "time": "2024-08-13T19:43:40+00:00"
+            "time": "2024-08-15T14:54:00+00:00"
         },
         {
             "name": "psr/container",
@@ -1807,5 +1810,5 @@
         "php": "^8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
