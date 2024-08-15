@@ -8,6 +8,7 @@ use App\Models\User\{UserLoginRequest, UserRegisterRequest};
 use App\Service\{SessionService, UserService};
 use MA\PHPQUICK\Exceptions\ValidationException;
 use MA\PHPQUICK\MVC\View;
+use MA\PHPQUICK\Validation\Validation;
 use MA\PHPQUICK\Validation\Validator;
 
 class AuthController extends Controller
@@ -69,12 +70,11 @@ class AuthController extends Controller
 
     public function activate(Request $req){
         try{
-            $handler = new Validator($req->query(), [
-                'activation_code' => 'required|@string'
-            ], ['required' => 'Tautan aktivasi tidak valid']);
+            $handler = new Validation($req->query(), [
+                'activation_code' => 'required'
+            ]);
             
-            $data = $handler->filter();
-            $this->make(UserService::class)->activationAccount($data['activation_code']);
+            $this->make(UserService::class)->activationAccount($handler);
             return response()->redirect('/users/login')
             ->withMessage('login', 'Akun sudah aktif silakan login');
         }catch(ValidationException $val){
