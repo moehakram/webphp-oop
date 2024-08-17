@@ -55,7 +55,7 @@ class UserService
     {
         // create the activation link
         $activation_link = sprintf(
-            config('app.url') . "/users/activate?activation_code=%s", 
+            config('app.url') . "/users/activate?code=%s", 
             $this->generateToken([
                 'email' => $user->email,
                 'expiry' => time() + self::expireActivationEmail
@@ -87,7 +87,7 @@ class UserService
             throw $ex;
         }
 
-        if (! $this->verifyToken($data['activation_code'], $token = new Collection())) {
+        if (! $this->verifyToken($data['code'], $token = new Collection())) {
             throw new ValidationException('Ativation code tidak valid');
         }
         
@@ -95,7 +95,7 @@ class UserService
         if ($token->expiry > time()) {
             return $this->activateUserIfNotActive($user);
         } else {
-            return $this->handleExpiredToken($user, $token);
+            return $this->handleExpiredToken($user);
         }
     }
 
@@ -107,11 +107,11 @@ class UserService
                 'username' => $user->username,
                 'active sejak' => $user->activated_at
             ]);
-            return true;
         }
+        return true;
     }
 
-    private function handleExpiredToken($user, $token): bool
+    private function handleExpiredToken($user): bool
     {
         if ($user->is_active === 1) {
             write_log([
