@@ -47,11 +47,6 @@ class AuthController extends Controller
             'title' => 'Register New User',
             'errors' => $request->session()->getFlash('message')
         ]);
-
-        // return $this->view('auth/register', [
-        //     'title' => 'Register New User',
-        //     'errors' => $request->session()->getFlash('message')
-        // ]);
     }
 
     public function register(Request $request)  // Proses registrasi pengguna
@@ -70,7 +65,7 @@ class AuthController extends Controller
     public function activate(Request $req){
         try{
             $handler = new Validation($req->query(), [
-                'activation_code' => 'required'
+                'code' => 'required'
             ]);
             
             $this->make(UserService::class)->activationAccount($handler);
