@@ -17,7 +17,8 @@ class UserLoginRequest extends Model
     {
         return [
             'username' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'remember_me' => 'alpha'
         ];
     }
 }
