@@ -28,6 +28,7 @@ class AuthController extends Controller
         $req = new UserLoginRequest();
         $req->username = $request->post('username');
         $req->password = $request->post('password');
+        $req->remember_me = $request->post('remember_me');
 
         try {
             $user = $this->make(UserService::class)->login($req);
