@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc3291aaf57e2c72cc9c7b7f55393b28",
+    "content-hash": "0d416541b9b6e03589f0b39690b03aed",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -71,16 +71,16 @@
         },
         {
             "name": "moehakram/phpquick",
-            "version": "v2.1.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f"
+                "reference": "2ba5377060858c679f26d5f0d09c4523638fdc9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f",
-                "reference": "bd3cd334b0b4743e1b591b1e9f3bfd4b22f74f7f",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/2ba5377060858c679f26d5f0d09c4523638fdc9b",
+                "reference": "2ba5377060858c679f26d5f0d09c4523638fdc9b",
                 "shasum": ""
             },
             "require": {
@@ -89,8 +89,9 @@
                 "psr/container": "^2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.5"
+                "pestphp/pest": "^2.35"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -117,9 +118,9 @@
             "description": "Library PHP untuk framework webphp-oop",
             "support": {
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
-                "source": "https://github.com/moehakram/webphp-oop-engine/tree/v2.1.1"
+                "source": "https://github.com/moehakram/webphp-oop-engine/tree/main"
             },
-            "time": "2024-08-15T15:26:22+00:00"
+            "time": "2024-08-17T08:37:56+00:00"
         },
         {
             "name": "psr/container",
@@ -1803,7 +1804,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "moehakram/phpquick": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

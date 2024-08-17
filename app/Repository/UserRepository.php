@@ -20,14 +20,14 @@ class UserRepository
                         VALUES(:name, :username, :email, :password, :role, :is_active, :activated_at)';
 
         $statement = $this->connection->prepare($sql);
-        $statement->bindValue(':name', $user->name);
-        $statement->bindValue(':username', $user->username);
-        $statement->bindValue(':email', $user->email);
-        $statement->bindValue(':password', $user->password);
-        $statement->bindValue(':email', $user->email);
-        $statement->bindValue(':role', (int)$user->role, PDO::PARAM_INT);
-        $statement->bindValue(':is_active', (int)$user->is_active, PDO::PARAM_INT);
-        $statement->bindValue(':activated_at', $user->activated_at);
+        $statement->bindValue('name', $user->name);
+        $statement->bindValue('username', $user->username);
+        $statement->bindValue('email', $user->email);
+        $statement->bindValue('password', $user->password);
+        $statement->bindValue('email', $user->email);
+        $statement->bindValue('role', (int)$user->role, PDO::PARAM_INT);
+        $statement->bindValue('is_active', (int)$user->is_active, PDO::PARAM_INT);
+        $statement->bindValue('activated_at', $user->activated_at);
         $statement->execute();
 
         return $user;
@@ -70,7 +70,7 @@ class UserRepository
     public function findByUsername(string $username): ?User
     {
         $statement = $this->connection->prepare("SELECT id, name, username, email, password, role, is_active, activated_at FROM users WHERE username = :username");
-        $statement->bindValue(':username', $username);
+        $statement->bindValue('username', $username);
         $statement->execute();
 
         try {
@@ -118,35 +118,20 @@ class UserRepository
     }
 
     public function activateUser(int $id): bool
-    {
-        $sql = 'UPDATE users
-                SET is_active = 1,
-                    activated_at = CURRENT_TIMESTAMP
-                WHERE id=:id';
-    
-        $statement = $this->connection->prepare($sql);
-        $statement->bindValue(':id', $id);
-    
-        return $statement->execute();
+    {   
+        $statement = $this->connection->prepare('UPDATE users SET is_active = 1, activated_at = CURRENT_TIMESTAMP WHERE id= ?');  
+        return $statement->execute([$id]);
     }
 
     public function deleteUnverifiedUser(string $email)
     {
-        $sql = 'SELECT id 
-        FROM users
-        WHERE active = 0 AND email=:email';
-
-        $statement = $this->connection->prepare($sql);
-
-        $statement->bindValue(':email', $email);
-        return $statement->execute();       
+        $statement = $this->connection->prepare('SELECT id FROM users WHERE active = 0 AND email=:email');
+        return $statement->execute(['email' => $email]);
     }
 
     public function deleteById(string $id): void
     {
         $statement = $this->connection->prepare("DELETE FROM users WHERE id = ?");
         $statement->execute([$id]);
-    }
-
-    
+    }    
 }

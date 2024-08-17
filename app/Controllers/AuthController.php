@@ -9,7 +9,6 @@ use App\Service\{SessionService, UserService};
 use MA\PHPQUICK\Exceptions\ValidationException;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Validation\Validation;
-use MA\PHPQUICK\Validation\Validator;
 
 class AuthController extends Controller
 {
