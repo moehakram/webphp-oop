@@ -14,7 +14,7 @@ use App\Repository\SessionRepository;
 use App\Middleware\OnlyAdminMiddleware;
 use App\Middleware\CurrentUserMiddleware;
 use MA\PHPQUICK\Contracts\ContainerInterface as App;
-
+use MA\PHPQUICK\Session\Session;
 
 return (new Bootstrap(
 
@@ -26,6 +26,10 @@ return (new Bootstrap(
         http_response_code(500);
         // Menampilkan halaman error 500 menggunakan view
         echo View::error_500('errors', 'Whoops, looks like something went wrong!');
+    },
+    initializeSession: function(App $app){
+        $app->instance(Session::class, $session = new Session);
+        $app->instance('session', $session); // alias session
     },
     
     // Alias untuk middleware yang bisa digunakan dalam route (opsional)
@@ -46,14 +50,18 @@ return (new Bootstrap(
     },
     // Inisialisasi pengaturan database
     initializeDatabase: function (\PDO $pdo): void {
-        // Uncomment jika ingin mengatur atribut PDO, seperti mode fetch default
-        // $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+        // Mengatur atribut PDO mode fetch default
+        $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     },
 
     // Inisialisasi layanan (services) yang akan di-manage oleh container
     initializeServices: function (App $app): void {
         $app->singleton(SessionService::class, function (App $app) {
-            return new SessionService($app->get(SessionRepository::class));
+            return new SessionService(
+                $app->get(SessionRepository::class), 
+                $app->get(UserRepository::class),
+                $app->get(Session::class)
+            );
         });
 
         $app->singleton(UserService::class, function (App $app) {

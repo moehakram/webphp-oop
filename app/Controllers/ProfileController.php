@@ -50,10 +50,9 @@ class ProfileController extends Controller
 
     public function changePassword(Request $request) // Menampilkan formulir penggantian kata sandi
     {
-        $user = $request->user();
         return $this->view('profile/password', [
             "title" => "Update user password",
-            "username" => $this->make(UserService::class)->getUser($user->id)->username
+            "username" => $request->user()->getAuthIdentifier()
         ]);
     }
 

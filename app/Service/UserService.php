@@ -223,8 +223,4 @@ class UserService
             throw new ValidationException("Id, Old Password, New Password can not blank");
         }
     }
-
-    public function getUser($id){
-        return $this->userRepository->findById($id);
-    }
 }

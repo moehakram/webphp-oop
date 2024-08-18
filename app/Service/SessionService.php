@@ -4,12 +4,12 @@ namespace App\Service;
 
 use App\Domain\User;
 use App\Domain\Session;
+use MA\PHPQUICK\Collection;
+use MA\PHPQUICK\Traits\Token;
 use App\Repository\SessionRepository;
 use App\Repository\UserRepository;
-use MA\PHPQUICK\Collection;
 use MA\PHPQUICK\Session\CookieSession;
 use MA\PHPQUICK\Session\Session as SessionSession;
-use MA\PHPQUICK\Traits\Token;
 
 class SessionService
 {
@@ -20,28 +20,27 @@ class SessionService
     protected const EXPIRY_REFRESH_TOKEN = 3600 * 24 * 30 * 1; // 1 bulan
     protected const EXPIRY_ACCESS_TOKEN = 3600 * 1; // 1 jam
 
-    private SessionRepository $sessionRepository;
     private CookieSession $sessionCookie;
-    private SessionSession $session;
 
-    public function __construct(SessionRepository $sessionRepository)
-    {
+    public function __construct(
+        private SessionRepository $sessionRepository, 
+        private UserRepository $userRepository,
+        private SessionSession $session
+    ){
         self::$secretToken = 'fe1ed383b50832081d04bef6067540e54c66066a83cc1cf994af07skajjalooldloaw';
-        $this->sessionRepository = $sessionRepository;
         $this->sessionCookie = new CookieSession(self::COOKIE_NAME, self::JWT_SECRET, self::EXPIRY_REFRESH_TOKEN);
-        $this->session = session();
     }
 
    public function create(User $user): Session
     {
         $session = new Session();
-        $session->user_id = $user->id;
+        $session->userId = $user->id;
         $this->sessionRepository->save($session);
         
-        $this->setSession($user);
+        $this->session->add('login', $this->accessToken($user));
 
         if ((bool)request()->get('remember_me')) {
-            $this->setRefreshToken($user, $session->id);
+            $this->createRefreshToken($user->username, $session->id);
         }
 
         return $session;
@@ -57,37 +56,27 @@ class SessionService
 
         $this->session->set('login', null);
         $this->sessionCookie->clear();
+        session_unset();
+        session_destroy();
     }
 
     public function current(): ?User
     {
         if ($this->verifyToken($this->session->get('login', ''), $session = new Collection())) {
-            if ($this->isSessionExpired($session->get('exp'))) {
-                $this->session->set('login', null);
-            } else {
-                return $this->mapSessionToUser($session);
+            if (! $this->isSessionExpired($session->get('exp'))) {
+                $user = new User();
+                $user->id = $session->get('id');
+                $user->username = $session->get('username');
+                $user->name = $session->get('name');
+                $user->role = $session->get('role');
+                return $user;
             }
         }
-
-        return $this->createUserFromRefreshToken();
-    }
-
-    private function createUserFromRefreshToken(): ?User
-    {
-        $userId = $this->createRefreshToken();
-        if (!$userId) {
-            return null;
-        }
-
-        $user = $this->mapSessionToUser($this->sessionCookie);
-
         session_regenerate_id(true);
-        $this->setSession($user);
-
-        return $user;
+        return $this->createAccessToken();
     }
 
-    public function createRefreshToken()
+    private function createAccessToken(): ?User
     {
         if ($this->isSessionExpired($this->sessionCookie->get('exp'))) {
             return null;
@@ -97,26 +86,32 @@ class SessionService
             return null;
         }
 
-        return $this->verifySessionInDB($sessionId);
+        $user = $this->verifySessionRefreshTokenInDB($sessionId);
+
+        if (!$user) {
+            return null;
+        }
+        $this->session->add('login', $this->accessToken($user));
+        return $user;
     }
 
-    private function setSession(User $user): void
+    private function accessToken(User $user): string
     {
-        $accessToken = $this->generateToken([
+        return $this->generateToken([
             'id' => $user->id,
+            'username' => $user->username,
             'name' => $user->name,
             'role' => $user->role,
             'exp' => time() + self::EXPIRY_ACCESS_TOKEN
         ]);
-        $this->session->add('login', $accessToken);
     }
 
-    private function setRefreshToken(User $user, string $sessionId): void // cookie
+    private function createRefreshToken(string $username,string $sessionId): void // cookie
     {
         $this->sessionCookie->add([
             'id' => $sessionId,
-            'name' => $user->name,
-            'role' => $user->role,
+            'username' => $username,
+            'sessionId' => session_id(),
             'exp' => time() + self::EXPIRY_REFRESH_TOKEN
         ]);
         $this->sessionCookie->push();
@@ -127,7 +122,7 @@ class SessionService
         return $exp === null || $exp < time();
     }
 
-    private function verifySessionInDB($sessionId)
+    private function verifySessionRefreshTokenInDB($sessionId): ?User
     {
         $session = $this->sessionRepository->findById($sessionId);
 
@@ -136,15 +131,6 @@ class SessionService
             return null;
         }
 
-        return $session->user_id;
-    }
-
-    private function mapSessionToUser(Collection $session): User
-    {
-        $user = new User();
-        $user->id = $session->get('id');
-        $user->name = $session->get('name');
-        $user->role = $session->get('role');
-        return $user;
+        return $this->userRepository->findById($session->userId);
     }
 }

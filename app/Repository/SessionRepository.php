@@ -17,7 +17,7 @@ class SessionRepository
     public function save(Session $session): Session
     {
         $statement = $this->connection->prepare("INSERT INTO sessions(user_id) VALUES (?)");
-        $statement->execute([$session->user_id]);
+        $statement->execute([$session->userId]);
         $session->id = $this->connection->lastInsertId();
         return $session;
     }
@@ -28,10 +28,10 @@ class SessionRepository
         $statement->execute([$id]);
 
         try {
-            if ($row = $statement->fetch()) {
+            if ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                 $session = new Session();
                 $session->id = $row['id'];
-                $session->user_id = $row['user_id'];
+                $session->userId = $row['user_id'];
                 return $session;
             } else {
                 return null;
