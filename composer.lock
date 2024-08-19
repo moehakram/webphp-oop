@@ -75,12 +75,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d"
+                "reference": "1b96d9f66bb6ba8fc8587283ab24f2eac66f37df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d",
-                "reference": "8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/1b96d9f66bb6ba8fc8587283ab24f2eac66f37df",
+                "reference": "1b96d9f66bb6ba8fc8587283ab24f2eac66f37df",
                 "shasum": ""
             },
             "require": {
@@ -120,7 +120,7 @@
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
                 "source": "https://github.com/moehakram/webphp-oop-engine/tree/main"
             },
-            "time": "2024-08-19T08:43:56+00:00"
+            "time": "2024-08-19T09:11:07+00:00"
         },
         {
             "name": "psr/container",
