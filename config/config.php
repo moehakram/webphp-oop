@@ -29,10 +29,10 @@ return [
     // Konfigurasi logging
     'logging' => [
         'error_log' => [
-            'path' => base_path('logs/error.log'),
+            'path' => 'logs/error.log',
         ],
         'info_log' => [
-            'path' => base_path('logs/app.log'),
+            'path' => 'logs/app.log',
         ],
     ],
 ];

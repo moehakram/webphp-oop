@@ -1,28 +1,22 @@
 <?php
-
 declare(strict_types=1);
 
-use MA\PHPQUICK\Application;
-use MA\PHPQUICK\Config;
-use MA\PHPQUICK\Router\Router;
-use MA\PHPQUICK\Http\Requests\Request;
 // Include the autoloader to load necessary classes
 require_once __DIR__ . '/../vendor/autoload.php';
 
-define('BASE_PATH', dirname(__DIR__));
 // Bootstrapping
 $bootstrap = require __DIR__ . '/../bootstrap.php';
 
 // Create and configure the router
-$router = new Router();
+$router = new \MA\PHPQUICK\Router\Router();
 require __DIR__ . '/../config/routes.php';
 
 // Boot and run the application
 $bootstrap->boot(
-    new Application(
-        config: new Config(require __DIR__ . '/../config/config.php'),
-        request: new Request(),
+    new \MA\PHPQUICK\Application(
         router: $router,
+        basePath: dirname(__DIR__),
+        config: new \MA\PHPQUICK\Config(require __DIR__ . '/../config/config.php')
     )
 )->run()
 ->send();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2277b7c48c34023418ac428d0698e5ed",
+    "content-hash": "80c60ef06e845c7abe4616cfcbe7602b",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -75,12 +75,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/moehakram/webphp-oop-engine.git",
-                "reference": "d0fb5251352180f655b232f4acf39b31a66af078"
+                "reference": "8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/d0fb5251352180f655b232f4acf39b31a66af078",
-                "reference": "d0fb5251352180f655b232f4acf39b31a66af078",
+                "url": "https://api.github.com/repos/moehakram/webphp-oop-engine/zipball/8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d",
+                "reference": "8af5a4e12068e7e2dcfde4b1bdbc999cd4fc422d",
                 "shasum": ""
             },
             "require": {
@@ -120,7 +120,7 @@
                 "issues": "https://github.com/moehakram/webphp-oop-engine/issues",
                 "source": "https://github.com/moehakram/webphp-oop-engine/tree/main"
             },
-            "time": "2024-08-18T08:52:47+00:00"
+            "time": "2024-08-19T08:43:56+00:00"
         },
         {
             "name": "psr/container",
