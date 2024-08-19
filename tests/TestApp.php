@@ -22,14 +22,6 @@ function tesUser(){
     dd(request()->user());
 }
 
-
-// tesConfig();
-// tesUser();
-
-function testLog(){
-    write_log('tes aja', 'tes');
-}
-
 // testLog();
 
 function testContainer($app){

@@ -1,27 +1,32 @@
 <?php
 declare(strict_types=1);
 
-use MA\PHPQUICK\Config;
+use Monolog\Logger;
 use MA\PHPQUICK\MVC\View;
 use MA\PHPQUICK\Bootstrap;
 use App\Service\UserService;
 use App\Service\SessionService;
+use MA\PHPQUICK\Session\Session;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CSRFMiddleware;
 use App\Repository\UserRepository;
+use Monolog\Handler\StreamHandler;
 use App\Middleware\GuestMiddleware;
 use App\Repository\SessionRepository;
 use App\Middleware\OnlyAdminMiddleware;
 use App\Middleware\CurrentUserMiddleware;
 use MA\PHPQUICK\Contracts\ContainerInterface as App;
-use MA\PHPQUICK\Session\Session;
+
+ini_set('display_errors', 0);
 
 return (new Bootstrap(
 
     // Handler untuk menangani pengecualian (exception)
     exceptionHandler: function(\Throwable $ex){
+        $logger = new Logger('errors');
         // Log exception ke sistem log
-        log_exception($ex);
+        $logger->pushHandler(new StreamHandler(__DIR__ . '/logs/error.log'));
+        $logger->error(log_exception($ex));
         // Set kode respon HTTP menjadi 500 (Internal Server Error)
         http_response_code(500);
         // Menampilkan halaman error 500 menggunakan view
@@ -51,6 +56,7 @@ return (new Bootstrap(
     // Inisialisasi pengaturan database
     initializeDatabase: function (\PDO $pdo): void {
         // Mengatur atribut PDO mode fetch default
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     },
 
@@ -78,11 +84,6 @@ return (new Bootstrap(
             return new UserRepository($app->get(\PDO::class));
         });
     },
-
-    // Inisialisasi konfigurasi aplikasi (opsional)
-    // function (Config $config) : void {}
-    initializeConfig: null,
-
     // Inisialisasi domain logika aplikasi (opsional)
     // function (App $app) : void {}
     initializeDomain:null,

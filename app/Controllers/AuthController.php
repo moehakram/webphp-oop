@@ -55,7 +55,7 @@ class AuthController extends Controller
         $req = new UserRegisterRequest($request->post());
         try {
             $this->make(UserService::class)->register($req);
-            write_log(['username' => $req->username, 'password' => $req->password]);
+            write_log('register',['username' => $req->username, 'password' => $req->password]);
             return response()->redirect('/users/login')
             ->withMessage('Silakan buka email untuk aktivasi akun!');
         } catch (ValidationException $exception) {

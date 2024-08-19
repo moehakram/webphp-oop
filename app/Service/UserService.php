@@ -103,7 +103,7 @@ class UserService
     {
         if ($user->is_active === 0) {
             $this->userRepository->activateUser($user->id);
-            write_log([
+            write_log('activate',[
                 'username' => $user->username,
                 'active sejak' => $user->activated_at
             ]);
@@ -114,7 +114,7 @@ class UserService
     private function handleExpiredToken($user): bool
     {
         if ($user->is_active === 1) {
-            write_log([
+            write_log('activate',[
                 'username' => $user->username,
                 'active sejak' => $user->activated_at
             ]);
